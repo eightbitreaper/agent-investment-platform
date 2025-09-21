@@ -149,7 +149,7 @@
   - [x] 3.3 Create `config/strategies.yaml` for investment strategy configurations
   - [x] 3.4 Create `templates/strategy-prompts/` directory with LLM prompts
   - [ ] 3.5 Create `src/analysis/strategy_engine.py` for strategy application
-  - [ ] 3.6 Create `src/analysis/recommendation_engine.py` for buy/sell/hold decisions
+  - [x] 3.6 Create `src/analysis/recommendation_engine.py` for buy/sell/hold decisions
   - [ ] 3.7 Create unit tests for analysis components in `tests/analysis/`
   - [ ] 3.8 Create backtesting framework in `src/backtesting/`
 
