@@ -1,5 +1,31 @@
-# Agent Investment Platform - Investment Strategies Configuration
-# This file defines available investment strategies and their parameters
+# Investment Strategies Configuration
+# 
+# This file defines various investment strategies with their parameters,
+# risk management rules, and analysis criteria for the Agent Investment Platform.
+
+# Global Risk Management Settings
+risk_management:
+  max_portfolio_risk: 0.15  # Maximum 15% portfolio risk
+  max_single_position: 0.08  # Maximum 8% in any single position
+  max_sector_exposure: 0.25  # Maximum 25% exposure to any sector
+  stop_loss_default: 0.08  # Default 8% stop loss
+  take_profit_default: 0.15  # Default 15% take profit
+  position_sizing_method: "kelly_criterion"  # kelly_criterion, fixed_percentage, volatility_adjusted
+  rebalance_frequency: "weekly"  # daily, weekly, monthly, quarterly
+
+# Market Conditions
+market_conditions:
+  bull_market:
+    rsi_threshold: 30  # More aggressive in bull markets
+    ma_crossover_weight: 1.2
+    momentum_weight: 1.3
+  bear_market:
+    rsi_threshold: 20  # More conservative in bear markets
+    ma_crossover_weight: 0.8
+    cash_allocation_min: 0.2  # Minimum 20% cash in bear markets
+  sideways_market:
+    range_trading_enabled: true
+    breakout_confirmation_required: true
 
 # Default strategy settings
 default_strategy:
@@ -7,9 +33,272 @@ default_strategy:
   risk_tolerance: "moderate"
   time_horizon: "long_term"  # short_term (< 1 year), medium_term (1-5 years), long_term (> 5 years)
 
-# Available investment strategies
+# Investment Strategies
 strategies:
-  # Conservative strategies
+  
+  # 1. Conservative Growth Strategy
+  conservative_growth:
+    name: "Conservative Growth"
+    description: "Low-risk strategy focusing on stable dividend-paying stocks and growth companies"
+    risk_level: "low"
+    target_return: 0.08  # 8% annual target
+    max_volatility: 0.12  # Maximum 12% volatility
+    
+    allocation:
+      large_cap_growth: 0.35
+      dividend_stocks: 0.30
+      bonds: 0.20
+      cash: 0.10
+      international: 0.05
+    
+    entry_criteria:
+      technical:
+        rsi_max: 70
+        ma_trend: "bullish"  # Price above 50-day MA
+        volume_confirmation: true
+      fundamental:
+        pe_ratio_max: 25
+        debt_to_equity_max: 0.5
+        dividend_yield_min: 0.02
+        revenue_growth_min: 0.05
+      sentiment:
+        min_score: -0.2  # Not too negative
+        news_volume_min: 5
+    
+    exit_criteria:
+      stop_loss: 0.08
+      take_profit: 0.15
+      rsi_overbought: 80
+      fundamental_deterioration: true
+      sentiment_turn_negative: -0.5
+    
+    position_sizing:
+      base_size: 0.05  # 5% base position
+      max_size: 0.08   # 8% maximum position
+      volatility_adjustment: true
+      kelly_fraction: 0.25  # Conservative Kelly fraction
+  
+  # 2. Aggressive Growth Strategy
+  aggressive_growth:
+    name: "Aggressive Growth"
+    description: "High-risk, high-reward strategy focusing on growth stocks and momentum"
+    risk_level: "high"
+    target_return: 0.20  # 20% annual target
+    max_volatility: 0.25  # Maximum 25% volatility
+    
+    allocation:
+      growth_stocks: 0.50
+      small_cap_growth: 0.25
+      tech_stocks: 0.15
+      cash: 0.05
+      crypto_exposure: 0.05
+    
+    entry_criteria:
+      technical:
+        rsi_range: [30, 70]
+        macd_bullish: true
+        breakout_confirmation: true
+        volume_spike: 1.5  # 50% above average volume
+      fundamental:
+        revenue_growth_min: 0.15  # 15% minimum revenue growth
+        pe_growth_ratio_max: 1.5  # PEG ratio under 1.5
+        market_cap_min: 1000000000  # $1B minimum market cap
+      sentiment:
+        min_score: 0.1  # Positive sentiment required
+        momentum_score_min: 0.3
+    
+    exit_criteria:
+      stop_loss: 0.12  # Wider stop loss for volatility
+      take_profit: 0.25
+      momentum_reversal: true
+      volume_decline: 0.5  # Volume below 50% of average
+      sentiment_reversal: -0.3
+    
+    position_sizing:
+      base_size: 0.06  # 6% base position
+      max_size: 0.10   # 10% maximum position
+      momentum_adjustment: true
+      kelly_fraction: 0.5  # More aggressive Kelly fraction
+  
+  # 3. Value Investing Strategy
+  value_investing:
+    name: "Value Investing"
+    description: "Long-term value strategy based on fundamental analysis"
+    risk_level: "medium"
+    target_return: 0.12  # 12% annual target
+    max_volatility: 0.15  # Maximum 15% volatility
+    
+    allocation:
+      value_stocks: 0.60
+      dividend_value: 0.25
+      bonds: 0.10
+      cash: 0.05
+    
+    entry_criteria:
+      technical:
+        rsi_max: 60  # Not overbought
+        support_level_bounce: true
+      fundamental:
+        pe_ratio_max: 15
+        pb_ratio_max: 2.0
+        debt_to_equity_max: 0.6
+        roe_min: 0.10  # 10% minimum ROE
+        free_cash_flow_positive: true
+        dividend_sustainability: true
+      sentiment:
+        contrarian_opportunity: true  # Buy when sentiment is negative
+        max_score: 0.2  # Not too optimistic
+    
+    exit_criteria:
+      intrinsic_value_reached: 0.9  # Sell at 90% of intrinsic value
+      stop_loss: 0.15  # Conservative stop loss
+      fundamental_deterioration: true
+      overvaluation_metrics: true
+    
+    position_sizing:
+      base_size: 0.08  # 8% base position
+      max_size: 0.12   # 12% maximum position
+      conviction_adjustment: true
+      margin_of_safety_factor: true
+  
+  # 4. Momentum Strategy
+  momentum_strategy:
+    name: "Momentum Trading"
+    description: "Short to medium-term momentum-based trading strategy"
+    risk_level: "high"
+    target_return: 0.25  # 25% annual target
+    max_volatility: 0.30  # Maximum 30% volatility
+    holding_period: "1-12 weeks"
+    
+    allocation:
+      momentum_stocks: 0.70
+      sector_rotation: 0.20
+      cash: 0.10
+    
+    entry_criteria:
+      technical:
+        price_momentum: 0.10  # 10% price increase in 4 weeks
+        rsi_range: [40, 70]
+        macd_bullish_crossover: true
+        volume_confirmation: 2.0  # 2x average volume
+        breakout_above_resistance: true
+      fundamental:
+        earnings_surprise_positive: true
+        revenue_growth_acceleration: true
+      sentiment:
+        positive_momentum: 0.3
+        news_catalyst: true
+    
+    exit_criteria:
+      momentum_fading: true
+      rsi_overbought: 75
+      volume_decline_significant: 0.4
+      stop_loss: 0.10
+      take_profit: 0.20
+      time_stop: "12 weeks"  # Maximum holding period
+    
+    position_sizing:
+      base_size: 0.04  # 4% base position
+      max_size: 0.08   # 8% maximum position
+      volatility_scaling: true
+      momentum_strength_adjustment: true
+  
+  # 5. Dividend Income Strategy
+  dividend_income:
+    name: "Dividend Income"
+    description: "Income-focused strategy prioritizing dividend yield and growth"
+    risk_level: "low"
+    target_return: 0.07  # 7% annual target (including dividends)
+    max_volatility: 0.10  # Maximum 10% volatility
+    
+    allocation:
+      dividend_aristocrats: 0.40
+      reits: 0.25
+      utility_stocks: 0.20
+      bonds: 0.10
+      cash: 0.05
+    
+    entry_criteria:
+      technical:
+        near_support_level: true
+        rsi_max: 65
+      fundamental:
+        dividend_yield_min: 0.03  # 3% minimum yield
+        dividend_growth_history: 5  # 5+ years of growth
+        payout_ratio_max: 0.7  # Maximum 70% payout ratio
+        debt_coverage_adequate: true
+        fcf_dividend_coverage: 1.5  # 1.5x free cash flow coverage
+      sentiment:
+        stable_sentiment: true
+    
+    exit_criteria:
+      dividend_cut_risk: true
+      payout_ratio_excessive: 0.8
+      fundamental_deterioration: true
+      stop_loss: 0.12
+      overvaluation_extreme: true
+    
+    position_sizing:
+      base_size: 0.06  # 6% base position
+      max_size: 0.10   # 10% maximum position
+      yield_weighted: true
+      dividend_safety_adjustment: true
+  
+  # 6. Sector Rotation Strategy
+  sector_rotation:
+    name: "Sector Rotation"
+    description: "Strategic allocation across sectors based on economic cycles"
+    risk_level: "medium"
+    target_return: 0.15  # 15% annual target
+    max_volatility: 0.18  # Maximum 18% volatility
+    
+    sectors:
+      technology:
+        economic_phase: ["early_expansion", "late_expansion"]
+        allocation_range: [0.10, 0.25]
+        momentum_weight: 1.2
+      healthcare:
+        economic_phase: ["all_phases"]
+        allocation_range: [0.08, 0.15]
+        defensive_weight: 1.1
+      financials:
+        economic_phase: ["expansion", "recovery"]
+        allocation_range: [0.05, 0.20]
+        interest_rate_sensitivity: 1.3
+      consumer_discretionary:
+        economic_phase: ["expansion"]
+        allocation_range: [0.00, 0.15]
+        economic_sensitivity: 1.4
+      utilities:
+        economic_phase: ["recession", "early_recovery"]
+        allocation_range: [0.05, 0.15]
+        defensive_weight: 1.2
+      materials:
+        economic_phase: ["late_expansion"]
+        allocation_range: [0.00, 0.12]
+        commodity_correlation: 1.1
+    
+    rotation_signals:
+      economic_indicators:
+        gdp_growth: true
+        employment_data: true
+        inflation_trends: true
+        interest_rates: true
+      market_indicators:
+        yield_curve: true
+        credit_spreads: true
+        vix_levels: true
+      sector_momentum:
+        relative_strength: true
+        earnings_revisions: true
+    
+    position_sizing:
+      sector_momentum_based: true
+      economic_phase_weighting: true
+      max_sector_weight: 0.25
+      min_sector_weight: 0.05
+
+  # Legacy strategies for compatibility
   conservative_income:
     name: "Conservative Income"
     description: "Focus on dividend-paying stocks and bonds for steady income"
@@ -70,81 +359,6 @@ strategies:
       frequency: "monthly"
       threshold: 0.05
 
-  aggressive_growth:
-    name: "Aggressive Growth"
-    description: "High-growth stocks with higher volatility and potential returns"
-    risk_level: 8
-    expected_return: 0.12  # 12% annual return
-    max_drawdown: 0.25  # 25% maximum drawdown
-
-    asset_allocation:
-      stocks: 0.90
-      bonds: 0.05
-      cash: 0.05
-
-    stock_criteria:
-      min_revenue_growth: 0.15  # 15% minimum revenue growth
-      max_pe_ratio: 50
-      min_market_cap: 1000000000  # $1B minimum
-
-    sectors:
-      technology: 0.40
-      healthcare: 0.20
-      consumer_discretionary: 0.15
-      communication_services: 0.10
-      industrials: 0.10
-      financials: 0.05
-
-    rebalancing:
-      frequency: "weekly"
-      threshold: 0.03
-
-  # Specialized strategies
-  value_investing:
-    name: "Value Investing"
-    description: "Undervalued stocks with strong fundamentals"
-    risk_level: 4
-    expected_return: 0.09  # 9% annual return
-    max_drawdown: 0.18  # 18% maximum drawdown
-
-    asset_allocation:
-      stocks: 0.80
-      bonds: 0.15
-      cash: 0.05
-
-    stock_criteria:
-      max_pe_ratio: 15
-      min_pb_ratio: 0.5
-      max_pb_ratio: 2.0
-      min_roe: 0.12  # 12% minimum return on equity
-      debt_to_equity_max: 0.6
-      min_current_ratio: 1.5
-
-    screening_metrics:
-      - low_pe_ratio
-      - low_pb_ratio
-      - high_dividend_yield
-      - strong_balance_sheet
-      - consistent_earnings
-
-  dividend_aristocrats:
-    name: "Dividend Aristocrats"
-    description: "Companies with 25+ years of consecutive dividend increases"
-    risk_level: 3
-    expected_return: 0.07  # 7% annual return
-    max_drawdown: 0.12  # 12% maximum drawdown
-
-    asset_allocation:
-      stocks: 0.85
-      bonds: 0.10
-      cash: 0.05
-
-    stock_criteria:
-      min_dividend_years: 25  # 25+ years of dividend increases
-      min_dividend_yield: 0.02  # 2% minimum dividend yield
-      max_payout_ratio: 0.60  # 60% maximum payout ratio
-      min_market_cap: 5000000000  # $5B minimum
-
   # ESG and thematic strategies
   esg_sustainable:
     name: "ESG Sustainable Investing"
@@ -191,8 +405,70 @@ strategies:
       autonomous_vehicles: 0.10
       quantum_computing: 0.05
 
-# Risk management parameters
-risk_management:
+# Strategy Selection Rules
+strategy_selection:
+  market_volatility:
+    low: ["conservative_growth", "dividend_income"]
+    medium: ["value_investing", "sector_rotation"]
+    high: ["aggressive_growth", "momentum_strategy"]
+  
+  market_trend:
+    bull_market: ["aggressive_growth", "momentum_strategy"]
+    bear_market: ["conservative_growth", "dividend_income"]
+    sideways: ["value_investing", "sector_rotation"]
+  
+  user_risk_profile:
+    conservative: ["conservative_growth", "dividend_income"]
+    moderate: ["value_investing", "sector_rotation"]
+    aggressive: ["aggressive_growth", "momentum_strategy"]
+
+# Portfolio Construction Rules
+portfolio_construction:
+  diversification:
+    max_positions: 20
+    min_positions: 8
+    sector_diversification: true
+    geographic_diversification: true
+    market_cap_diversification: true
+  
+  correlation_limits:
+    max_pairwise_correlation: 0.7
+    max_sector_correlation: 0.8
+    rebalance_trigger: 0.05  # 5% drift from target
+  
+  liquidity_requirements:
+    min_daily_volume: 1000000  # $1M daily volume
+    max_bid_ask_spread: 0.02  # 2% maximum spread
+    emergency_cash_reserve: 0.05  # 5% cash for opportunities
+
+# Risk Monitoring and Alerts
+risk_monitoring:
+  daily_checks:
+    - portfolio_var  # Value at Risk
+    - position_concentration
+    - sector_exposure
+    - correlation_drift
+  
+  weekly_checks:
+    - strategy_performance
+    - benchmark_tracking_error
+    - risk_adjusted_returns
+    - drawdown_analysis
+  
+  monthly_checks:
+    - strategy_effectiveness
+    - parameter_optimization
+    - market_regime_detection
+    - rebalancing_opportunities
+  
+  alert_thresholds:
+    portfolio_loss: 0.05  # 5% daily loss
+    position_loss: 0.10   # 10% position loss
+    correlation_spike: 0.8  # High correlation alert
+    volatility_spike: 2.0   # 2x normal volatility
+
+# Legacy Risk Management Parameters (for compatibility)
+legacy_risk_management:
   position_sizing:
     max_single_position: 0.05  # 5% maximum in any single stock
     max_sector_weight: 0.30    # 30% maximum in any sector
@@ -272,6 +548,28 @@ backtesting:
     - sortino_ratio
     - calmar_ratio
     - win_rate
+
+# Backtesting Parameters
+backtesting:
+  lookback_period: "5 years"
+  rebalance_frequency: "monthly"
+  transaction_costs: 0.001  # 0.1% per trade
+  slippage: 0.0005  # 0.05% slippage
+  benchmark: "SPY"  # S&P 500 ETF
+  
+  performance_metrics:
+    - total_return
+    - annualized_return
+    - volatility
+    - sharpe_ratio
+    - sortino_ratio
+    - max_drawdown
+    - calmar_ratio
+    - win_rate
+    - profit_factor
+    - beta
+    - alpha
+    - information_ratio
 
 # Dynamic strategy adjustment
 adaptive_parameters:
