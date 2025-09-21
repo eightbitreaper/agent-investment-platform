@@ -187,6 +187,9 @@ These guidelines are **mandatory** for all development work on this project. Any
 6. **Verify code functionality** by running scripts and commands when possible
 7. **Test configuration files** for proper syntax and loading behavior
 8. **Document testing results** and any platform-specific findings
+9. **Leverage the memory bank** for project context, patterns, and user preferences
+10. **Update memory bank** with new learnings and project evolution insights
+11. **Maintain session continuity** by building on stored knowledge and decisions
 
 ## Updates to Guidelines
 
