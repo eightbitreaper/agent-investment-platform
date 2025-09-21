@@ -5,9 +5,15 @@ Provides persistent knowledge storage and retrieval across sessions
 """
 
 import json
-import yaml
 import os
 from datetime import datetime
+
+# Optional imports with fallbacks
+try:
+    import yaml
+    HAS_YAML = True
+except ImportError:
+    HAS_YAML = False
 from pathlib import Path
 from typing import Dict, List, Any, Optional
 
