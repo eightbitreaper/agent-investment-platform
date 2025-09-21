@@ -5,6 +5,64 @@ It covers both **WSL-based setup** and **Windows-native GitHub setup**.
 
 ---
 
+## VS Code Insiders and GitHub Copilot Setup
+
+Before configuring GitHub, set up your development environment with VS Code Insiders and GitHub Copilot.
+
+### 1. Install VS Code Insiders
+
+VS Code Insiders provides access to the latest features and updates.
+
+1. Download VS Code Insiders from: [https://code.visualstudio.com/insiders/](https://code.visualstudio.com/insiders/)
+2. Run the installer and follow the installation wizard
+3. During installation, make sure to check:
+   - ✅ "Add to PATH (requires shell restart)"
+   - ✅ "Register Code as an editor for supported file types"
+   - ✅ "Add 'Open with Code' action to Windows Explorer file context menu"
+   - ✅ "Add 'Open with Code' action to Windows Explorer directory context menu"
+
+### 2. Install and Configure GitHub Copilot Extension
+
+GitHub Copilot provides AI-powered code suggestions and assistance.
+
+1. **Open VS Code Insiders**
+
+2. **Install GitHub Copilot Extension:**
+   - Press `Ctrl+Shift+X` to open Extensions
+   - Search for "GitHub Copilot"
+   - Click **Install** on the official GitHub Copilot extension by GitHub
+
+3. **Sign in to GitHub:**
+   - After installation, VS Code will prompt you to sign in
+   - Click **Sign in to GitHub** in the notification
+   - This will open your browser to authenticate with GitHub
+   - Authorize VS Code Insiders to access your GitHub account
+
+4. **Verify Copilot is Active:**
+   - Open any code file (`.js`, `.py`, `.md`, etc.)
+   - Start typing code - you should see grayed-out suggestions from Copilot
+   - Press `Tab` to accept suggestions or `Esc` to dismiss them
+
+5. **Configure Copilot Settings (Optional):**
+   - Press `Ctrl+,` to open Settings
+   - Search for "copilot"
+   - Adjust settings like:
+     - `github.copilot.enable` - Enable/disable Copilot
+     - `github.copilot.inlineSuggest.enable` - Enable inline suggestions
+
+### 3. Verify Installation
+
+Test that everything is working:
+
+1. Open VS Code Insiders from command line:
+   ```powershell
+   code-insiders --version
+   ```
+
+2. Create a test file and verify Copilot suggestions appear when typing code
+
+---
+
 ## Option A: Using WSL (Ubuntu) with GitHub
 
 1. Ensure WSL is installed and Ubuntu is available:
