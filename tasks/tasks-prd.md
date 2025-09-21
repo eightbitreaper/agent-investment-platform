@@ -30,6 +30,12 @@
 - `docs/configuration/strategy-configuration.md` - How to configure investment strategies
 - `docs/deployment/docker-deployment.md` - Docker deployment instructions
 - `docs/troubleshooting/common-issues.md` - Common setup and runtime issues
+- `docs/setup/initialize.prompt.md` - VS Code agent prompt for one-command setup
+- `docs/setup/installation-guide.md` - Comprehensive installation instructions
+- `.vscode/guidelines.prompt.md` - Master development guidelines and documentation standards
+- `docs/setup/configuration-guide.md` - Configuration and customization guide
+- `docs/api/README.md` - API documentation index
+- `docs/development/README.md` - Development guide index
 - `scripts/initialize.py` - Main initialization script for VS Code agent
 - `scripts/setup/install-dependencies.py` - Automated dependency installation
 - `scripts/setup/configure-environment.py` - Environment configuration automation
@@ -37,8 +43,7 @@
 - `scripts/setup/validate-setup.py` - Setup validation and testing
 - `.vscode/tasks.json` - VS Code tasks for initialization and common operations
 - `.vscode/settings.json` - VS Code workspace settings and extensions
-- `initialize.prompt.md` - VS Code agent prompt for one-command setup
-- `README.md` - Updated with quick initialization instructions
+- `README.md` - Main entry point with quick start and links to docs/
 
 ### Notes
 
@@ -49,18 +54,35 @@
 - Comprehensive documentation ensures junior developers can set up and contribute
 - One-command initialization via VS Code agent for seamless onboarding
 
+### MANDATORY: Development Guidelines Reference
+
+**⚠️ CRITICAL: Before starting ANY task:**
+1. **ALWAYS read** `.vscode/guidelines.prompt.md` for current project standards
+2. **Verify** the guidelines are being followed for file placement and organization
+3. **Check** that documentation will be placed in the correct `docs/` subdirectory
+
+**⚠️ CRITICAL: After completing ANY task:**
+1. **ALWAYS verify** all files are placed according to guidelines
+2. **Update** parent README files with navigation links to new documentation
+3. **Cross-reference** related documentation sections as specified in guidelines
+4. **Validate** that all markdown files follow the established directory structure
+
+**These guidelines are MANDATORY and must be followed without exception.**
+
 ## Tasks
 
+**🚨 BEFORE STARTING ANY TASK: Read [.vscode/guidelines.prompt.md](../.vscode/guidelines.prompt.md) for mandatory project standards**
+
 - [ ] 0.0 VS Code Agent Initialization System
-  - [x] 0.1 Create `initialize.prompt.md` with VS Code agent setup instructions
-  - [ ] 0.2 Create `scripts/initialize.py` main initialization orchestrator
+  - [x] 0.1 Create `docs/setup/initialize.prompt.md` with VS Code agent setup instructions
+  - [x] 0.2 Create `scripts/initialize.py` main initialization orchestrator
   - [ ] 0.3 Create `scripts/setup/install-dependencies.py` for automated dependency installation
   - [ ] 0.4 Create `scripts/setup/configure-environment.py` for environment configuration
   - [ ] 0.5 Create `scripts/setup/download-models.py` for local LLM model management
   - [ ] 0.6 Create `scripts/setup/validate-setup.py` for setup verification
   - [ ] 0.7 Create `.vscode/tasks.json` with initialization and common tasks
   - [ ] 0.8 Create `.vscode/settings.json` with workspace configuration
-  - [ ] 0.9 Update `README.md` with quick initialization instructions
+  - [ ] 0.9 Update `README.md` as main entry point with links to docs/
 
 - [ ] 1.0 Infrastructure and Environment Setup
   - [ ] 1.1 Create `docker-compose.yml` with services for MCP servers, LLM, and scheduler
@@ -113,11 +135,14 @@
   - [ ] 5.8 Create integration tests for scheduling system
 
 - [ ] 6.0 Documentation and Local LLM Setup
-  - [ ] 6.1 Create `docs/setup/local-llm-setup.md` with installation guides
-  - [ ] 6.2 Create `docs/setup/quick-start-guide.md` for new users
-  - [ ] 6.3 Create `docs/configuration/llm-configuration.md` with examples
-  - [ ] 6.4 Create `docs/configuration/strategy-configuration.md` guide
-  - [ ] 6.5 Create `docs/deployment/docker-deployment.md` instructions
-  - [ ] 6.6 Create `docs/troubleshooting/common-issues.md` guide
-  - [ ] 6.7 Create `docs/api/mcp-server-reference.md` for developers
-  - [ ] 6.8 Create `docs/contributing/development-guide.md` for contributors
+  - [ ] 6.1 Create `docs/setup/local-llm-setup.md` with installation guides (follow guidelines for placement and navigation updates)
+  - [ ] 6.2 Create `docs/setup/installation-guide.md` comprehensive setup guide (follow guidelines for placement and navigation updates)
+  - [ ] 6.3 Create `docs/setup/configuration-guide.md` with LLM and strategy examples (follow guidelines for placement and navigation updates)
+  - [ ] 6.4 Create `docs/deployment/docker-deployment.md` instructions (follow guidelines for placement and navigation updates)
+  - [ ] 6.5 Create `docs/troubleshooting/common-issues.md` guide (follow guidelines for placement and navigation updates)
+  - [ ] 6.6 Create `docs/api/README.md` API documentation index (follow guidelines for placement and navigation updates)
+  - [ ] 6.7 Create `docs/api/mcp-server-reference.md` for developers (follow guidelines for placement and navigation updates)
+  - [ ] 6.8 Create `docs/development/README.md` development guide index (follow guidelines for placement and navigation updates)
+  - [ ] 6.9 Create `docs/development/contributing.md` for contributors (follow guidelines for placement and navigation updates)
+  - [ ] 6.10 Create `docs/README.md` documentation index linking all sections (follow guidelines for placement and navigation updates)
+  - [ ] 6.11 Validate all documentation follows guidelines and update navigation links

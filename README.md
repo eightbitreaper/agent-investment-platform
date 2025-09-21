@@ -1,51 +1,103 @@
-# Agent Investment Platform
+# 🚀 Agent Investment Platform
 
-This repository contains the code and documentation for building a private, agent-driven stock investment platform.  
-The platform analyzes stock/ETF/bond trends, financial news, and external data sources to generate sentiment-driven insights and actionable recommendations.  
+> **One-command setup for AI-powered stock investment analysis**
+
+An agent-driven platform that provides automated analysis of stocks, ETFs, and bonds with real-time insights, sentiment analysis, and comprehensive reporting.
 
 ⚠️ **Note**: The system does not execute trades. It informs the operator so they can act manually.
 
----
+## ⚡ Quick Start
 
-## Project Structure
+Get up and running in under 5 minutes:
 
-- `docs/` — All project documentation (setup guides, PRDs, task lists, architecture notes, etc.)
-- `src/` — Application source code (to be added)
-- `tests/` — Automated test files (to be added)
+```bash
+# 1. Clone the repository
+git clone https://github.com/eightbitreaper/agent-investment-platform.git
+cd agent-investment-platform
 
----
+# 2. Open in VS Code
+code .
 
-## Getting Started
+# 3. Initialize everything with one command
+@workspace run docs/setup/initialize.prompt
+```
 
-1. Clone the repository:
-   ```bash
-   git clone git@github.com:eightbitreaper/agent-investment-platform.git
-   cd agent-investment-platform
-   ```
+That's it! The initialization will:
+- ✅ Install all dependencies (Docker, Python, etc.)
+- ✅ Set up local LLMs or configure API access
+- ✅ Configure all data sources and MCP servers
+- ✅ Create your first investment analysis report
+- ✅ Validate the complete setup
 
-2. Review the [Documentation Index](docs/index.md) to get started with setup and development.
+## 🎯 What This Platform Does
 
----
+- **📊 Real-time Analysis**: Continuously monitors stocks, ETFs, and bonds
+- **🤖 AI-Powered Insights**: Uses LLMs for sentiment analysis and strategy recommendations
+- **📰 Multi-Source Data**: Integrates news, YouTube transcripts, and market data
+- **📝 Automated Reports**: Generates markdown reports with buy/sell/hold recommendations
+- **🔄 Version Control**: All reports are versioned and stored in GitHub
+- **🐋 Container Ready**: Full Docker deployment for any platform
 
-## Documentation
+## 📚 Documentation
 
-All documentation is maintained under the [docs/](docs/) folder.  
-Key documents include:
+| Section | Description |
+|---------|-------------|
+| **[📖 Full Documentation](docs/README.md)** | Complete documentation index |
+| **[⚙️ Setup & Installation](docs/setup/)** | Detailed setup guides and configuration |
+| **[🚀 Deployment](docs/deployment/)** | Docker and production deployment |
+| **[🔧 API Reference](docs/api/)** | MCP server and API documentation |
+| **[👨‍💻 Development](docs/development/)** | Contributing and development guides |
+| **[🆘 Troubleshooting](docs/troubleshooting/)** | Common issues and solutions |
 
-- [Documentation Index](docs/index.md)
-- [Prerequisites Setup Guide](docs/prerequisites.md)
-- [Contributing Guide](docs/CONTRIBUTING.md)
-- [Code of Conduct](docs/CODE_OF_CONDUCT.md)
-- [License (MIT)](docs/LICENSE.md)
+## 🏗️ Architecture
 
----
+The platform follows a modular, agent-based architecture:
 
-## Contributing
+```
+┌─────────────────┐    ┌──────────────┐    ┌─────────────────┐
+│   Data Sources  │───▶│ MCP Servers  │───▶│ Analysis Engine │
+└─────────────────┘    └──────────────┘    └─────────────────┘
+│ • Stock APIs    │    │ • Stock Data │    │ • Sentiment     │
+│ • News Feeds    │    │ • News Agent │    │ • Technical     │
+│ • YouTube       │    │ • YouTube    │    │ • Strategy      │
+└─────────────────┘    └──────────────┘    └─────────────────┘
+                                                     │
+┌─────────────────┐    ┌──────────────┐    ┌─────────────────┐
+│ GitHub Reports  │◀───│ Report Gen   │◀───│ LLM Processing  │
+└─────────────────┘    └──────────────┘    └─────────────────┘
+```
 
-We welcome contributions! Please read the [Contributing Guide](docs/CONTRIBUTING.md) and follow the workflow before submitting a pull request.  
+## 🤝 Contributing
 
----
+We welcome contributors! The platform is designed for easy extension:
 
-## License
+1. **Run the initializer** to get your dev environment ready
+2. **Read the [development guidelines](.vscode/guidelines.prompt.md)** for project standards
+3. **Check the [development guide](docs/development/)** for architecture details
+4. **Browse [open issues](https://github.com/eightbitreaper/agent-investment-platform/issues)** for ways to help
+5. **Add new MCP servers** for additional data sources
+6. **Create new analysis strategies** for different investment approaches
+
+## 📄 Project Structure
+
+- **`docs/`** — All project documentation (setup, API, development guides)
+- **`src/`** — Application source code (agents, analysis, reports)
+- **`scripts/`** — Setup and utility scripts
+- **`config/`** — Configuration files for all services
+- **`tasks/`** — Project requirements and task tracking
+- **`tests/`** — Automated test files
+
+## 🔗 Links
+
+- **[Project Tasks & Roadmap](tasks/tasks-prd.md)** - Current development progress
+- **[Product Requirements](tasks/prd.md)** - Detailed project specifications  
+- **[Architecture Details](docs/architecture.md)** - Technical architecture overview
+- **[GitHub Repository](https://github.com/eightbitreaper/agent-investment-platform)** - Source code and issues
+
+## 📄 License
 
 This project is licensed under the [MIT License](docs/LICENSE.md).
+
+---
+
+**⭐ Star this repo if you find it useful!** | **🐛 [Report Issues](https://github.com/eightbitreaper/agent-investment-platform/issues)** | **💬 [Discussions](https://github.com/eightbitreaper/agent-investment-platform/discussions)**
