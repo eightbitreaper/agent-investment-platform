@@ -203,3 +203,4 @@ ollama_data/
 # Additional data directories
 test_data/
 backup/
+logs/health-check-report.json

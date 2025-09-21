@@ -1,12 +1,12 @@
 {
   "summary": {
     "overall_status": "unhealthy",
-    "check_timestamp": "2025-09-21T14:33:57.860907",
+    "check_timestamp": "2025-09-21T15:06:38.248847",
     "total_components": 8,
-    "healthy_components": 5,
-    "warning_components": 2,
+    "healthy_components": 6,
+    "warning_components": 1,
     "error_components": 1,
-    "health_score": 62.5
+    "health_score": 75.0
   },
   "components": {
     "python_environment": {
@@ -14,22 +14,22 @@
       "version": "3.9.10",
       "executable": "C:\\Users\\Clinton\\AppData\\Local\\Microsoft\\WindowsApps\\PythonSoftwareFoundation.Python.3.9_qbz5n2kfra8p0\\python.exe",
       "platform": "win32",
-      "check_time": "2025-09-21T14:33:57.404338"
+      "check_time": "2025-09-21T15:06:37.718412"
     },
     "dependencies": {
       "status": "error",
       "installed": {
         "requests": "2.32.5",
         "click": "8.1.8",
-        "rich": "unknown"
+        "rich": "unknown",
+        "aiohttp": "3.12.15",
+        "jinja2": "3.1.6",
+        "markdown": "3.9"
       },
       "missing": [
-        "pyyaml",
-        "aiohttp",
-        "jinja2",
-        "markdown"
+        "pyyaml"
       ],
-      "check_time": "2025-09-21T14:33:57.434341"
+      "check_time": "2025-09-21T15:06:37.877923"
     },
     "configuration": {
       "status": "healthy",
@@ -42,12 +42,18 @@
       ],
       "missing_configs": [],
       "invalid_configs": [],
-      "check_time": "2025-09-21T14:33:57.436345"
+      "check_time": "2025-09-21T15:06:37.878923"
     },
     "database": {
-      "status": "warning",
-      "message": "Database not initialized - will be created on first use",
-      "check_time": "2025-09-21T14:33:57.436345"
+      "status": "healthy",
+      "path": "data\\analysis.db",
+      "tables": [
+        "analyses",
+        "sqlite_sequence",
+        "risk_metrics"
+      ],
+      "size_mb": 0.02,
+      "check_time": "2025-09-21T15:06:37.879924"
     },
     "api_keys": {
       "status": "warning",
@@ -63,7 +69,7 @@
       "total_configured": 0,
       "total_available": 7,
       "message": "At least one API key should be configured for full functionality",
-      "check_time": "2025-09-21T14:33:57.436345"
+      "check_time": "2025-09-21T15:06:37.879924"
     },
     "external_apis": {
       "status": "healthy",
@@ -75,7 +81,7 @@
       ],
       "healthy_apis": 1,
       "total_tested": 1,
-      "check_time": "2025-09-21T14:33:57.854927"
+      "check_time": "2025-09-21T15:06:38.241843"
     },
     "file_system": {
       "status": "healthy",
@@ -92,7 +98,7 @@
       "missing_dirs": [],
       "permission_errors": [],
       "free_space_gb": null,
-      "check_time": "2025-09-21T14:33:57.860907"
+      "check_time": "2025-09-21T15:06:38.247846"
     },
     "mcp_servers": {
       "status": "healthy",
@@ -107,7 +113,7 @@
       "missing_servers": [],
       "total_available": 6,
       "total_expected": 6,
-      "check_time": "2025-09-21T14:33:57.860907"
+      "check_time": "2025-09-21T15:06:38.248847"
     }
   },
   "recommendations": [
@@ -115,5 +121,5 @@
     "Review warnings for optimal performance",
     "Configure API keys for full functionality"
   ],
-  "report_generated": "2025-09-21T14:33:57.861907"
+  "report_generated": "2025-09-21T15:06:38.248847"
 }
