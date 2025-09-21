@@ -30,6 +30,15 @@
 - `docs/configuration/strategy-configuration.md` - How to configure investment strategies
 - `docs/deployment/docker-deployment.md` - Docker deployment instructions
 - `docs/troubleshooting/common-issues.md` - Common setup and runtime issues
+- `scripts/initialize.py` - Main initialization script for VS Code agent
+- `scripts/setup/install-dependencies.py` - Automated dependency installation
+- `scripts/setup/configure-environment.py` - Environment configuration automation
+- `scripts/setup/download-models.py` - Local LLM model download automation
+- `scripts/setup/validate-setup.py` - Setup validation and testing
+- `.vscode/tasks.json` - VS Code tasks for initialization and common operations
+- `.vscode/settings.json` - VS Code workspace settings and extensions
+- `initialize.prompt.md` - VS Code agent prompt for one-command setup
+- `README.md` - Updated with quick initialization instructions
 
 ### Notes
 
@@ -38,9 +47,11 @@
 - Docker containers isolate and manage different services
 - All configuration should be externalized to config files
 - Comprehensive documentation ensures junior developers can set up and contribute
+- One-command initialization via VS Code agent for seamless onboarding
 
 ## Tasks
 
+- [ ] 0.0 VS Code Agent Initialization System
 - [ ] 1.0 Infrastructure and Environment Setup
 - [ ] 2.0 MCP Server Integration and Data Ingestion
 - [ ] 3.0 Analysis Engine Development
