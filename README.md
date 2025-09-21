@@ -8,7 +8,7 @@ An agent-driven platform that provides automated analysis of stocks, ETFs, and b
 
 ## ⚡ Quick Start
 
-Get up and running in under 5 minutes:
+Get up and running in under 5 minutes with our complete initialization system:
 
 ```bash
 # 1. Clone the repository
@@ -19,15 +19,16 @@ cd agent-investment-platform
 code .
 
 # 3. Initialize everything with one command
-@workspace run docs/setup/initialize.prompt
+@workspace /docs/setup/initialize.prompt.md
 ```
 
-That's it! The initialization will:
-- ✅ Install all dependencies (Docker, Python, etc.)
-- ✅ Set up local LLMs or configure API access
-- ✅ Configure all data sources and MCP servers
-- ✅ Create your first investment analysis report
-- ✅ Validate the complete setup
+**✅ Initialization Complete!** Our system handles:
+- 🐍 **Python Environment** - Automatic dependency installation & configuration
+- 🤖 **LLM Setup** - Local models (Ollama) or API configuration (OpenAI/Claude)
+- 🔧 **VS Code Integration** - Complete workspace setup with 85+ optimized settings
+- 📊 **Platform Validation** - Comprehensive system checks and health monitoring
+- 🏗️ **Development Tools** - 20 VS Code tasks for all operations (build, test, deploy)
+- 💾 **Memory Bank** - AI persistence system for seamless development continuity
 
 ## 🎯 What This Platform Does
 
@@ -40,14 +41,14 @@ That's it! The initialization will:
 
 ## 📚 Documentation
 
-| Section | Description |
-|---------|-------------|
-| **[📖 Full Documentation](docs/README.md)** | Complete documentation index |
-| **[⚙️ Setup & Installation](docs/setup/)** | Detailed setup guides and configuration |
-| **[🚀 Deployment](docs/deployment/)** | Docker and production deployment |
-| **[🔧 API Reference](docs/api/)** | MCP server and API documentation |
-| **[👨‍💻 Development](docs/development/)** | Contributing and development guides |
-| **[🆘 Troubleshooting](docs/troubleshooting/)** | Common issues and solutions |
+| Section | Description | Status |
+|---------|-------------|---------|
+| **[📖 Documentation Index](docs/index.md)** | Complete documentation overview | ✅ Available |
+| **[⚙️ Initialization Guide](docs/setup/initialize.prompt.md)** | One-command VS Code setup | ✅ Complete |
+| **[🏗️ Architecture Overview](docs/architecture.md)** | Technical architecture & design | ✅ Available |
+| **[� Development Guidelines](.vscode/guidelines.prompt.md)** | Code standards & best practices | ✅ Active |
+| **[� Contributing Guide](docs/CONTRIBUTING.md)** | How to contribute to the project | ✅ Available |
+| **[🚀 Project Requirements](tasks/prd.md)** | Complete product specification | ✅ Available |
 
 ## 🏗️ Architecture
 
@@ -80,17 +81,33 @@ We welcome contributors! The platform is designed for easy extension:
 
 ## 📄 Project Structure
 
-- **`docs/`** — All project documentation (setup, API, development guides)
-- **`src/`** — Application source code (agents, analysis, reports)
-- **`scripts/`** — Setup and utility scripts
-- **`config/`** — Configuration files for all services
-- **`tasks/`** — Project requirements and task tracking
-- **`tests/`** — Automated test files
+```
+agent-investment-platform/
+├── 📁 docs/                    # Complete documentation
+│   ├── setup/initialize.prompt.md  # ✅ One-command initialization
+│   ├── architecture.md            # ✅ Technical architecture
+│   └── CONTRIBUTING.md            # ✅ Development guidelines
+├── 📁 scripts/                 # ✅ Setup & utility scripts
+│   ├── initialize.py              # ✅ Main orchestration
+│   └── setup/                     # ✅ All setup modules
+├── 📁 .vscode/                 # ✅ VS Code integration
+│   ├── tasks.json                 # ✅ 20 automation tasks
+│   ├── settings.json              # ✅ 85+ optimized settings
+│   └── guidelines.prompt.md       # ✅ Development standards
+├── 📁 .memory/                 # ✅ AI memory bank system
+├── 📁 tasks/                   # ✅ Project requirements
+│   ├── prd.md                     # ✅ Product specification
+│   └── tasks-prd.md               # ✅ Task breakdown
+├── 📄 requirements.txt         # ✅ Python dependencies
+└── 📄 .gitignore              # ✅ Repository hygiene
+```
+
+**Coming Next**: `src/`, `config/`, `tests/`, `infra/` directories as development progresses.
 
 ## 🔗 Links
 
 - **[Project Tasks & Roadmap](tasks/tasks-prd.md)** - Current development progress
-- **[Product Requirements](tasks/prd.md)** - Detailed project specifications  
+- **[Product Requirements](tasks/prd.md)** - Detailed project specifications
 - **[Architecture Details](docs/architecture.md)** - Technical architecture overview
 - **[GitHub Repository](https://github.com/eightbitreaper/agent-investment-platform)** - Source code and issues
 

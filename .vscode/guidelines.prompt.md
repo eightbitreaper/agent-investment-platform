@@ -26,7 +26,7 @@ docs/
 ├── setup/                 # Installation, configuration, and initialization guides
 ├── api/                   # API documentation, MCP server references
 ├── development/           # Contributing, architecture, development workflows
-├── deployment/            # Docker, production, scaling guides  
+├── deployment/            # Docker, production, scaling guides
 ├── troubleshooting/       # Common issues, debugging, FAQ
 └── [feature-specific]/    # Additional organized sections as needed
 ```
@@ -94,7 +94,7 @@ Brief description of what this document covers and who it's for.
 
 **All documentation must be:**
 - **Scannable** - Use headers, bullets, tables for easy navigation
-- **Actionable** - Provide clear steps and examples where applicable  
+- **Actionable** - Provide clear steps and examples where applicable
 - **Current** - Keep information up-to-date with project changes
 - **Accessible** - Write for the intended audience level (beginner, intermediate, advanced)
 - **Complete** - Cover the full scope of the topic without gaps
@@ -204,6 +204,73 @@ Brief description of what this document covers and who it's for.
 - Clean up any files that were accidentally tracked before adding ignore rules
 - Validate that sensitive information is never committed to version control
 
+### 9. Data Classification and Sensitive Information Protection
+
+**Data Security Requirements:**
+- **NEVER commit sensitive information** to the GitHub repository under any circumstances
+- **IMPLEMENT data classification standards** to identify and protect sensitive data at all levels
+- **SCAN all code and files** before committing to ensure no sensitive information is included
+- **USE secure alternatives** like environment variables, configuration templates, and external secret management
+
+**Prohibited Information Types:**
+1. **Authentication Credentials** - API keys, passwords, tokens, certificates, private keys
+2. **Personally Identifiable Information (PII)** - Names, emails, phone numbers, addresses, user IDs
+3. **Financial Data** - Account numbers, credit card details, banking information, trading credentials
+4. **Internal System Information** - Database connection strings, internal URLs, server configurations
+5. **Business Sensitive Data** - Proprietary algorithms, customer lists, internal processes, competitive intelligence
+6. **Development Secrets** - Test credentials, development API keys, internal service tokens
+
+**Security Implementation Standards:**
+- **Environment Variables** - Use `.env` files (ignored by Git) for local development secrets
+- **Configuration Templates** - Provide `.env.example` or `config.example.yaml` with placeholder values
+- **External Secret Management** - Reference secure vaults or managed services for production secrets
+- **Dynamic Generation** - Generate temporary credentials or use secure defaults when needed
+- **Documentation** - Clearly document where users should obtain or configure sensitive values
+
+**Pre-Commit Security Checks:**
+1. **Scan all new files** for potential sensitive information patterns
+2. **Review configuration files** for hardcoded credentials or sensitive data
+3. **Validate environment templates** contain only safe placeholder values
+4. **Check documentation** doesn't inadvertently expose sensitive information
+5. **Verify .gitignore rules** properly exclude sensitive file types
+
+**Sensitive Data Patterns to Detect:**
+```
+- API keys: /[Aa][Pp][Ii][-_]?[Kk][Ee][Yy]/
+- Passwords: /[Pp][Aa][Ss][Ss][Ww][Oo][Rr][Dd]/
+- Tokens: /[Tt][Oo][Kk][Ee][Nn]/
+- Email addresses: /\b[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\.[A-Z|a-z]{2,}\b/
+- URLs with credentials: /https?:\/\/[^:]+:[^@]+@/
+- Private keys: /-----BEGIN [A-Z ]+PRIVATE KEY-----/
+```
+
+**Remediation Process:**
+- **If sensitive data is committed** - Immediately remove from repository and rewrite Git history
+- **If PII is detected** - Follow data protection protocols and notify appropriate stakeholders
+- **If credentials are exposed** - Immediately revoke/rotate affected credentials
+- **Document incidents** - Maintain security incident log for audit and improvement purposes
+
+**Safe Alternatives and Patterns:**
+```yaml
+# WRONG - Hardcoded sensitive data
+database_url: "postgresql://user:password123@localhost:5432/mydb"
+api_key: "sk-1234567890abcdef"
+
+# CORRECT - Environment variable references
+database_url: "${DATABASE_URL}"
+api_key: "${OPENAI_API_KEY}"
+
+# CORRECT - Configuration template (.env.example)
+DATABASE_URL=postgresql://username:password@localhost:5432/database_name
+OPENAI_API_KEY=your_openai_api_key_here
+```
+
+**Documentation Security:**
+- **Redact examples** - Use placeholder values in all documentation examples
+- **Reference patterns** - Show configuration patterns without actual sensitive values
+- **Security notes** - Include warnings about sensitive data handling in relevant documentation
+- **User guidance** - Provide clear instructions for secure configuration setup
+
 ## Enforcement
 
 These guidelines are **mandatory** for all development work on this project. Any LLM working on this project must:
@@ -222,12 +289,17 @@ These guidelines are **mandatory** for all development work on this project. Any
 12. **Identify and ignore output files** that should not be tracked in Git
 13. **Update .gitignore** immediately when new file patterns need to be excluded
 14. **Maintain repository cleanliness** by preventing unwanted files from being committed
+15. **NEVER commit sensitive information** including API keys, passwords, tokens, or PII to GitHub
+16. **Scan all content** for sensitive data patterns before any commit or file creation
+17. **Use secure configuration patterns** with environment variables and template files
+18. **Implement data classification standards** to protect sensitive information at all levels
+19. **Follow security remediation protocols** if sensitive data is accidentally exposed
 
 ## Updates to Guidelines
 
 When project needs require changes to these guidelines:
 1. Update this `guidelines.prompt.md` file with new requirements
-2. Update any affected documentation to match new guidelines  
+2. Update any affected documentation to match new guidelines
 3. Ensure all team members/LLMs reference the updated guidelines
 
 ---

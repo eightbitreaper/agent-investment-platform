@@ -1,0 +1,223 @@
+{
+    "editor.tabSize": 4,
+    "editor.insertSpaces": true,
+    "editor.detectIndentation": true,
+    "editor.trimAutoWhitespace": true,
+    "editor.formatOnSave": true,
+    "editor.formatOnPaste": true,
+    "editor.codeActionsOnSave": {
+        "source.organizeImports": "explicit",
+        "source.fixAll": "explicit"
+    },
+    "editor.rulers": [
+        88,
+        120
+    ],
+    "editor.wordWrap": "bounded",
+    "editor.wordWrapColumn": 88,
+    "editor.bracketPairColorization.enabled": true,
+    "editor.guides.bracketPairs": true,
+    "files.encoding": "utf8",
+    "files.eol": "\n",
+    "files.insertFinalNewline": true,
+    "files.trimTrailingWhitespace": true,
+    "files.exclude": {
+        "**/__pycache__": true,
+        "**/*.pyc": true,
+        "**/*.pyo": true,
+        "**/*.pyd": true,
+        "**/.Python": true,
+        "**/build": true,
+        "**/develop-eggs": true,
+        "**/dist": true,
+        "**/downloads": true,
+        "**/eggs": true,
+        "**/.eggs": true,
+        "**/lib": true,
+        "**/lib64": true,
+        "**/parts": true,
+        "**/sdist": true,
+        "**/var": true,
+        "**/wheels": true,
+        "**/*.egg-info": true,
+        "**/.env": true,
+        "**/logs/*.log": true,
+        "**/reports/*.md": true,
+        "**/models": true
+    },
+    "files.watcherExclude": {
+        "**/__pycache__/**": true,
+        "**/logs/**": true,
+        "**/reports/**": true,
+        "**/models/**": true,
+        "**/.memory/session-log.json": true
+    },
+    "files.associations": {
+        "*.prompt.md": "markdown",
+        "*.prompt": "markdown",
+        "requirements.txt": "pip-requirements",
+        "Dockerfile": "dockerfile",
+        "docker-compose.yml": "dockercompose",
+        "docker-compose.yaml": "dockercompose"
+    },
+    "python.defaultInterpreterPath": "python",
+    "python.linting.enabled": true,
+    "python.linting.pylintEnabled": false,
+    "python.linting.flake8Enabled": true,
+    "python.linting.flake8Args": [
+        "--max-line-length=88",
+        "--extend-ignore=E203,W503"
+    ],
+    "python.formatting.provider": "black",
+    "python.formatting.blackArgs": [
+        "--line-length=88"
+    ],
+    "python.sortImports.args": [
+        "--multi-line=3",
+        "--trailing-comma",
+        "--force-grid-wrap=0",
+        "--combine-as",
+        "--line-width=88"
+    ],
+    "python.testing.pytestEnabled": true,
+    "python.testing.unittestEnabled": false,
+    "python.testing.pytestArgs": [
+        "tests"
+    ],
+    "python.analysis.typeCheckingMode": "basic",
+    "python.analysis.autoImportCompletions": true,
+    "python.analysis.completeFunctionParens": true,
+    "markdown.extension.toc.levels": "2..6",
+    "markdown.extension.toc.orderedList": false,
+    "markdown.extension.toc.updateOnSave": true,
+    "markdown.extension.list.indentationSize": "adaptive",
+    "markdown.extension.preview.autoShowPreviewToSide": false,
+    "markdown.validate.enabled": true,
+    "markdown.validate.fileLinks": "warning",
+    "markdown.validate.fragmentLinks": "warning",
+    "markdown.validate.ignoredLinks": [
+        "#section-1",
+        "#section-2",
+        "../path/to/related.md",
+        "path/to/file.md"
+    ],
+    "git.ignoreLimitWarning": true,
+    "git.autoRepositoryDetection": true,
+    "git.autofetch": true,
+    "git.confirmSync": false,
+    "git.enableSmartCommit": true,
+    "git.suggestSmartCommit": false,
+    "git.untrackedChanges": "separate",
+    "json.schemas": [
+        {
+            "fileMatch": [
+                ".vscode/tasks.json"
+            ],
+            "url": "https://json.schemastore.org/task.json"
+        },
+        {
+            "fileMatch": [
+                "config/mcp-servers.json"
+            ],
+            "schema": {
+                "type": "object",
+                "properties": {
+                    "mcpServers": {
+                        "type": "object",
+                        "patternProperties": {
+                            ".*": {
+                                "type": "object",
+                                "properties": {
+                                    "command": {
+                                        "type": "string"
+                                    },
+                                    "args": {
+                                        "type": "array",
+                                        "items": {
+                                            "type": "string"
+                                        }
+                                    },
+                                    "env": {
+                                        "type": "object"
+                                    },
+                                    "enabled": {
+                                        "type": "boolean"
+                                    }
+                                },
+                                "required": [
+                                    "command",
+                                    "args"
+                                ]
+                            }
+                        }
+                    }
+                }
+            }
+        }
+    ],
+    "yaml.schemas": {
+        "https://json.schemastore.org/github-workflow.json": ".github/workflows/*.yml",
+        "https://json.schemastore.org/docker-compose.json": "docker-compose*.yml"
+    },
+    "yaml.format.enable": true,
+    "yaml.validate": true,
+    "yaml.completion": true,
+    "docker.defaultRegistryPath": "",
+    "docker.showStartPage": false,
+    "terminal.integrated.defaultProfile.windows": "PowerShell",
+    "terminal.integrated.defaultProfile.linux": "bash",
+    "terminal.integrated.defaultProfile.osx": "zsh",
+    "terminal.integrated.scrollback": 10000,
+    "terminal.integrated.copyOnSelection": true,
+    "terminal.integrated.rightClickBehavior": "paste",
+    "search.exclude": {
+        "**/__pycache__": true,
+        "**/*.pyc": true,
+        "**/logs": true,
+        "**/reports": true,
+        "**/models": true,
+        "**/.git": true,
+        "**/node_modules": true,
+        "**/dist": true,
+        "**/build": true
+    },
+    "search.useIgnoreFiles": true,
+    "search.useGlobalIgnoreFiles": true,
+    "explorer.confirmDelete": true,
+    "explorer.confirmDragAndDrop": true,
+    "explorer.sortOrder": "type",
+    "explorer.fileNesting.enabled": true,
+    "explorer.fileNesting.patterns": {
+        "*.py": "${capture}.pyc",
+        "requirements.txt": "requirements-*.txt",
+        "docker-compose.yml": "docker-compose.*.yml, Dockerfile*",
+        "README.md": "*.md"
+    },
+    "workbench.colorTheme": "Default Dark+",
+    "workbench.iconTheme": "vs-seti",
+    "workbench.startupEditor": "readme",
+    "workbench.tips.enabled": false,
+    "workbench.welcomePage.walkthroughs.openOnInstall": false,
+    "extensions.ignoreRecommendations": false,
+    "extensions.showRecommendationsOnlyOnDemand": false,
+    "github.copilot.enable": {
+        "*": true,
+        "yaml": true,
+        "plaintext": false,
+        "markdown": true,
+        "python": true,
+        "json": true,
+        "dockerfile": true
+    },
+    "editor.suggestSelection": "first",
+    "editor.acceptSuggestionOnCommitCharacter": true,
+    "editor.acceptSuggestionOnEnter": "on",
+    "editor.quickSuggestions": {
+        "other": true,
+        "comments": true,
+        "strings": true
+    },
+    "agentInvestmentPlatform.autoValidation": true,
+    "agentInvestmentPlatform.memoryBankIntegration": true,
+    "agentInvestmentPlatform.guidelinesEnforcement": true
+}
