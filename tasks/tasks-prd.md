@@ -77,7 +77,7 @@
   - [x] 0.1 Create `docs/setup/initialize.prompt.md` with VS Code agent setup instructions
   - [x] 0.2 Create `scripts/initialize.py` main initialization orchestrator
   - [x] 0.3 Create `scripts/setup/install-dependencies.py` for automated dependency installation
-  - [ ] 0.4 Create `scripts/setup/configure-environment.py` for environment configuration
+  - [x] 0.4 Create `scripts/setup/configure-environment.py` for environment configuration
   - [ ] 0.5 Create `scripts/setup/download-models.py` for local LLM model management
   - [ ] 0.6 Create `scripts/setup/validate-setup.py` for setup verification
   - [ ] 0.7 Create `.vscode/tasks.json` with initialization and common tasks
