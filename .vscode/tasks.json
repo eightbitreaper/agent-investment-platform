@@ -1,0 +1,377 @@
+{
+    "version": "2.0.0",
+    "tasks": [
+        {
+            "label": "🚀 Initialize Platform",
+            "type": "shell",
+            "command": "python",
+            "args": ["scripts/initialize.py", "--interactive"],
+            "group": {
+                "kind": "build",
+                "isDefault": true
+            },
+            "presentation": {
+                "echo": true,
+                "reveal": "always",
+                "focus": false,
+                "panel": "shared",
+                "showReuseMessage": true,
+                "clear": true
+            },
+            "problemMatcher": [],
+            "detail": "Complete platform initialization with interactive setup",
+            "runOptions": {
+                "runOn": "default"
+            },
+            "options": {
+                "cwd": "${workspaceFolder}"
+            }
+        },
+        {
+            "label": "🔍 Validate Setup",
+            "type": "shell", 
+            "command": "python",
+            "args": ["scripts/setup/validate-setup.py"],
+            "group": "test",
+            "presentation": {
+                "echo": true,
+                "reveal": "always",
+                "focus": false,
+                "panel": "shared",
+                "showReuseMessage": true,
+                "clear": false
+            },
+            "problemMatcher": [],
+            "detail": "Comprehensive setup validation and health check"
+        },
+        {
+            "label": "⚡ Quick Validation",
+            "type": "shell",
+            "command": "python", 
+            "args": ["scripts/setup/validate-setup.py", "--quick"],
+            "group": "test",
+            "presentation": {
+                "echo": true,
+                "reveal": "silent",
+                "focus": false,
+                "panel": "shared"
+            },
+            "problemMatcher": [],
+            "detail": "Quick readiness check (80% validation)"
+        },
+        {
+            "label": "🔧 Install Dependencies",
+            "type": "shell",
+            "command": "python",
+            "args": ["scripts/setup/install-dependencies.py"],
+            "group": "build",
+            "presentation": {
+                "echo": true,
+                "reveal": "always",
+                "focus": true,
+                "panel": "shared",
+                "clear": true
+            },
+            "problemMatcher": [],
+            "detail": "Install system dependencies and Python packages",
+            "runOptions": {
+                "runOn": "folderOpen"
+            }
+        },
+        {
+            "label": "⚙️ Configure Environment",
+            "type": "shell",
+            "command": "python", 
+            "args": ["scripts/setup/configure-environment.py", "--interactive"],
+            "group": "build",
+            "presentation": {
+                "echo": true,
+                "reveal": "always",
+                "focus": true,
+                "panel": "shared"
+            },
+            "problemMatcher": [],
+            "detail": "Interactive environment configuration setup"
+        },
+        {
+            "label": "🤖 Setup Local LLMs",
+            "type": "shell",
+            "command": "python",
+            "args": ["scripts/setup/download-models.py", "--interactive"],
+            "group": "build",
+            "presentation": {
+                "echo": true,
+                "reveal": "always",
+                "focus": true,
+                "panel": "shared"
+            },
+            "problemMatcher": [],
+            "detail": "Interactive local LLM model setup and download"
+        },
+        {
+            "label": "🐋 Start Docker Services",
+            "type": "shell",
+            "command": "docker-compose",
+            "args": ["up", "-d"],
+            "group": "build",
+            "presentation": {
+                "echo": true,
+                "reveal": "always",
+                "focus": false,
+                "panel": "shared"
+            },
+            "problemMatcher": [],
+            "detail": "Start all Docker services in background",
+            "dependsOn": ["🔍 Validate Setup"]
+        },
+        {
+            "label": "🛑 Stop Docker Services", 
+            "type": "shell",
+            "command": "docker-compose",
+            "args": ["down"],
+            "group": "build",
+            "presentation": {
+                "echo": true,
+                "reveal": "always",
+                "focus": false,
+                "panel": "shared"
+            },
+            "problemMatcher": [],
+            "detail": "Stop all Docker services"
+        },
+        {
+            "label": "📊 Generate Test Report",
+            "type": "shell",
+            "command": "python",
+            "args": ["orchestrator.py", "--test-mode"],
+            "group": "test",
+            "presentation": {
+                "echo": true,
+                "reveal": "always",
+                "focus": true,
+                "panel": "shared"
+            },
+            "problemMatcher": [],
+            "detail": "Generate test investment analysis report"
+        },
+        {
+            "label": "📈 Run Live Analysis",
+            "type": "shell",
+            "command": "python", 
+            "args": ["orchestrator.py", "--live"],
+            "group": "build",
+            "presentation": {
+                "echo": true,
+                "reveal": "always",
+                "focus": true,
+                "panel": "shared"
+            },
+            "problemMatcher": [],
+            "detail": "Run live investment analysis (requires API keys)",
+            "dependsOn": ["🔍 Validate Setup"]
+        },
+        {
+            "label": "🔄 Update Memory Bank",
+            "type": "shell",
+            "command": "python",
+            "args": [".memory/memory_bank.py"],
+            "group": "build",
+            "presentation": {
+                "echo": true,
+                "reveal": "silent",
+                "focus": false,
+                "panel": "shared"
+            },
+            "problemMatcher": [],
+            "detail": "Update AI memory bank with current session context"
+        },
+        {
+            "label": "📝 View Documentation",
+            "type": "shell",
+            "command": "code",
+            "args": ["docs/README.md"],
+            "group": "build",
+            "presentation": {
+                "echo": false,
+                "reveal": "never"
+            },
+            "problemMatcher": [],
+            "detail": "Open documentation index"
+        },
+        {
+            "label": "🏗️ Clean Build Artifacts",
+            "type": "shell",
+            "command": "python",
+            "args": ["-c", "import shutil, pathlib; [shutil.rmtree(p) for p in pathlib.Path('.').glob('**/__pycache__') if p.is_dir()]; [p.unlink() for p in pathlib.Path('.').glob('**/*.pyc')]"],
+            "group": "build",
+            "presentation": {
+                "echo": true,
+                "reveal": "silent",
+                "focus": false,
+                "panel": "shared"
+            },
+            "problemMatcher": [],
+            "detail": "Clean Python cache files and build artifacts"
+        },
+        {
+            "label": "📋 Show System Info",
+            "type": "shell",
+            "command": "python",
+            "args": ["-c", "import platform, sys; print(f'OS: {platform.system()} {platform.release()}'); print(f'Python: {sys.version}'); print(f'Architecture: {platform.machine()}')"],
+            "group": "test",
+            "presentation": {
+                "echo": true,
+                "reveal": "always",
+                "focus": false,
+                "panel": "shared"
+            },
+            "problemMatcher": [],
+            "detail": "Display system information for debugging"
+        },
+        {
+            "label": "🔒 Check Security Config",
+            "type": "shell",
+            "command": "python",
+            "args": ["-c", "import os; print('Environment variables:'); [print(f'{k}={'*'*len(v) if 'key' in k.lower() or 'token' in k.lower() or 'password' in k.lower() else v}') for k,v in os.environ.items() if k.startswith(('LLM_', 'API_', 'GITHUB_', 'EMAIL_', 'DISCORD_'))]"],
+            "group": "test",
+            "presentation": {
+                "echo": true,
+                "reveal": "always",
+                "focus": false,
+                "panel": "shared"
+            },
+            "problemMatcher": [],
+            "detail": "Check configured environment variables (masks sensitive data)"
+        },
+        {
+            "label": "🧪 Run All Tests",
+            "type": "shell",
+            "command": "python",
+            "args": ["-m", "pytest", "tests/", "-v"],
+            "group": {
+                "kind": "test",
+                "isDefault": true
+            },
+            "presentation": {
+                "echo": true,
+                "reveal": "always",
+                "focus": true,
+                "panel": "shared",
+                "clear": true
+            },
+            "problemMatcher": ["$python"],
+            "detail": "Run complete test suite"
+        },
+        {
+            "label": "📦 Install Requirements",
+            "type": "shell",
+            "command": "pip",
+            "args": ["install", "-r", "requirements.txt"],
+            "group": "build",
+            "presentation": {
+                "echo": true,
+                "reveal": "always",
+                "focus": true,
+                "panel": "shared"
+            },
+            "problemMatcher": [],
+            "detail": "Install Python package requirements"
+        },
+        {
+            "label": "🔄 Restart Services",
+            "type": "shell",
+            "command": "docker-compose",
+            "args": ["restart"],
+            "group": "build",
+            "presentation": {
+                "echo": true,
+                "reveal": "always",
+                "focus": false,
+                "panel": "shared"
+            },
+            "problemMatcher": [],
+            "detail": "Restart all Docker services"
+        },
+        {
+            "label": "📊 Service Status",
+            "type": "shell",
+            "command": "docker-compose",
+            "args": ["ps"],
+            "group": "test",
+            "presentation": {
+                "echo": true,
+                "reveal": "always",
+                "focus": false,
+                "panel": "shared"
+            },
+            "problemMatcher": [],
+            "detail": "Show status of all Docker services"
+        },
+        {
+            "label": "🔍 View Logs",
+            "type": "shell",
+            "command": "docker-compose",
+            "args": ["logs", "-f"],
+            "group": "test",
+            "presentation": {
+                "echo": true,
+                "reveal": "always",
+                "focus": true,
+                "panel": "dedicated"
+            },
+            "problemMatcher": [],
+            "detail": "Follow Docker service logs in real-time",
+            "isBackground": true
+        }
+    ],
+    "inputs": [
+        {
+            "id": "llmChoice",
+            "description": "Choose LLM provider",
+            "default": "local",
+            "type": "pickString",
+            "options": [
+                {
+                    "label": "Local (Ollama) - Privacy focused",
+                    "value": "local"
+                },
+                {
+                    "label": "OpenAI API - High quality", 
+                    "value": "openai"
+                },
+                {
+                    "label": "Anthropic API - Excellent analysis",
+                    "value": "anthropic" 
+                },
+                {
+                    "label": "Hybrid - Local + API fallback",
+                    "value": "hybrid"
+                }
+            ]
+        },
+        {
+            "id": "reportType",
+            "description": "Choose report type to generate",
+            "default": "daily",
+            "type": "pickString", 
+            "options": [
+                {
+                    "label": "Daily Summary",
+                    "value": "daily"
+                },
+                {
+                    "label": "Weekly Analysis", 
+                    "value": "weekly"
+                },
+                {
+                    "label": "Custom Stocks",
+                    "value": "custom"
+                },
+                {
+                    "label": "Strategy Backtest",
+                    "value": "backtest"
+                }
+            ]
+        }
+    ]
+}
