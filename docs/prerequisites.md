@@ -1,81 +1,87 @@
-# Prerequisites
+# Agent Investment Platform - Prerequisites
 
-This document explains how to set up the environment for contributing to the **Agent Investment Platform** project.  
-It covers both **WSL-based setup** and **Windows-native GitHub setup**.
+This document outlines the system requirements and setup prerequisites for the **Agent Investment Platform**. The platform is designed to work cross-platform with a focus on Windows PowerShell compatibility.
 
----
+## 🎯 Quick Requirements Summary
 
-## VS Code Insiders and GitHub Copilot Setup
+**Essential:**
+- **Python 3.9+** (core platform and MCP servers)
+- **Git** (version control and repository management)
+- **VS Code** (recommended development environment)
 
-Before configuring GitHub, set up your development environment with VS Code Insiders and GitHub Copilot.
-
-### 1. Install VS Code Insiders
-
-VS Code Insiders provides access to the latest features and updates.
-
-1. Download VS Code Insiders from: [https://code.visualstudio.com/insiders/](https://code.visualstudio.com/insiders/)
-2. Run the installer and follow the installation wizard
-3. During installation, make sure to check:
-   - ✅ "Add to PATH (requires shell restart)"
-   - ✅ "Register Code as an editor for supported file types"
-   - ✅ "Add 'Open with Code' action to Windows Explorer file context menu"
-   - ✅ "Add 'Open with Code' action to Windows Explorer directory context menu"
-
-### 2. Install and Configure GitHub Copilot Extension
-
-GitHub Copilot provides AI-powered code suggestions and assistance.
-
-1. **Open VS Code Insiders**
-
-2. **Install GitHub Copilot Extension:**
-   - Press `Ctrl+Shift+X` to open Extensions
-   - Search for "GitHub Copilot"
-   - Click **Install** on the official GitHub Copilot extension by GitHub
-
-3. **Sign in to GitHub:**
-   - After installation, VS Code will prompt you to sign in
-   - Click **Sign in to GitHub** in the notification
-   - This will open your browser to authenticate with GitHub
-   - Authorize VS Code Insiders to access your GitHub account
-
-4. **Verify Copilot is Active:**
-   - Open any code file (`.js`, `.py`, `.md`, etc.)
-   - Start typing code - you should see grayed-out suggestions from Copilot
-   - Press `Tab` to accept suggestions or `Esc` to dismiss them
-
-5. **Configure Copilot Settings (Optional):**
-   - Press `Ctrl+,` to open Settings
-   - Search for "copilot"
-   - Adjust settings like:
-     - `github.copilot.enable` - Enable/disable Copilot
-     - `github.copilot.inlineSuggest.enable` - Enable inline suggestions
-
-### 3. Verify Installation
-
-Test that everything is working:
-
-1. Open VS Code Insiders from command line:
-   ```powershell
-   code-insiders --version
-   ```
-
-2. Create a test file and verify Copilot suggestions appear when typing code
+**Optional but Recommended:**
+- **Node.js 18+** (for JavaScript MCP servers)
+- **Docker** (for containerized deployment)
+- **API Keys** (Alpha Vantage, NewsAPI, etc. for full functionality)
 
 ---
 
-## Option A: Using WSL (Ubuntu) with GitHub
+## 🛠️ Development Environment Setup
 
-1. Ensure WSL is installed and Ubuntu is available:
-   ```powershell
-   wsl --list --verbose
-   ```
+The Agent Investment Platform uses VS Code as the primary development environment with comprehensive workspace configuration.
 
-2. Navigate to your working directory:
-   ```bash
-   cd /mnt/d
-   mkdir agent-investment-platform
-   cd agent-investment-platform
-   ```
+### 1. Install VS Code
+
+Download and install VS Code from: [https://code.visualstudio.com/](https://code.visualstudio.com/)
+
+**Installation Options:**
+- ✅ "Add to PATH (requires shell restart)"
+- ✅ "Register Code as an editor for supported file types"
+- ✅ "Add 'Open with Code' action to Windows Explorer context menu"
+
+The project includes a complete **`.vscode/`** workspace configuration with:
+- **20 automation tasks** for development, testing, and deployment
+- **85+ optimized settings** for Python, MCP, and financial development
+- **Recommended extensions** for the best development experience
+
+### 2. Essential VS Code Extensions
+
+The project recommends these extensions for optimal development:
+
+**Core Extensions:**
+- **Python** - Python language support and debugging
+- **Pylance** - Advanced Python language server
+- **GitHub Copilot** - AI-powered code assistance (optional)
+
+**MCP Development:**
+- **JSON** - Configuration file editing
+- **YAML** - Configuration file support
+
+All recommended extensions are listed in `.vscode/extensions.json` and will be suggested automatically when you open the workspace.
+
+### 3. Verify VS Code Setup
+
+Test your VS Code installation:
+
+```powershell
+# Verify VS Code is in PATH
+code --version
+
+# Open the project workspace
+code d:\code\agent-investment-platform
+```
+
+The workspace will automatically load optimized settings and suggest recommended extensions.
+
+---
+
+## 📁 Project Setup and Git Configuration
+
+### 1. Clone the Repository
+
+**Option A: HTTPS Clone (Recommended)**
+```powershell
+cd d:\code
+git clone https://github.com/your-username/agent-investment-platform.git
+cd agent-investment-platform
+```
+
+**Option B: SSH Clone (if SSH keys configured)**
+```powershell
+cd d:\code
+git clone git@github.com:your-username/agent-investment-platform.git
+cd agent-investment-platform
+```
 
 3. Initialize git:
    ```bash
@@ -160,85 +166,118 @@ Get-Content $env:USERPROFILE\.ssh\id_ed25519.pub
 ```
 Copy → GitHub → Settings → **SSH and GPG Keys → New SSH key** → paste → Save.
 
-### 6. Test Connection
+---
+
+## 🐍 Python Environment Setup
+
+The Agent Investment Platform requires **Python 3.9+** for MCP server functionality.
+
+### 1. Install Python
+
+**Verify Existing Installation:**
 ```powershell
-ssh -T git@github.com
-```
-Expected output:
-```
-Hi eightbitreaper! You've successfully authenticated, but GitHub does not provide shell access.
+python --version
+# Should show Python 3.9.0 or higher
 ```
 
-### 7. Update Remote in Repo
-In your project folder (`D:\agent-investment-platform`):
+**If Python needs installation:**
+- **Windows**: Download from [python.org](https://www.python.org/downloads/) 
+- **Installation**: ✅ "Add Python to PATH"
+
+### 2. Install Project Dependencies
+
+Navigate to the project directory and install required packages:
 ```powershell
-cd D: gent-investment-platform
-git remote -v
-# if needed:
-git remote set-url origin git@github.com:eightbitreaper/agent-investment-platform.git
+cd d:\code\agent-investment-platform
+pip install -r requirements.txt
 ```
 
-### 8. Push to GitHub
+The project includes all necessary dependencies for:
+- **MCP Server Framework** (`mcp`, `pydantic`)
+- **Financial Data APIs** (`yfinance`, `requests`)
+- **Development Tools** (`pytest`, `black`, `pylint`)
+
+### 3. Verify Python Setup
+
+Test that Python and MCP dependencies are working:
 ```powershell
-git pull --tags origin main
-git push
+# Verify MCP installation
+python -c "import mcp; print('MCP installed successfully')"
+
+# Run a quick environment check
+python scripts/health-check.py
 ```
 
 ---
 
-## Clone AI Development Tasks Repository
+## 🔧 Optional Components
 
-After setting up GitHub authentication, clone the AI development tasks repository to access tools for generating PRD specifications and managing development tasks.
+### API Keys (For Full Functionality)
 
-### For WSL Users (Option A):
-```bash
-cd /mnt/d
-git clone https://github.com/danquirk/ai-dev-tasks.git
-cd ai-dev-tasks
-```
+The platform can work with limited functionality using mock data, but for live financial data, you'll need:
 
-### For Windows Users (Option B):
+**Alpha Vantage API:**
 ```powershell
-cd D:\
-git clone https://github.com/danquirk/ai-dev-tasks.git
-cd ai-dev-tasks
+# Get free API key from: https://www.alphavantage.co/support/#api-key
+# Add to config/api_config.json:
+# "ALPHA_VANTAGE_API_KEY": "your-key-here"
 ```
 
-### What This Repository Provides:
-- **PRD Generation Tools**: Templates and guidelines for creating Product Requirements Documents
-- **Task Management**: Structured approaches for breaking down development work
-- **AI-Assisted Development**: Examples and patterns for working with AI coding assistants
-- **Best Practices**: Documentation standards and development workflows
+**NewsAPI (Optional):**
+```powershell
+# Get free API key from: https://newsapi.org/register
+# Add to config/api_config.json:
+# "NEWS_API_KEY": "your-key-here"
+```
 
-### Add to VS Code Workspace:
-After cloning, add the repository to your VS Code Insiders workspace:
+### Node.js (Optional)
 
-1. **Open VS Code Insiders** in your current project directory
-2. **Add the folder to workspace:**
-   - Go to `File > Add Folder to Workspace...`
-   - Navigate to and select the `ai-dev-tasks` folder:
-     - WSL users: `/mnt/d/ai-dev-tasks`
-     - Windows users: `D:\ai-dev-tasks`
-   - Click **Add**
+For JavaScript-based MCP servers or additional tooling:
+```powershell
+# Download from: https://nodejs.org/
+# Verify installation:
+node --version
+npm --version
+```
 
-3. **Save the workspace:**
-   - Go to `File > Save Workspace As...`
-   - Save as `agent-investment-platform.code-workspace` in your project root
+### Docker (Optional)
 
-This creates a multi-folder workspace where you can easily reference the AI development tools while working on the investment platform.
-
-### Usage:
-Once cloned and added to your workspace, you can reference the tools and templates when:
-- Creating PRD specifications for new features
-- Breaking down complex development tasks
-- Following AI-assisted development patterns
-- Maintaining consistent documentation standards
+For containerized deployment:
+```powershell
+# Download Docker Desktop from: https://www.docker.com/products/docker-desktop
+# Verify installation:
+docker --version
+docker-compose --version
+```
 
 ---
 
-## Summary
+## ✅ Verification Checklist
 
-- Use **Option A (WSL)** if you want a Linux-based workflow (with Docker, Linux packages, etc.).  
-- Use **Option B (Windows)** if you want a pure Windows-native workflow with VS Code Insiders.
+Before starting development, ensure you have:
 
-Both paths ensure that contributors can authenticate with GitHub and push/pull successfully.
+- [ ] **VS Code** installed with Python extension
+- [ ] **Python 3.9+** in PATH
+- [ ] **Git** configured with your identity
+- [ ] **Project repository** cloned and accessible
+- [ ] **Dependencies installed** via `pip install -r requirements.txt`
+- [ ] **Health check passed** via `python scripts/health-check.py`
+
+**Next Steps:**
+1. See [CONTRIBUTING.md](CONTRIBUTING.md) for development workflow
+2. Check [README.md](../README.md) for project overview
+3. Review [architecture.md](architecture.md) for system design
+
+---
+
+## 🆘 Need Help?
+
+**Common Issues:**
+- **Python not found**: Ensure Python is added to PATH during installation
+- **Permission errors**: Run PowerShell as Administrator for system-wide changes
+- **Module import errors**: Verify `pip install -r requirements.txt` completed successfully
+
+**Resources:**
+- [Project Documentation](../docs/)
+- [Contributing Guidelines](CONTRIBUTING.md)
+- [Architecture Overview](architecture.md)

@@ -13,30 +13,28 @@ Welcome to the comprehensive documentation for the Agent Investment Platform. Th
 ## 📖 Documentation Sections
 
 ### ⚙️ Setup & Installation
-| Document | Description |
-|----------|-------------|
-| [Initialize Prompt](setup/initialize.prompt.md) | VS Code agent one-command setup |
-| [Installation Guide](setup/installation-guide.md) | Step-by-step installation instructions |
-| [Local LLM Setup](setup/local-llm-setup.md) | Configure Ollama, LMStudio, and other local models |
-| [Configuration Guide](setup/configuration-guide.md) | LLM settings, strategies, and data sources |
+| Document | Description | Status |
+|----------|-------------|--------|
+| [Initialize Prompt](setup/initialize.prompt.md) | VS Code agent one-command setup | ✅ Available |
+| [Prerequisites Guide](prerequisites.md) | System requirements and setup prerequisites | ✅ Available |
 
-### 🚀 Deployment
-| Document | Description |
-|----------|-------------|
-| [Docker Deployment](deployment/docker-deployment.md) | Production Docker setup and scaling |
+### 🏗️ Architecture & Technical
+| Document | Description | Status |
+|----------|-------------|--------|
+| [Architecture Overview](architecture.md) | Technical system design and components | ✅ Available |
+| [MCP Server Integration](mcp-server-integration.md) | Complete MCP server documentation | ✅ Available |
 
-### 🔧 API & Development
-| Document | Description |
-|----------|-------------|
-| [API Documentation](api/README.md) | MCP server APIs and endpoints |
-| [MCP Server Reference](api/mcp-server-reference.md) | Detailed MCP server documentation |
-| [Development Guide](development/README.md) | Architecture and development workflow |
-| [Contributing Guide](development/contributing.md) | How to contribute to the project |
+### 🔧 Development & Contributing
+| Document | Description | Status |
+|----------|-------------|--------|
+| [Contributing Guide](CONTRIBUTING.md) | How to contribute to the project | ✅ Available |
+| [Code of Conduct](CODE_OF_CONDUCT.md) | Community standards and expectations | ✅ Available |
+| [License](LICENSE.md) | MIT License terms and conditions | ✅ Available |
 
-### 🆘 Support
-| Document | Description |
-|----------|-------------|
-| [Troubleshooting](troubleshooting/common-issues.md) | Common issues and solutions |
+### 📋 Project Management
+| Document | Description | Status |
+|----------|-------------|--------|
+| [Documentation Index](index.md) | Complete documentation overview | ✅ Available |
 
 ## 🏗️ Platform Architecture
 
@@ -66,11 +64,11 @@ The Agent Investment Platform follows a modular architecture with these key comp
 
 **Need help with...?**
 - 🆕 **First-time setup** → [Initialize Platform](setup/initialize.prompt.md)
-- 🤖 **Local AI models** → [Local LLM Setup](setup/local-llm-setup.md) 
-- 🐋 **Docker deployment** → [Docker Guide](deployment/docker-deployment.md)
-- 🔧 **API integration** → [API Documentation](api/README.md)
-- 🚨 **Problems/Errors** → [Troubleshooting](troubleshooting/common-issues.md)
-- 👨‍💻 **Contributing code** → [Development Guide](development/README.md)
+- 🏗️ **System architecture** → [Architecture Overview](architecture.md)
+- 🤖 **MCP servers** → [MCP Server Integration](mcp-server-integration.md)
+- �‍💻 **Contributing code** → [Contributing Guide](CONTRIBUTING.md)
+- � **System requirements** → [Prerequisites](prerequisites.md)
+- � **Project overview** → [Documentation Index](index.md)
 
 ## 💡 Pro Tips
 

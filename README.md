@@ -83,13 +83,22 @@ We welcome contributors! The platform is designed for easy extension:
 
 ```
 agent-investment-platform/
-├── 📁 docs/                    # Complete documentation
+├── 📁 docs/                    # ✅ Complete documentation
 │   ├── setup/initialize.prompt.md  # ✅ One-command initialization
 │   ├── architecture.md            # ✅ Technical architecture
-│   └── CONTRIBUTING.md            # ✅ Development guidelines
+│   ├── CONTRIBUTING.md            # ✅ Development guidelines
+│   └── mcp-server-integration.md   # ✅ MCP server documentation
+├── 📁 src/                     # ✅ Source code
+│   ├── mcp_servers/               # ✅ Python MCP servers
+│   └── mcp-servers/               # ✅ Node.js MCP servers
 ├── 📁 scripts/                 # ✅ Setup & utility scripts
 │   ├── initialize.py              # ✅ Main orchestration
+│   ├── health-check.py            # ✅ System health monitoring
 │   └── setup/                     # ✅ All setup modules
+├── 📁 config/                  # ✅ Configuration management
+│   ├── mcp-servers.json           # ✅ MCP server configuration
+│   ├── llm-config.yaml            # ✅ LLM configuration
+│   └── data-sources.yaml          # ✅ API configurations
 ├── 📁 .vscode/                 # ✅ VS Code integration
 │   ├── tasks.json                 # ✅ 20 automation tasks
 │   ├── settings.json              # ✅ 85+ optimized settings
@@ -98,11 +107,15 @@ agent-investment-platform/
 ├── 📁 tasks/                   # ✅ Project requirements
 │   ├── prd.md                     # ✅ Product specification
 │   └── tasks-prd.md               # ✅ Task breakdown
+├── 📄 docker-compose.yml       # ✅ Multi-service orchestration
+├── 📄 Dockerfile              # ✅ Container configuration
 ├── 📄 requirements.txt         # ✅ Python dependencies
-└── 📄 .gitignore              # ✅ Repository hygiene
+├── 📄 run_mcp_server.py        # ✅ MCP server runner
+├── 📄 test_mcp_servers.py      # ✅ Comprehensive testing
+└── 📄 .env.example            # ✅ Environment template
 ```
 
-**Coming Next**: `src/`, `config/`, `tests/`, `infra/` directories as development progresses.
+**Current Status**: Infrastructure foundation complete with 4 production MCP servers and comprehensive testing framework.
 
 ## 🔗 Links
 

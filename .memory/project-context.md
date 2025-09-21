@@ -15,11 +15,11 @@
 - Maintain comprehensive documentation and contributor-friendly onboarding
 
 ### Architecture Decisions
-- **Modular agent-based architecture** using MCP (Model Context Protocol) servers
+- **MCP Server Infrastructure** using Model Context Protocol for AI agent communication
+- **Production-ready MCP servers** (4 specialized servers with 20+ financial tools)
+- **Python-based backend** with comprehensive financial data integration
 - **Docker containerization** for cross-platform deployment
-- **Markdown-based reporting** with GitHub version control
-- **Hybrid LLM support** (local Ollama + cloud APIs with fallback)
-- **Configuration-driven** approach with external YAML/JSON files
+- **Configuration-driven** approach with external JSON configuration files
 
 ## User Profile & Preferences
 

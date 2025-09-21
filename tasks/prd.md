@@ -1,22 +1,22 @@
 # Product Requirements Document (PRD)  
-**Project:** Agent-Driven Stock Investment Platform  
+**Project:** AI Investment Platform (MCP Server Infrastructure)  
 **Audience:** Junior Developers & Contributors  
 **Format:** Markdown (`.md`)  
 
 ---
 
 ## 1. Introduction / Overview  
-We are building an **Agent-Driven Stock Investment Platform** designed to provide actionable insights into stock, ETF, and bond markets.  
+We are building an **AI-powered Investment Platform** using Model Context Protocol (MCP) servers designed to provide actionable insights into stock, ETF, and bond markets.  
 
-The platform will:  
-- Continuously evaluate **chart trends** and **relevant news** that affect stock prices.  
-- Fetch and analyze **YouTube transcripts** from configurable channels.  
-- Map sentiment and investment strategies into **explicit recommendations** (e.g., buy/sell/hold).  
-- Output results as **Markdown reports** (hourly/daily/weekly) which can be pushed to GitHub.  
-- Support both **conversational interaction** (debugging, operator queries) and **markdown historical logging**.  
-- Be modular, so new data sources and agents can be added over time.  
+The platform provides:  
+- **Real-time stock data** through specialized MCP servers (Alpha Vantage, financial APIs)  
+- **Portfolio analysis** and performance tracking capabilities  
+- **Financial report generation** with automated insights and recommendations  
+- **Market news analysis** for sentiment and impact assessment  
+- **MCP protocol integration** for AI agent communication and tool access  
+- **Modular server architecture** allowing easy addition of new financial data sources  
 
-The system will **not execute trades automatically**. It will act as a **decision-support platform** for human operators.  
+The system provides **decision-support tools** for human operators and integrates with MCP-compatible AI clients like Claude Desktop.  
 
 ---
 
