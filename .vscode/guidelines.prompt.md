@@ -250,6 +250,63 @@ Brief description of what this document covers and who it's for.
 - **If credentials are exposed** - Immediately revoke/rotate affected credentials
 - **Document incidents** - Maintain security incident log for audit and improvement purposes
 
+### 13. Git Push Command Protocol
+
+**Single-Word 'push' Command:**
+- **WHEN user inputs only the word 'push'** - Execute automated git commit and push sequence
+- **ANALYZE staged changes** to understand what modifications have been made
+- **GENERATE descriptive commit message** that clearly explains the changes and their purpose
+- **COMMIT and PUSH** changes to GitHub with the generated message
+
+**Push Command Implementation:**
+1. **Check Git Status** - Verify there are staged changes ready for commit
+2. **Analyze Changes** - Review what files have been modified, added, or deleted
+3. **Generate Commit Message** - Create clear, descriptive message following conventional commit format
+4. **Execute Commit** - Run `git commit -m "message"` with the generated description
+5. **Push to Remote** - Execute `git push` to update the GitHub repository
+
+**Commit Message Standards:**
+```
+Format: <type>(<scope>): <description>
+
+Types:
+- feat: New feature or capability
+- fix: Bug fix or error correction
+- docs: Documentation updates
+- refactor: Code restructuring without behavior change
+- style: Formatting, whitespace, or style changes
+- test: Adding or updating tests
+- chore: Maintenance tasks, dependency updates
+
+Examples:
+- feat(mcp): Add comprehensive MCP server integration with 4 production servers
+- docs(guidelines): Add git push command protocol and commit message standards
+- fix(health-check): Resolve encoding issues in system health monitoring
+- refactor(tasks): Reorganize task tracking and remove task-specific documentation references
+```
+
+**Push Protocol Execution:**
+```powershell
+# Check what's staged
+git status --porcelain
+
+# Analyze changes and generate message
+git diff --cached --name-status
+
+# Commit with descriptive message
+git commit -m "feat(scope): Clear description of changes and impact"
+
+# Push to GitHub
+git push origin main
+```
+
+**Change Analysis Guidelines:**
+- **New Files** - Identify purpose and functionality of added files
+- **Modified Files** - Understand what specific changes were made and why
+- **Deleted Files** - Note what was removed and the reason for removal
+- **Scope Identification** - Determine which area of the project is affected (mcp, docs, config, etc.)
+- **Impact Assessment** - Evaluate the significance and purpose of the changes
+
 **Safe Alternatives and Patterns:**
 ```yaml
 # WRONG - Hardcoded sensitive data
@@ -288,7 +345,7 @@ print("⚠️ Warning")  # Mixed encoding problems
 
 # CORRECT - ASCII alternatives
 print("[PASS] Success")
-print("[FAIL] Failed") 
+print("[FAIL] Failed")
 print("[WARN] Warning")
 ```
 
@@ -482,6 +539,7 @@ These guidelines are **mandatory** for all development work on this project. Any
 23. **Use Windows PowerShell commands** when working in Windows environments, Linux/Mac bash commands otherwise
 24. **ENSURE repository resilience** by committing all essential files and testing `git clean -xdf` compatibility
 25. **SEPARATE essential files** from generated content and verify seamless operation after clean operations
+26. **RESPOND to 'push' command** by analyzing staged changes, generating descriptive commit messages, and executing git commit/push sequence
 
 ## Updates to Guidelines
 
