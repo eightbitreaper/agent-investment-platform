@@ -250,7 +250,34 @@ Brief description of what this document covers and who it's for.
 - **If credentials are exposed** - Immediately revoke/rotate affected credentials
 - **Document incidents** - Maintain security incident log for audit and improvement purposes
 
-### 13. Git Push Command Protocol
+### 13. Task Status Maintenance Requirements
+
+**Task Completion Tracking:**
+- **ALWAYS update task status** in `tasks/tasks-prd.md` when completing any work items
+- **MARK subtasks as completed** immediately after finishing implementation
+- **UPDATE main task status** from "READY" to "IN PROGRESS" to "COMPLETED" as appropriate
+- **MAINTAIN accuracy** between actual work completed and documented task status
+
+**Task Status Update Process:**
+1. **After completing any subtask** - Mark the specific subtask with [x] completion checkbox
+2. **Update main task status** - Change parent task status to reflect current progress
+3. **Add completion notes** - Include relevant details about what was implemented
+4. **Update completion dates** - Add dates when major task sections are finished
+5. **Cross-reference with git commits** - Ensure task updates align with actual code changes
+
+**Task Status Indicators:**
+- **⏳ READY** - Prerequisites complete, ready to begin work
+- **⏳ IN PROGRESS** - Work has begun, some subtasks completed
+- **✅ COMPLETED** - All subtasks finished and validated
+- **❌ BLOCKED** - Cannot proceed due to dependencies or issues
+
+**Completion Validation Requirements:**
+- **Verify implementation exists** - Confirm files and code are actually created/modified
+- **Test functionality works** - Validate that completed components function as expected
+- **Update documentation** - Ensure any new features are properly documented
+- **Commit changes** - Make sure completed work is saved to the repository
+
+### 14. Git Push Command Protocol
 
 **Single-Word 'push' Command:**
 - **WHEN user inputs only the word 'push'** - Execute automated git commit and push sequence
@@ -539,7 +566,9 @@ These guidelines are **mandatory** for all development work on this project. Any
 23. **Use Windows PowerShell commands** when working in Windows environments, Linux/Mac bash commands otherwise
 24. **ENSURE repository resilience** by committing all essential files and testing `git clean -xdf` compatibility
 25. **SEPARATE essential files** from generated content and verify seamless operation after clean operations
-26. **RESPOND to 'push' command** by analyzing staged changes, generating descriptive commit messages, and executing git commit/push sequence
+26. **UPDATE task status accurately** in tasks/tasks-prd.md immediately after completing any work items or subtasks
+27. **MAINTAIN task completion tracking** to ensure documented progress matches actual implementation status
+28. **RESPOND to 'push' command** by analyzing staged changes, generating descriptive commit messages, and executing git commit/push sequence
 
 ## Updates to Guidelines
 
