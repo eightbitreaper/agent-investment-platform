@@ -2,7 +2,7 @@
 Stock Data MCP Server for the Agent Investment Platform.
 
 This server provides real-time stock data, prices, and financial metrics
-through various data providers including Alpha Vantage and Polygon.
+through the Polygon API for reliable financial data access.
 """
 
 import asyncio
@@ -65,12 +65,12 @@ class CompanyFundamentals:
         }
 
 
-class AlphaVantageClient:
-    """Client for Alpha Vantage API."""
+class PolygonClient:
+    """Client for Polygon API."""
 
     def __init__(self, api_key: str):
         self.api_key = api_key
-        self.base_url = "https://www.alphavantage.co/query"
+        self.base_url = "https://api.polygon.io"
         self.session: Optional[aiohttp.ClientSession] = None
 
     async def __aenter__(self):
@@ -82,37 +82,41 @@ class AlphaVantageClient:
             await self.session.close()
 
     async def get_quote(self, symbol: str) -> Optional[StockQuote]:
-        """Get real-time quote for a symbol."""
+        """Get previous day quote for a symbol (Polygon free tier)."""
         if not self.session:
             raise RuntimeError("Client not initialized. Use async context manager.")
 
-        params = {
-            "function": "GLOBAL_QUOTE",
-            "symbol": symbol,
-            "apikey": self.api_key
-        }
+        url = f"{self.base_url}/v2/aggs/ticker/{symbol}/prev?adjusted=true&apikey={self.api_key}"
 
         try:
-            async with self.session.get(self.base_url, params=params) as response:
+            async with self.session.get(url) as response:
+                if response.status == 401:
+                    raise MCPError(-32503, "Invalid Polygon API key")
+                elif response.status == 429:
+                    raise MCPError(-32503, "Polygon API rate limit exceeded")
+                elif response.status != 200:
+                    raise MCPError(-32603, f"Polygon API error: {response.status}")
+
                 data = await response.json()
 
-                if "Error Message" in data:
-                    raise MCPError(-32602, f"Invalid symbol: {symbol}")
+                if data.get("status") != "OK" or not data.get("results"):
+                    raise MCPError(-32602, f"No data available for symbol: {symbol}")
 
-                if "Note" in data:
-                    raise MCPError(-32503, "API rate limit exceeded")
-
-                quote_data = data.get("Global Quote", {})
-                if not quote_data:
-                    return None
+                result = data["results"][0]
+                
+                # Calculate change from open to close
+                open_price = float(result.get("o", 0))
+                close_price = float(result.get("c", 0))
+                change = close_price - open_price
+                change_percent = (change / open_price * 100) if open_price > 0 else 0
 
                 return StockQuote(
-                    symbol=quote_data.get("01. symbol", symbol),
-                    price=float(quote_data.get("05. price", 0)),
-                    change=float(quote_data.get("09. change", 0)),
-                    change_percent=float(quote_data.get("10. change percent", "0%").rstrip('%')),
-                    volume=int(quote_data.get("06. volume", 0)),
-                    timestamp=datetime.now()
+                    symbol=symbol.upper(),
+                    price=close_price,
+                    change=change,
+                    change_percent=change_percent,
+                    volume=int(result.get("v", 0)),
+                    timestamp=datetime.fromtimestamp(result.get("t", 0) / 1000) if result.get("t") else datetime.now()
                 )
 
         except aiohttp.ClientError as e:
@@ -122,74 +126,90 @@ class AlphaVantageClient:
 
     async def get_historical_data(self, symbol: str, interval: str = "daily",
                                 outputsize: str = "compact") -> Dict[str, Any]:
-        """Get historical price data."""
+        """Get historical price data using Polygon API."""
         if not self.session:
             raise RuntimeError("Client not initialized. Use async context manager.")
 
-        function_map = {
-            "daily": "TIME_SERIES_DAILY",
-            "weekly": "TIME_SERIES_WEEKLY",
-            "monthly": "TIME_SERIES_MONTHLY"
+        # Map intervals to Polygon timespan
+        timespan_map = {
+            "daily": "day",
+            "weekly": "week", 
+            "monthly": "month"
         }
-
-        function = function_map.get(interval, "TIME_SERIES_DAILY")
-
-        params = {
-            "function": function,
-            "symbol": symbol,
-            "outputsize": outputsize,
-            "apikey": self.api_key
-        }
+        
+        timespan = timespan_map.get(interval, "day")
+        
+        # Get data for last 30 days for daily, adjust for other intervals
+        from datetime import datetime, timedelta
+        end_date = datetime.now()
+        if interval == "daily":
+            start_date = end_date - timedelta(days=30)
+        elif interval == "weekly":
+            start_date = end_date - timedelta(weeks=52) 
+        else:  # monthly
+            start_date = end_date - timedelta(days=365)
+            
+        start_str = start_date.strftime("%Y-%m-%d")
+        end_str = end_date.strftime("%Y-%m-%d")
+        
+        url = f"{self.base_url}/v2/aggs/ticker/{symbol}/range/1/{timespan}/{start_str}/{end_str}?adjusted=true&sort=asc&apikey={self.api_key}"
 
         try:
-            async with self.session.get(self.base_url, params=params) as response:
+            async with self.session.get(url) as response:
+                if response.status != 200:
+                    raise MCPError(-32603, f"Polygon API error: {response.status}")
+
                 data = await response.json()
-
-                if "Error Message" in data:
-                    raise MCPError(-32602, f"Invalid symbol: {symbol}")
-
-                if "Note" in data:
-                    raise MCPError(-32503, "API rate limit exceeded")
-
-                return data
+                
+                if data.get("status") != "OK":
+                    return {"Time Series": {}}
+                
+                # Convert Polygon format to Alpha Vantage-like format for compatibility
+                time_series = {}
+                for result in data.get("results", []):
+                    date_str = datetime.fromtimestamp(result["t"] / 1000).strftime("%Y-%m-%d")
+                    time_series[date_str] = {
+                        "1. open": str(result.get("o", 0)),
+                        "2. high": str(result.get("h", 0)), 
+                        "3. low": str(result.get("l", 0)),
+                        "4. close": str(result.get("c", 0)),
+                        "5. volume": str(result.get("v", 0))
+                    }
+                
+                return {"Time Series": time_series}
 
         except aiohttp.ClientError as e:
             raise MCPError(-32603, f"Network error: {str(e)}")
 
     async def get_company_overview(self, symbol: str) -> Optional[CompanyFundamentals]:
-        """Get company fundamental data."""
+        """Get company fundamental data using Polygon API."""
         if not self.session:
             raise RuntimeError("Client not initialized. Use async context manager.")
 
-        params = {
-            "function": "OVERVIEW",
-            "symbol": symbol,
-            "apikey": self.api_key
-        }
+        url = f"{self.base_url}/v3/reference/tickers/{symbol}?apikey={self.api_key}"
 
         try:
-            async with self.session.get(self.base_url, params=params) as response:
-                data = await response.json()
-
-                if "Error Message" in data:
-                    raise MCPError(-32602, f"Invalid symbol: {symbol}")
-
-                if "Note" in data:
-                    raise MCPError(-32503, "API rate limit exceeded")
-
-                if not data or "Symbol" not in data:
+            async with self.session.get(url) as response:
+                if response.status != 200:
                     return None
 
+                data = await response.json()
+                
+                if data.get("status") != "OK" or not data.get("results"):
+                    return None
+                
+                result = data["results"]
+                
                 return CompanyFundamentals(
-                    symbol=data.get("Symbol", symbol),
-                    name=data.get("Name", ""),
-                    market_cap=self._safe_float(data.get("MarketCapitalization")),
-                    pe_ratio=self._safe_float(data.get("PERatio")),
-                    dividend_yield=self._safe_float(data.get("DividendYield")),
-                    eps=self._safe_float(data.get("EPS")),
-                    revenue=self._safe_float(data.get("RevenueTTM")),
-                    debt_to_equity=self._safe_float(data.get("DebtToEquityRatio")),
-                    roe=self._safe_float(data.get("ReturnOnEquityTTM"))
+                    symbol=result.get("ticker", symbol),
+                    name=result.get("name", ""),
+                    market_cap=self._safe_float(result.get("market_cap")),
+                    pe_ratio=None,  # Not available in basic Polygon response
+                    dividend_yield=None,  # Not available in basic Polygon response
+                    eps=None,  # Not available in basic Polygon response
+                    revenue=None,  # Not available in basic Polygon response
+                    debt_to_equity=None,  # Not available in basic Polygon response
+                    roe=None  # Not available in basic Polygon response
                 )
 
         except aiohttp.ClientError as e:
@@ -203,6 +223,8 @@ class AlphaVantageClient:
             return float(value)
         except (ValueError, TypeError):
             return None
+
+
 
 
 class StockDataServer(MCPServerBase):
@@ -224,14 +246,10 @@ class StockDataServer(MCPServerBase):
         )
 
         # Initialize API clients
-        self.alpha_vantage_key = os.environ.get("ALPHA_VANTAGE_API_KEY")
         self.polygon_key = os.environ.get("POLYGON_API_KEY")
 
-        if not self.alpha_vantage_key:
-            self.logger.warning("ALPHA_VANTAGE_API_KEY not set - some features may be limited")
-
         if not self.polygon_key:
-            self.logger.warning("POLYGON_API_KEY not set - some features may be limited")
+            self.logger.warning("POLYGON_API_KEY not set - stock data features will be limited")
 
     def _register_capabilities(self):
         """Register stock data tools."""
@@ -335,10 +353,10 @@ class StockDataServer(MCPServerBase):
         if not symbol:
             raise MCPValidationError("Symbol is required")
 
-        if not self.alpha_vantage_key:
-            raise MCPError(-32503, "Alpha Vantage API key not configured")
+        if not self.polygon_key:
+            raise MCPError(-32503, "Polygon API key not configured")
 
-        async with AlphaVantageClient(self.alpha_vantage_key) as client:
+        async with PolygonClient(self.polygon_key) as client:
             quote = await client.get_quote(symbol)
 
             if not quote:
@@ -358,10 +376,10 @@ class StockDataServer(MCPServerBase):
         if not symbol:
             raise MCPValidationError("Symbol is required")
 
-        if not self.alpha_vantage_key:
-            raise MCPError(-32503, "Alpha Vantage API key not configured")
+        if not self.polygon_key:
+            raise MCPError(-32503, "Polygon API key not configured")
 
-        async with AlphaVantageClient(self.alpha_vantage_key) as client:
+        async with PolygonClient(self.polygon_key) as client:
             data = await client.get_historical_data(symbol, interval, outputsize)
 
             return {
@@ -381,10 +399,10 @@ class StockDataServer(MCPServerBase):
         if not symbol:
             raise MCPValidationError("Symbol is required")
 
-        if not self.alpha_vantage_key:
-            raise MCPError(-32503, "Alpha Vantage API key not configured")
+        if not self.polygon_key:
+            raise MCPError(-32503, "Polygon API key not configured")
 
-        async with AlphaVantageClient(self.alpha_vantage_key) as client:
+        async with PolygonClient(self.polygon_key) as client:
             fundamentals = await client.get_company_overview(symbol)
 
             if not fundamentals:
@@ -405,13 +423,13 @@ class StockDataServer(MCPServerBase):
         if len(symbols) > 10:
             raise MCPValidationError("Maximum 10 symbols allowed per request")
 
-        if not self.alpha_vantage_key:
-            raise MCPError(-32503, "Alpha Vantage API key not configured")
+        if not self.polygon_key:
+            raise MCPError(-32503, "Polygon API key not configured")
 
         results = []
         errors = []
 
-        async with AlphaVantageClient(self.alpha_vantage_key) as client:
+        async with PolygonClient(self.polygon_key) as client:
             # Process symbols concurrently but with rate limiting
             for symbol in symbols:
                 try:
@@ -448,15 +466,14 @@ class StockDataServer(MCPServerBase):
             "timestamp": datetime.now().isoformat(),
             "version": self.version,
             "api_keys": {
-                "alpha_vantage": bool(self.alpha_vantage_key),
                 "polygon": bool(self.polygon_key)
             }
         }
 
         # Test API connectivity if keys are available
-        if self.alpha_vantage_key:
+        if self.polygon_key:
             try:
-                async with AlphaVantageClient(self.alpha_vantage_key) as client:
+                async with PolygonClient(self.polygon_key) as client:
                     # Test with a simple quote request
                     quote = await client.get_quote("AAPL")
                     status["api_connectivity"] = {

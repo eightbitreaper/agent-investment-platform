@@ -95,6 +95,11 @@ agent-investment-platform/
 │   ├── initialize.py              # ✅ Main orchestration
 │   ├── health-check.py            # ✅ System health monitoring
 │   └── setup/                     # ✅ All setup modules
+├── 📁 tests/                   # ✅ Comprehensive test suites
+│   ├── integration/               # ✅ MCP server integration tests
+│   └── api/                       # ✅ External API tests (Polygon, etc.)
+├── 📁 dev-tools/               # ✅ Development utilities
+│   └── README.md                  # ✅ Development tool documentation
 ├── 📁 config/                  # ✅ Configuration management
 │   ├── mcp-servers.json           # ✅ MCP server configuration
 │   ├── llm-config.yaml            # ✅ LLM configuration
@@ -111,11 +116,32 @@ agent-investment-platform/
 ├── 📄 Dockerfile              # ✅ Container configuration
 ├── 📄 requirements.txt         # ✅ Python dependencies
 ├── 📄 run_mcp_server.py        # ✅ MCP server runner
-├── 📄 test_mcp_servers.py      # ✅ Comprehensive testing
+├── 📄 run_tests.py             # ✅ Test suite runner
+├── 📄 TESTING.md               # ✅ Testing strategy documentation
 └── 📄 .env.example            # ✅ Environment template
 ```
 
-**Current Status**: Infrastructure foundation complete with 4 production MCP servers and comprehensive testing framework.
+## 🧪 Testing
+
+**Quick Testing:**
+```bash
+# Run all tests
+python run_tests.py --all
+
+# Run specific test categories  
+python run_tests.py --integration  # MCP server tests
+python run_tests.py --api          # API integration tests (Polygon, etc.)
+```
+
+**Development Tools:**
+```bash
+# Test Polygon API with your key
+$env:POLYGON_API_KEY="your-key"; python dev-tools/test_polygon_api.py
+```
+
+See [TESTING.md](TESTING.md) for complete testing strategy.
+
+**Current Status**: Infrastructure foundation complete with 4 production MCP servers, **real Polygon API integration**, and comprehensive testing framework.
 
 ## 🔗 Links
 

@@ -15,7 +15,7 @@ from pathlib import Path
 from typing import Dict, Any, List
 
 # Add src to path for imports
-sys.path.insert(0, str(Path(__file__).parent.parent))
+sys.path.insert(0, str(Path(__file__).parent.parent.parent))
 
 from src.mcp_servers.stock_data_server import StockDataServer
 from src.mcp_servers.analysis_engine_server import AnalysisEngineServer

@@ -49,7 +49,7 @@ This document describes the comprehensive architecture of the **Agent Investment
 │  │Financial    │ │News & Media │ │Social Media │ │Market Data  │ │
 │  │APIs         │ │Sources      │ │Platforms    │ │Providers    │ │
 │  │             │ │             │ │             │ │             │ │
-│  │• Alpha      │ │• NewsAPI    │ │• Reddit     │ │• YouTube    │ │
+│  │• Polygon    │ │• NewsAPI    │ │• Reddit     │ │• YouTube    │ │
 │  │  Vantage    │ │• Financial  │ │• Twitter    │ │• Transcripts│ │
 │  │• Polygon    │ │  News feeds │ │• Discussion │ │• Educational│ │
 │  │• Yahoo      │ │• Market     │ │  forums     │ │  content    │ │
@@ -65,7 +65,7 @@ This document describes the comprehensive architecture of the **Agent Investment
 ### 1. MCP Server Infrastructure (Production-Ready)
 
 **Stock Data Server** (`src/mcp_servers/stock_data_server.py`)
-- **Real-time quotes** via Alpha Vantage and Polygon APIs
+- **Real-time quotes** via Polygon API
 - **Historical price data** with configurable timeframes
 - **Company fundamentals** including P/E ratios, debt metrics, ROE
 - **Batch processing** for multiple stock analysis

@@ -204,3 +204,4 @@ ollama_data/
 test_data/
 backup/
 logs/health-check-report.json
+logs/health-check-report.json

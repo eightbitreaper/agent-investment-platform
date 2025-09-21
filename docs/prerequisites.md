@@ -12,7 +12,7 @@ This document outlines the system requirements and setup prerequisites for the *
 **Optional but Recommended:**
 - **Node.js 18+** (for JavaScript MCP servers)
 - **Docker** (for containerized deployment)
-- **API Keys** (Alpha Vantage, NewsAPI, etc. for full functionality)
+- **API Keys** (Polygon, NewsAPI, etc. for full functionality)
 
 ---
 
@@ -216,11 +216,11 @@ python scripts/health-check.py
 
 The platform can work with limited functionality using mock data, but for live financial data, you'll need:
 
-**Alpha Vantage API:**
+**Polygon API:**
 ```powershell
-# Get free API key from: https://www.alphavantage.co/support/#api-key
-# Add to config/api_config.json:
-# "ALPHA_VANTAGE_API_KEY": "your-key-here"
+# Get free API key from: https://polygon.io/
+# Add to .env file:
+# POLYGON_API_KEY=your-key-here
 ```
 
 **NewsAPI (Optional):**

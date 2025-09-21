@@ -24,7 +24,7 @@ The platform implements a complete MCP server framework with:
   - Historical price data
   - Company fundamental data
   - Batch quote processing
-- **Data Sources**: Alpha Vantage, Polygon (configurable)
+- **Data Sources**: Polygon API
 
 #### 2. Analysis Engine Server (Python)
 - **File**: `src/mcp_servers/analysis_engine_server.py`
@@ -79,7 +79,7 @@ The platform implements a complete MCP server framework with:
 
 ### Environment Variables
 Required environment variables for different servers:
-- `ALPHA_VANTAGE_API_KEY`: Stock data access
+- `POLYGON_API_KEY`: Stock data access
 - `POLYGON_API_KEY`: Alternative stock data source
 - `NEWS_API_KEY`: News aggregation
 - `REDDIT_CLIENT_ID`, `REDDIT_CLIENT_SECRET`: Social media monitoring
