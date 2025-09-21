@@ -24,6 +24,12 @@
 - `src/analysis/chart_analyzer.py` - Technical chart trend analysis
 - `src/reports/markdown_generator.py` - Markdown report generation engine
 - `src/github/report_uploader.py` - GitHub integration for report versioning
+- `docs/setup/local-llm-setup.md` - Instructions for installing and configuring local LLMs
+- `docs/setup/quick-start-guide.md` - Step-by-step setup guide for new users
+- `docs/configuration/llm-configuration.md` - LLM configuration options and examples
+- `docs/configuration/strategy-configuration.md` - How to configure investment strategies
+- `docs/deployment/docker-deployment.md` - Docker deployment instructions
+- `docs/troubleshooting/common-issues.md` - Common setup and runtime issues
 
 ### Notes
 
@@ -31,6 +37,7 @@
 - Use established LLM APIs (OpenAI, Anthropic) or local models (Ollama, LMStudio)
 - Docker containers isolate and manage different services
 - All configuration should be externalized to config files
+- Comprehensive documentation ensures junior developers can set up and contribute
 
 ## Tasks
 
@@ -39,3 +46,4 @@
 - [ ] 3.0 Analysis Engine Development
 - [ ] 4.0 Report Generation and Output System
 - [ ] 5.0 Scheduling and Notification System
+- [ ] 6.0 Documentation and Local LLM Setup
