@@ -1,0 +1,195 @@
+{
+    "mcpServers": {
+        "stock-data-server": {
+            "command": "node",
+            "args": [
+                "src/mcp-servers/stock-data-server.js"
+            ],
+            "env": {
+                "ALPHA_VANTAGE_API_KEY": "${ALPHA_VANTAGE_API_KEY}",
+                "POLYGON_API_KEY": "${POLYGON_API_KEY}",
+                "PORT": "3001"
+            },
+            "enabled": true,
+            "description": "Real-time stock data, prices, and financial metrics",
+            "capabilities": [
+                "stock_price",
+                "historical_data",
+                "company_fundamentals",
+                "market_indicators"
+            ],
+            "timeout": 30000,
+            "retry_attempts": 3
+        },
+        "news-analysis-server": {
+            "command": "node",
+            "args": [
+                "src/mcp-servers/news-analysis-server.js"
+            ],
+            "env": {
+                "NEWS_API_KEY": "${NEWS_API_KEY}",
+                "REDDIT_CLIENT_ID": "${REDDIT_CLIENT_ID}",
+                "REDDIT_CLIENT_SECRET": "${REDDIT_CLIENT_SECRET}",
+                "PORT": "3002"
+            },
+            "enabled": true,
+            "description": "Financial news aggregation and sentiment analysis",
+            "capabilities": [
+                "news_search",
+                "sentiment_analysis",
+                "social_media_monitoring",
+                "trend_detection"
+            ],
+            "timeout": 45000,
+            "retry_attempts": 2
+        },
+        "youtube-transcript-server": {
+            "command": "node",
+            "args": [
+                "src/mcp-servers/youtube-transcript-server.js"
+            ],
+            "env": {
+                "YOUTUBE_API_KEY": "${YOUTUBE_API_KEY}",
+                "PORT": "3003"
+            },
+            "enabled": true,
+            "description": "YouTube video transcript extraction and analysis",
+            "capabilities": [
+                "transcript_extraction",
+                "video_search",
+                "content_analysis",
+                "speaker_identification"
+            ],
+            "timeout": 60000,
+            "retry_attempts": 2
+        },
+        "analysis-engine-server": {
+            "command": "python",
+            "args": [
+                "-m",
+                "src.mcp_servers.analysis_engine_server"
+            ],
+            "env": {
+                "DATABASE_URL": "${DATABASE_URL}",
+                "LLM_CONFIG_PATH": "config/llm-config.yaml",
+                "PORT": "3004"
+            },
+            "enabled": true,
+            "description": "Core financial analysis and strategy engine",
+            "capabilities": [
+                "technical_analysis",
+                "fundamental_analysis",
+                "risk_assessment",
+                "portfolio_optimization",
+                "strategy_generation"
+            ],
+            "timeout": 120000,
+            "retry_attempts": 1
+        },
+        "report-generator-server": {
+            "command": "python",
+            "args": [
+                "-m",
+                "src.mcp_servers.report_generator_server"
+            ],
+            "env": {
+                "REPORTS_DIRECTORY": "${REPORTS_DIRECTORY}",
+                "GITHUB_TOKEN": "${GITHUB_TOKEN}",
+                "GITHUB_REPO": "${GITHUB_REPO}",
+                "PORT": "3005"
+            },
+            "enabled": true,
+            "description": "Automated investment report generation and publishing",
+            "capabilities": [
+                "report_generation",
+                "template_management",
+                "github_publishing",
+                "chart_generation"
+            ],
+            "timeout": 90000,
+            "retry_attempts": 2
+        },
+        "data-validation-server": {
+            "command": "python",
+            "args": [
+                "-m",
+                "src.mcp_servers.data_validation_server"
+            ],
+            "env": {
+                "DATA_DIRECTORY": "${DATA_DIRECTORY}",
+                "PORT": "3006"
+            },
+            "enabled": true,
+            "description": "Data quality validation and cleansing",
+            "capabilities": [
+                "data_validation",
+                "anomaly_detection",
+                "data_cleansing",
+                "quality_metrics"
+            ],
+            "timeout": 30000,
+            "retry_attempts": 3
+        }
+    },
+    "global_settings": {
+        "health_check_interval": 60000,
+        "auto_restart": true,
+        "max_restart_attempts": 3,
+        "restart_delay": 5000,
+        "logging": {
+            "level": "INFO",
+            "file": "logs/mcp-servers.log",
+            "max_size": "10MB",
+            "backup_count": 5
+        }
+    },
+    "communication": {
+        "protocol": "stdio",
+        "timeout": 30000,
+        "max_message_size": "10MB",
+        "compression": true
+    },
+    "security": {
+        "authentication": {
+            "enabled": true,
+            "token": "${MCP_AUTH_TOKEN}",
+            "token_expiry": 3600
+        },
+        "rate_limiting": {
+            "enabled": true,
+            "requests_per_minute": 100,
+            "burst_limit": 20
+        },
+        "encryption": {
+            "enabled": false,
+            "algorithm": "AES-256-GCM"
+        }
+    },
+    "monitoring": {
+        "metrics": {
+            "enabled": true,
+            "port": 9090,
+            "path": "/metrics"
+        },
+        "health_endpoint": {
+            "enabled": true,
+            "port": 8080,
+            "path": "/health"
+        },
+        "alerts": {
+            "enabled": false,
+            "webhook_url": "",
+            "alert_threshold": {
+                "response_time_ms": 5000,
+                "error_rate_percent": 5.0,
+                "memory_usage_percent": 80.0
+            }
+        }
+    },
+    "development": {
+        "hot_reload": true,
+        "debug_mode": true,
+        "mock_mode": false,
+        "test_endpoints": true
+    }
+}

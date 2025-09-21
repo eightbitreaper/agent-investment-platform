@@ -1,0 +1,158 @@
+# Agent Investment Platform - LLM Configuration
+# This file configures available Large Language Models and their usage
+
+# Default LLM Configuration
+default:
+  provider: "ollama"  # Options: ollama, openai, anthropic
+  model: "llama3.1:8b"
+  max_tokens: 4096
+  temperature: 0.1
+  timeout: 300
+
+# Provider-specific configurations
+providers:
+  # Local LLM via Ollama
+  ollama:
+    host: "${OLLAMA_HOST:-http://localhost:11434}"
+    models:
+      - name: "llama3.1:8b"
+        description: "Llama 3.1 8B - Fast and efficient for general analysis"
+        context_length: 128000
+        use_cases: ["general", "analysis", "summarization"]
+      - name: "llama3.1:70b"
+        description: "Llama 3.1 70B - High quality for complex reasoning"
+        context_length: 128000
+        use_cases: ["complex_analysis", "strategy", "research"]
+      - name: "mistral:7b"
+        description: "Mistral 7B - Alternative fast model"
+        context_length: 32000
+        use_cases: ["general", "classification"]
+    timeout: "${OLLAMA_TIMEOUT:-300}"
+
+  # OpenAI GPT Models
+  openai:
+    api_key: "${OPENAI_API_KEY}"
+    models:
+      - name: "gpt-4-turbo-preview"
+        description: "GPT-4 Turbo - Latest and most capable model"
+        context_length: 128000
+        max_tokens: 4096
+        use_cases: ["complex_analysis", "strategy", "research", "reports"]
+      - name: "gpt-4"
+        description: "GPT-4 - Reliable and capable for most tasks"
+        context_length: 8192
+        max_tokens: 4096
+        use_cases: ["analysis", "strategy", "reports"]
+      - name: "gpt-3.5-turbo"
+        description: "GPT-3.5 Turbo - Fast and cost-effective"
+        context_length: 16384
+        max_tokens: 4096
+        use_cases: ["general", "summarization", "classification"]
+    timeout: 60
+
+  # Anthropic Claude Models
+  anthropic:
+    api_key: "${ANTHROPIC_API_KEY}"
+    models:
+      - name: "claude-3-sonnet-20240229"
+        description: "Claude 3 Sonnet - Balanced performance and capability"
+        context_length: 200000
+        max_tokens: 4096
+        use_cases: ["analysis", "research", "reports"]
+      - name: "claude-3-haiku-20240307"
+        description: "Claude 3 Haiku - Fast and efficient"
+        context_length: 200000
+        max_tokens: 4096
+        use_cases: ["general", "summarization", "classification"]
+    timeout: 60
+
+# Task-specific model assignments
+task_assignments:
+  # Financial analysis tasks
+  stock_analysis:
+    primary: "llama3.1:8b"
+    fallback: "gpt-4-turbo-preview"
+    temperature: 0.1
+
+  market_sentiment:
+    primary: "llama3.1:8b"
+    fallback: "claude-3-sonnet-20240229"
+    temperature: 0.2
+
+  technical_analysis:
+    primary: "llama3.1:70b"
+    fallback: "gpt-4"
+    temperature: 0.1
+
+  # Research and strategy tasks
+  investment_strategy:
+    primary: "llama3.1:70b"
+    fallback: "gpt-4-turbo-preview"
+    temperature: 0.3
+
+  risk_assessment:
+    primary: "llama3.1:8b"
+    fallback: "claude-3-sonnet-20240229"
+    temperature: 0.1
+
+  # Content generation tasks
+  report_generation:
+    primary: "llama3.1:8b"
+    fallback: "gpt-4-turbo-preview"
+    temperature: 0.2
+
+  news_summarization:
+    primary: "llama3.1:8b"
+    fallback: "gpt-3.5-turbo"
+    temperature: 0.1
+
+  # Data processing tasks
+  data_extraction:
+    primary: "llama3.1:8b"
+    fallback: "claude-3-haiku-20240307"
+    temperature: 0.0
+
+  classification:
+    primary: "mistral:7b"
+    fallback: "gpt-3.5-turbo"
+    temperature: 0.0
+
+# Model health monitoring
+health_check:
+  enabled: true
+  interval_seconds: 300
+  timeout_seconds: 30
+  fallback_enabled: true
+
+# Performance optimization
+optimization:
+  # Connection pooling
+  max_connections: 10
+  connection_timeout: 30
+
+  # Caching
+  cache_enabled: true
+  cache_ttl_seconds: 3600
+
+  # Rate limiting
+  requests_per_minute: 60
+  burst_limit: 10
+
+# Logging and monitoring
+logging:
+  log_requests: true
+  log_responses: false  # May contain sensitive data
+  log_performance: true
+  metrics_enabled: true
+
+# Cost management (for paid APIs)
+cost_management:
+  daily_limit_usd: 50.0
+  monthly_limit_usd: 1000.0
+  alert_threshold: 0.8
+
+# Security settings
+security:
+  api_key_rotation_days: 90
+  request_encryption: true
+  audit_log_enabled: true

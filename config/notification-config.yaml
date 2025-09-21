@@ -1,0 +1,289 @@
+# Agent Investment Platform - Notification Configuration
+# This file configures all notification channels and alert rules
+
+# Global notification settings
+global_settings:
+  enabled: true
+  timezone: "America/New_York"  # Market timezone
+  business_hours_only: false
+  max_notifications_per_hour: 10
+  rate_limiting: true
+
+# Notification channels
+channels:
+  email:
+    enabled: "${ENABLE_NOTIFICATIONS:-false}"
+    smtp_host: "${SMTP_HOST:-smtp.gmail.com}"
+    smtp_port: "${SMTP_PORT:-587}"
+    smtp_security: "tls"  # tls, ssl, or none
+    username: "${SMTP_USERNAME}"
+    password: "${SMTP_PASSWORD}"
+    from_address: "${NOTIFICATION_EMAIL}"
+    to_addresses:
+      - "${NOTIFICATION_EMAIL}"
+    templates:
+      subject_prefix: "[Agent Investment Platform]"
+      html_templates: true
+
+  slack:
+    enabled: false
+    webhook_url: "${SLACK_WEBHOOK_URL}"
+    channel: "#investment-alerts"
+    username: "Investment Bot"
+    icon_emoji: ":chart_with_upwards_trend:"
+
+  discord:
+    enabled: false
+    webhook_url: "${DISCORD_WEBHOOK_URL}"
+    username: "Investment Bot"
+    avatar_url: ""
+
+  telegram:
+    enabled: false
+    bot_token: "${TELEGRAM_BOT_TOKEN}"
+    chat_id: "${TELEGRAM_CHAT_ID}"
+
+  webhook:
+    enabled: false
+    url: "${WEBHOOK_URL}"
+    method: "POST"
+    headers:
+      Content-Type: "application/json"
+      Authorization: "Bearer ${WEBHOOK_TOKEN}"
+
+# Alert categories and rules
+alerts:
+  # Portfolio performance alerts
+  portfolio_alerts:
+    daily_loss_threshold:
+      enabled: true
+      threshold: -0.03  # -3% daily loss
+      severity: "high"
+      channels: ["email", "slack"]
+      message: "Portfolio down {percentage}% today. Current value: ${value}"
+      cooldown_minutes: 60
+
+    weekly_loss_threshold:
+      enabled: true
+      threshold: -0.05  # -5% weekly loss
+      severity: "medium"
+      channels: ["email"]
+      message: "Portfolio down {percentage}% this week"
+      cooldown_minutes: 1440  # 24 hours
+
+    drawdown_alert:
+      enabled: true
+      threshold: -0.10  # -10% from peak
+      severity: "high"
+      channels: ["email", "slack"]
+      message: "Portfolio drawdown of {percentage}% from peak"
+      cooldown_minutes: 60
+
+    profit_milestone:
+      enabled: true
+      thresholds: [0.10, 0.25, 0.50]  # 10%, 25%, 50% gains
+      severity: "low"
+      channels: ["email"]
+      message: "Portfolio reached {percentage}% profit milestone!"
+
+  # Individual position alerts
+  position_alerts:
+    large_move:
+      enabled: true
+      threshold: 0.05  # 5% single-day move
+      severity: "medium"
+      channels: ["email"]
+      message: "{symbol} moved {percentage}% today to ${price}"
+      max_per_day: 5
+
+    stop_loss_triggered:
+      enabled: true
+      severity: "high"
+      channels: ["email", "slack"]
+      message: "Stop loss triggered for {symbol} at ${price}"
+
+    earnings_announcement:
+      enabled: true
+      days_ahead: 3
+      severity: "low"
+      channels: ["email"]
+      message: "{symbol} earnings announcement in {days} days"
+
+  # Market condition alerts
+  market_alerts:
+    high_volatility:
+      enabled: true
+      vix_threshold: 30
+      severity: "medium"
+      channels: ["email"]
+      message: "Market volatility elevated (VIX: {vix})"
+      cooldown_minutes: 360  # 6 hours
+
+    market_correction:
+      enabled: true
+      threshold: -0.10  # -10% from recent high
+      severity: "high"
+      channels: ["email", "slack"]
+      message: "Market correction detected: {index} down {percentage}%"
+
+    sector_rotation:
+      enabled: true
+      threshold: 0.05  # 5% relative performance difference
+      severity: "low"
+      channels: ["email"]
+      message: "Sector rotation detected: {winning_sector} vs {losing_sector}"
+
+  # News and sentiment alerts
+  news_alerts:
+    breaking_news:
+      enabled: true
+      keywords:
+        - "Federal Reserve"
+        - "interest rates"
+        - "inflation"
+        - "recession"
+        - "earnings"
+      severity: "medium"
+      channels: ["email"]
+      message: "Breaking news alert: {headline}"
+      max_per_hour: 3
+
+    earnings_surprise:
+      enabled: true
+      surprise_threshold: 0.10  # 10% earnings surprise
+      severity: "medium"
+      channels: ["email"]
+      message: "{symbol} earnings surprise: {actual} vs {expected}"
+
+    analyst_rating_change:
+      enabled: true
+      rating_changes: ["upgrade", "downgrade"]
+      severity: "low"
+      channels: ["email"]
+      message: "{symbol} rating {change} by {analyst}: {old_rating} → {new_rating}"
+
+  # System and operational alerts
+  system_alerts:
+    data_feed_failure:
+      enabled: true
+      severity: "high"
+      channels: ["email", "slack"]
+      message: "Data feed failure detected: {source}"
+
+    api_rate_limit:
+      enabled: true
+      threshold: 0.80  # 80% of rate limit
+      severity: "medium"
+      channels: ["email"]
+      message: "API rate limit approaching: {api} at {percentage}%"
+
+    model_performance_degradation:
+      enabled: true
+      accuracy_threshold: 0.70  # Below 70% accuracy
+      severity: "medium"
+      channels: ["email"]
+      message: "Model performance degraded: {model_name} accuracy {accuracy}%"
+
+    report_generation_failure:
+      enabled: true
+      severity: "high"
+      channels: ["email", "slack"]
+      message: "Report generation failed: {report_type} for {date}"
+
+# Notification scheduling
+scheduling:
+  daily_summary:
+    enabled: true
+    time: "17:00"  # 5 PM ET (after market close)
+    channels: ["email"]
+    include:
+      - portfolio_performance
+      - top_movers
+      - news_summary
+      - upcoming_earnings
+
+  weekly_report:
+    enabled: true
+    day: "friday"
+    time: "18:00"  # 6 PM ET
+    channels: ["email"]
+    include:
+      - weekly_performance
+      - strategy_analysis
+      - risk_metrics
+      - recommendations
+
+  monthly_report:
+    enabled: true
+    day_of_month: 1
+    time: "09:00"  # 9 AM ET
+    channels: ["email"]
+    include:
+      - monthly_performance
+      - portfolio_rebalancing
+      - strategy_review
+      - goal_progress
+
+# Alert aggregation and filtering
+aggregation:
+  similar_alerts:
+    enabled: true
+    time_window_minutes: 30
+    max_similar: 3
+
+  priority_filtering:
+    high_priority_only: false
+    business_hours_filtering: true
+    weekend_alerts: false
+
+  user_preferences:
+    email_frequency: "immediate"  # immediate, hourly, daily
+    slack_frequency: "immediate"
+    digest_format: "summary"  # detailed, summary
+
+# Template customization
+templates:
+  email:
+    daily_summary: |
+      # Daily Investment Summary - {date}
+
+      ## Portfolio Performance
+      - Today's Return: {daily_return}%
+      - Total Value: ${portfolio_value}
+      - Total Return: {total_return}%
+
+      ## Top Movers
+      {top_gainers}
+      {top_losers}
+
+      ## Key News
+      {news_headlines}
+
+      ## Tomorrow's Calendar
+      {earnings_calendar}
+
+  slack:
+    alert_format: |
+      :warning: *{severity} Alert*
+      *{title}*
+      {message}
+      Time: {timestamp}
+
+# Notification history and analytics
+history:
+  retention_days: 90
+  analytics:
+    enabled: true
+    track_delivery: true
+    track_engagement: true
+
+  reporting:
+    weekly_summary: true
+    effectiveness_metrics: true
+
+# Development and testing
+development:
+  test_mode: false
+  test_recipients: ["developer@example.com"]
+  log_all_notifications: true
+  mock_external_services: false

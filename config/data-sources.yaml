@@ -1,0 +1,239 @@
+# Agent Investment Platform - Data Sources Configuration
+# This file configures all external data sources and their usage patterns
+
+# Primary financial data sources
+financial_data:
+  # Real-time stock data
+  alpha_vantage:
+    api_key: "${ALPHA_VANTAGE_API_KEY}"
+    base_url: "https://www.alphavantage.co/query"
+    rate_limit: 5  # requests per minute (free tier)
+    capabilities:
+      - real_time_quotes
+      - historical_data
+      - technical_indicators
+      - fundamental_data
+      - earnings_data
+    priority: 1
+
+  polygon:
+    api_key: "${POLYGON_API_KEY}"
+    base_url: "https://api.polygon.io"
+    rate_limit: 1000  # requests per minute (paid tier)
+    capabilities:
+      - real_time_quotes
+      - historical_data
+      - options_data
+      - forex_data
+      - crypto_data
+    priority: 2
+
+  finnhub:
+    api_key: "${FINNHUB_API_KEY}"
+    base_url: "https://finnhub.io/api/v1"
+    rate_limit: 60  # requests per minute (free tier)
+    capabilities:
+      - stock_quotes
+      - company_news
+      - earnings_calendar
+      - economic_indicators
+      - insider_trading
+    priority: 3
+
+  twelve_data:
+    api_key: "${TWELVE_DATA_API_KEY}"
+    base_url: "https://api.twelvedata.com"
+    rate_limit: 800  # requests per day (free tier)
+    capabilities:
+      - real_time_data
+      - historical_data
+      - technical_indicators
+      - fundamental_data
+      - market_movers
+    priority: 4
+
+# News and sentiment data sources
+news_sources:
+  news_api:
+    api_key: "${NEWS_API_KEY}"
+    base_url: "https://newsapi.org/v2"
+    rate_limit: 1000  # requests per day (free tier)
+    categories:
+      - business
+      - technology
+      - general
+    sources:
+      - reuters
+      - bloomberg
+      - cnbc
+      - wall-street-journal
+      - financial-times
+    language: "en"
+    country: "us"
+
+  reddit:
+    client_id: "${REDDIT_CLIENT_ID}"
+    client_secret: "${REDDIT_CLIENT_SECRET}"
+    user_agent: "AgentInvestmentPlatform/1.0"
+    rate_limit: 60  # requests per minute
+    subreddits:
+      - investing
+      - stocks
+      - SecurityAnalysis
+      - ValueInvesting
+      - financialindependence
+      - wallstreetbets
+      - stockmarket
+      - dividends
+
+  twitter:
+    bearer_token: "${TWITTER_BEARER_TOKEN}"
+    api_version: "2"
+    rate_limit: 300  # requests per 15 minutes
+    search_terms:
+      - "$AAPL OR #AAPL"
+      - "$MSFT OR #MSFT"
+      - "$GOOGL OR #GOOGL"
+      - "stock market"
+      - "investing"
+      - "earnings"
+    max_results: 100
+
+# Social media and alternative data
+social_media:
+  youtube:
+    api_key: "${YOUTUBE_API_KEY}"
+    base_url: "https://www.googleapis.com/youtube/v3"
+    rate_limit: 10000  # units per day
+    channels:
+      - "UCnMn36GT_H0X-w5_ckLtlgQ"  # Bloomberg Markets and Finance
+      - "UCEp_b_WYGQb_BQjuVl6MhEA"  # Yahoo Finance
+      - "UCkWQ0gDrqOCarmUKmppD7GQ"  # CNBC Television
+      - "UCvJJ_dzjViJCoLf5uKUTwoA"  # Ben Felix
+    search_queries:
+      - "stock analysis"
+      - "market outlook"
+      - "earnings report"
+      - "investment strategy"
+    max_results: 50
+
+# Economic and market indicators
+economic_data:
+  fred:
+    base_url: "https://api.stlouisfed.org/fred"
+    api_key: "${FRED_API_KEY}"
+    series:
+      - "GDP"          # Gross Domestic Product
+      - "UNRATE"       # Unemployment Rate
+      - "CPIAUCSL"     # Consumer Price Index
+      - "FEDFUNDS"     # Federal Funds Rate
+      - "DGS10"        # 10-Year Treasury Rate
+      - "DEXUSEU"      # USD/EUR Exchange Rate
+      - "NASDAQCOM"    # NASDAQ Composite Index
+
+  treasury:
+    base_url: "https://api.fiscaldata.treasury.gov/services/api/v1"
+    endpoints:
+      - "accounting/od/rates_of_exchange"
+      - "accounting/od/debt_to_penny"
+    rate_limit: 1000  # requests per hour
+
+# Configuration for data refresh and caching
+data_management:
+  refresh_intervals:
+    # Real-time data (in seconds)
+    stock_prices: 60
+    market_indices: 30
+
+    # Periodic data (in minutes)
+    news_articles: 15
+    social_media: 30
+    earnings_data: 60
+
+    # Daily data (in hours)
+    fundamental_data: 24
+    economic_indicators: 24
+    historical_data: 24
+
+  cache_settings:
+    enabled: true
+    ttl_seconds: 3600  # 1 hour default
+    max_size_mb: 1000
+    compression: true
+
+  data_quality:
+    validation_enabled: true
+    anomaly_detection: true
+    missing_data_threshold: 0.05  # 5% missing data threshold
+    outlier_detection: true
+
+# Error handling and fallbacks
+error_handling:
+  retry_attempts: 3
+  retry_delay_seconds: 5
+  exponential_backoff: true
+  circuit_breaker:
+    enabled: true
+    failure_threshold: 5
+    timeout_seconds: 60
+
+  fallback_sources:
+    primary_failure:
+      - alpha_vantage: polygon
+      - polygon: finnhub
+      - news_api: reddit
+
+# Data storage and persistence
+storage:
+  database:
+    connection_string: "${DATABASE_URL}"
+    tables:
+      stock_data: "stock_prices"
+      news_data: "news_articles"
+      social_data: "social_posts"
+      analysis_results: "analysis_cache"
+
+  file_storage:
+    base_directory: "${DATA_DIRECTORY}"
+    subdirectories:
+      raw_data: "raw"
+      processed_data: "processed"
+      cache: "cache"
+      exports: "exports"
+
+  backup:
+    enabled: true
+    frequency: "daily"
+    retention_days: 30
+    compression: true
+
+# Monitoring and alerting
+monitoring:
+  data_freshness:
+    enabled: true
+    alert_threshold_minutes: 60
+
+  api_health:
+    enabled: true
+    check_interval_minutes: 5
+    timeout_seconds: 10
+
+  usage_tracking:
+    enabled: true
+    daily_limits: true
+    cost_tracking: true
+
+# Development and testing settings
+development:
+  mock_data:
+    enabled: false
+    data_directory: "test_data"
+
+  sandbox_mode:
+    enabled: false
+    limited_requests: true
+
+  logging:
+    level: "INFO"
+    include_responses: false  # May contain sensitive data
+    max_log_size_mb: 100

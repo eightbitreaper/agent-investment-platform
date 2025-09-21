@@ -179,3 +179,21 @@ validation-report.md
 
 # Session files
 .memory/session-log.json
+
+# Docker and infrastructure
+docker-compose.override.yml
+.env.local
+.env.production
+.docker/
+
+# Database files
+*.db
+*.sqlite
+*.sqlite3
+postgres_data/
+redis_data/
+ollama_data/
+
+# Additional data directories
+test_data/
+backup/

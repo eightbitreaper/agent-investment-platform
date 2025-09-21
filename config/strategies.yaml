@@ -1,0 +1,290 @@
+# Agent Investment Platform - Investment Strategies Configuration
+# This file defines available investment strategies and their parameters
+
+# Default strategy settings
+default_strategy:
+  name: "balanced_growth"
+  risk_tolerance: "moderate"
+  time_horizon: "long_term"  # short_term (< 1 year), medium_term (1-5 years), long_term (> 5 years)
+
+# Available investment strategies
+strategies:
+  # Conservative strategies
+  conservative_income:
+    name: "Conservative Income"
+    description: "Focus on dividend-paying stocks and bonds for steady income"
+    risk_level: 1  # 1-10 scale
+    expected_return: 0.06  # 6% annual return
+    max_drawdown: 0.10  # 10% maximum drawdown
+
+    asset_allocation:
+      stocks: 0.30
+      bonds: 0.60
+      cash: 0.10
+
+    stock_criteria:
+      min_dividend_yield: 0.03  # 3% minimum dividend yield
+      max_pe_ratio: 20
+      min_market_cap: 10000000000  # $10B minimum market cap
+      debt_to_equity_max: 0.5
+
+    sectors:
+      utilities: 0.25
+      consumer_staples: 0.25
+      healthcare: 0.20
+      financials: 0.15
+      telecommunications: 0.15
+
+    rebalancing:
+      frequency: "quarterly"
+      threshold: 0.05  # Rebalance if allocation drifts 5%
+
+  balanced_growth:
+    name: "Balanced Growth"
+    description: "Mix of growth and value stocks with moderate risk"
+    risk_level: 5
+    expected_return: 0.08  # 8% annual return
+    max_drawdown: 0.15  # 15% maximum drawdown
+
+    asset_allocation:
+      stocks: 0.70
+      bonds: 0.25
+      cash: 0.05
+
+    stock_criteria:
+      min_market_cap: 2000000000  # $2B minimum
+      max_pe_ratio: 25
+      min_revenue_growth: 0.05  # 5% minimum revenue growth
+      debt_to_equity_max: 1.0
+
+    sectors:
+      technology: 0.25
+      healthcare: 0.20
+      financials: 0.15
+      consumer_discretionary: 0.15
+      industrials: 0.10
+      consumer_staples: 0.10
+      utilities: 0.05
+
+    rebalancing:
+      frequency: "monthly"
+      threshold: 0.05
+
+  aggressive_growth:
+    name: "Aggressive Growth"
+    description: "High-growth stocks with higher volatility and potential returns"
+    risk_level: 8
+    expected_return: 0.12  # 12% annual return
+    max_drawdown: 0.25  # 25% maximum drawdown
+
+    asset_allocation:
+      stocks: 0.90
+      bonds: 0.05
+      cash: 0.05
+
+    stock_criteria:
+      min_revenue_growth: 0.15  # 15% minimum revenue growth
+      max_pe_ratio: 50
+      min_market_cap: 1000000000  # $1B minimum
+
+    sectors:
+      technology: 0.40
+      healthcare: 0.20
+      consumer_discretionary: 0.15
+      communication_services: 0.10
+      industrials: 0.10
+      financials: 0.05
+
+    rebalancing:
+      frequency: "weekly"
+      threshold: 0.03
+
+  # Specialized strategies
+  value_investing:
+    name: "Value Investing"
+    description: "Undervalued stocks with strong fundamentals"
+    risk_level: 4
+    expected_return: 0.09  # 9% annual return
+    max_drawdown: 0.18  # 18% maximum drawdown
+
+    asset_allocation:
+      stocks: 0.80
+      bonds: 0.15
+      cash: 0.05
+
+    stock_criteria:
+      max_pe_ratio: 15
+      min_pb_ratio: 0.5
+      max_pb_ratio: 2.0
+      min_roe: 0.12  # 12% minimum return on equity
+      debt_to_equity_max: 0.6
+      min_current_ratio: 1.5
+
+    screening_metrics:
+      - low_pe_ratio
+      - low_pb_ratio
+      - high_dividend_yield
+      - strong_balance_sheet
+      - consistent_earnings
+
+  dividend_aristocrats:
+    name: "Dividend Aristocrats"
+    description: "Companies with 25+ years of consecutive dividend increases"
+    risk_level: 3
+    expected_return: 0.07  # 7% annual return
+    max_drawdown: 0.12  # 12% maximum drawdown
+
+    asset_allocation:
+      stocks: 0.85
+      bonds: 0.10
+      cash: 0.05
+
+    stock_criteria:
+      min_dividend_years: 25  # 25+ years of dividend increases
+      min_dividend_yield: 0.02  # 2% minimum dividend yield
+      max_payout_ratio: 0.60  # 60% maximum payout ratio
+      min_market_cap: 5000000000  # $5B minimum
+
+  # ESG and thematic strategies
+  esg_sustainable:
+    name: "ESG Sustainable Investing"
+    description: "Environmental, Social, Governance focused investing"
+    risk_level: 5
+    expected_return: 0.08  # 8% annual return
+    max_drawdown: 0.16  # 16% maximum drawdown
+
+    asset_allocation:
+      stocks: 0.75
+      green_bonds: 0.20
+      cash: 0.05
+
+    esg_criteria:
+      min_esg_score: 70  # Minimum ESG score (0-100)
+      exclude_sectors:
+        - tobacco
+        - weapons
+        - fossil_fuels
+        - gambling
+      include_themes:
+        - renewable_energy
+        - clean_technology
+        - sustainable_agriculture
+        - water_management
+
+  tech_innovation:
+    name: "Technology Innovation"
+    description: "Emerging technology and innovation focused"
+    risk_level: 9
+    expected_return: 0.15  # 15% annual return
+    max_drawdown: 0.30  # 30% maximum drawdown
+
+    asset_allocation:
+      stocks: 0.95
+      cash: 0.05
+
+    themes:
+      artificial_intelligence: 0.25
+      cloud_computing: 0.20
+      cybersecurity: 0.15
+      biotechnology: 0.15
+      fintech: 0.10
+      autonomous_vehicles: 0.10
+      quantum_computing: 0.05
+
+# Risk management parameters
+risk_management:
+  position_sizing:
+    max_single_position: 0.05  # 5% maximum in any single stock
+    max_sector_weight: 0.30    # 30% maximum in any sector
+    min_positions: 20          # Minimum number of positions
+
+  stop_losses:
+    enabled: true
+    trailing_stop: 0.15        # 15% trailing stop loss
+    daily_loss_limit: 0.02     # 2% maximum daily loss
+
+  volatility_management:
+    max_portfolio_volatility: 0.20  # 20% maximum portfolio volatility
+    volatility_lookback_days: 252   # 1 year lookback for volatility calc
+
+  correlation_limits:
+    max_correlation: 0.70      # Maximum correlation between positions
+    correlation_lookback_days: 126  # 6 months lookback
+
+# Analysis and screening configuration
+analysis:
+  fundamental_metrics:
+    required:
+      - pe_ratio
+      - pb_ratio
+      - debt_to_equity
+      - current_ratio
+      - roe
+      - revenue_growth
+
+  technical_indicators:
+    - sma_20    # 20-day Simple Moving Average
+    - sma_50    # 50-day Simple Moving Average
+    - rsi_14    # 14-day Relative Strength Index
+    - macd      # MACD indicator
+    - bollinger_bands
+
+  sentiment_analysis:
+    news_sentiment_weight: 0.30
+    social_sentiment_weight: 0.20
+    analyst_ratings_weight: 0.50
+
+# Reporting and monitoring
+reporting:
+  performance_metrics:
+    - total_return
+    - annualized_return
+    - sharpe_ratio
+    - max_drawdown
+    - volatility
+    - alpha
+    - beta
+
+  benchmark_comparisons:
+    - "SPY"   # S&P 500
+    - "QQQ"   # NASDAQ-100
+    - "VTI"   # Total Stock Market
+    - "VXUS"  # International Stocks
+
+  report_frequency: "weekly"
+  alert_thresholds:
+    drawdown_alert: 0.10      # Alert if portfolio down 10%
+    volatility_spike: 0.25    # Alert if volatility > 25%
+    correlation_breach: 0.80  # Alert if correlation > 80%
+
+# Strategy backtesting parameters
+backtesting:
+  start_date: "2010-01-01"
+  end_date: "2023-12-31"
+  initial_capital: 100000
+  transaction_costs: 0.001  # 0.1% transaction cost
+
+  performance_metrics:
+    - total_return
+    - cagr
+    - max_drawdown
+    - sharpe_ratio
+    - sortino_ratio
+    - calmar_ratio
+    - win_rate
+
+# Dynamic strategy adjustment
+adaptive_parameters:
+  market_regime_detection:
+    enabled: true
+    indicators:
+      - vix_level
+      - yield_curve_slope
+      - recession_probability
+
+  strategy_switching:
+    enabled: true
+    conditions:
+      high_volatility: "conservative_income"
+      recession_signal: "defensive_value"
+      bull_market: "aggressive_growth"
