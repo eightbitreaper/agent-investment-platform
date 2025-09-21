@@ -186,6 +186,56 @@ git push
 
 ---
 
+## Clone AI Development Tasks Repository
+
+After setting up GitHub authentication, clone the AI development tasks repository to access tools for generating PRD specifications and managing development tasks.
+
+### For WSL Users (Option A):
+```bash
+cd /mnt/d
+git clone https://github.com/danquirk/ai-dev-tasks.git
+cd ai-dev-tasks
+```
+
+### For Windows Users (Option B):
+```powershell
+cd D:\
+git clone https://github.com/danquirk/ai-dev-tasks.git
+cd ai-dev-tasks
+```
+
+### What This Repository Provides:
+- **PRD Generation Tools**: Templates and guidelines for creating Product Requirements Documents
+- **Task Management**: Structured approaches for breaking down development work
+- **AI-Assisted Development**: Examples and patterns for working with AI coding assistants
+- **Best Practices**: Documentation standards and development workflows
+
+### Add to VS Code Workspace:
+After cloning, add the repository to your VS Code Insiders workspace:
+
+1. **Open VS Code Insiders** in your current project directory
+2. **Add the folder to workspace:**
+   - Go to `File > Add Folder to Workspace...`
+   - Navigate to and select the `ai-dev-tasks` folder:
+     - WSL users: `/mnt/d/ai-dev-tasks`
+     - Windows users: `D:\ai-dev-tasks`
+   - Click **Add**
+
+3. **Save the workspace:**
+   - Go to `File > Save Workspace As...`
+   - Save as `agent-investment-platform.code-workspace` in your project root
+
+This creates a multi-folder workspace where you can easily reference the AI development tools while working on the investment platform.
+
+### Usage:
+Once cloned and added to your workspace, you can reference the tools and templates when:
+- Creating PRD specifications for new features
+- Breaking down complex development tasks
+- Following AI-assisted development patterns
+- Maintaining consistent documentation standards
+
+---
+
 ## Summary
 
 - Use **Option A (WSL)** if you want a Linux-based workflow (with Docker, Linux packages, etc.).  
