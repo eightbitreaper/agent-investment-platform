@@ -271,6 +271,188 @@ OPENAI_API_KEY=your_openai_api_key_here
 - **Security notes** - Include warnings about sensitive data handling in relevant documentation
 - **User guidance** - Provide clear instructions for secure configuration setup
 
+### 10. Character Encoding and Syntax Standards
+
+**ASCII Character Requirements:**
+- **ALWAYS prefer ASCII characters** over Unicode in code, configuration files, and structured data
+- **AVOID Unicode symbols** in Python code, JSON, YAML, and other configuration files
+- **USE ASCII alternatives** for visual indicators, status markers, and formatting elements
+- **PREVENT encoding-related syntax errors** that can break scripts and configuration loading
+
+**Prohibited Unicode Patterns:**
+```python
+# WRONG - Unicode characters that cause encoding issues
+print("✅ Success")  # Can cause UnicodeDecodeError
+print("❌ Failed")   # Platform-dependent encoding issues
+print("⚠️ Warning")  # Mixed encoding problems
+
+# CORRECT - ASCII alternatives
+print("[PASS] Success")
+print("[FAIL] Failed") 
+print("[WARN] Warning")
+```
+
+**Safe ASCII Alternatives:**
+- **Status indicators**: `[PASS]`, `[FAIL]`, `[WARN]`, `[INFO]` instead of ✅❌⚠️ℹ️
+- **List bullets**: `*`, `-`, `+` instead of • or other Unicode bullets
+- **Arrows**: `->`, `=>`, `<-` instead of → ← ↑ ↓
+- **Quotes**: `"text"`, `'text'` instead of "text" or 'text'
+- **Dashes**: `-`, `--` instead of – or —
+
+**Platform Compatibility:**
+- **Windows PowerShell** - Often defaults to CP1252 encoding, causing Unicode errors
+- **Linux/Mac terminals** - Better Unicode support but ASCII ensures universal compatibility
+- **Python scripts** - ASCII prevents `UnicodeDecodeError` and `charmap` codec issues
+- **JSON/YAML files** - ASCII ensures proper parsing across all systems and tools
+
+**Implementation Standards:**
+1. **Script Output** - Use ASCII status indicators and formatting in all print statements
+2. **Configuration Files** - Stick to ASCII characters in JSON, YAML, and other config formats
+3. **Documentation** - While Markdown can handle Unicode, prefer ASCII for code blocks and examples
+4. **Comments** - Use ASCII characters in code comments to prevent encoding issues
+5. **File Names** - Always use ASCII characters in file and directory names
+
+**Testing for Encoding Issues:**
+- **Validate all Python scripts** can be loaded and executed without encoding errors
+- **Test configuration files** parse correctly on different platforms
+- **Check JSON/YAML files** load properly using standard libraries
+- **Verify file operations** work correctly across Windows, Linux, and Mac systems
+
+### 11. Operating System Awareness and Command Selection
+
+**Platform Detection Requirements:**
+- **ALWAYS detect the current operating system** before suggesting or using shell commands
+- **USE platform-appropriate commands** based on the detected environment
+- **PROVIDE cross-platform alternatives** when commands differ between operating systems
+- **DOCUMENT platform-specific behaviors** and command variations
+
+**Operating System Command Standards:**
+
+**Windows (PowerShell/Command Prompt):**
+```powershell
+# File operations
+Get-ChildItem                    # List files (not ls)
+Move-Item src dest              # Move files (not mv)
+Copy-Item src dest              # Copy files (not cp)
+Remove-Item file                # Delete files (not rm)
+Test-Path file                  # Check if file exists (not [ -f ])
+New-Item -ItemType Directory    # Create directory (not mkdir)
+
+# Process management
+Get-Process                     # List processes (not ps)
+Stop-Process -Name name         # Kill process (not kill)
+
+# Network
+Test-NetConnection host -Port port  # Test connection (not nc/telnet)
+```
+
+**Linux/Mac (Bash/Zsh):**
+```bash
+# File operations
+ls                              # List files
+mv src dest                     # Move files
+cp src dest                     # Copy files
+rm file                         # Delete files
+[ -f file ]                     # Check if file exists
+mkdir -p dir                    # Create directory
+
+# Process management
+ps aux                          # List processes
+kill -9 pid                     # Kill process
+
+# Network
+nc -zv host port               # Test connection
+```
+
+**Cross-Platform Python Alternatives:**
+```python
+import os
+import platform
+import shutil
+from pathlib import Path
+
+# Detect OS
+current_os = platform.system()  # Returns: 'Windows', 'Linux', 'Darwin'
+
+# Cross-platform file operations
+Path('file').exists()           # Check file existence
+shutil.move(src, dest)          # Move files
+shutil.copy2(src, dest)         # Copy files
+os.makedirs(path, exist_ok=True)  # Create directories
+```
+
+**Implementation Guidelines:**
+1. **Detect Environment** - Check platform.system() or use context clues from terminal output
+2. **Use Appropriate Commands** - Select Windows PowerShell commands for Windows, bash commands for Linux/Mac
+3. **Provide Alternatives** - When documenting, show both Windows and Unix variations
+4. **Test Commands** - Verify commands work on the target platform before suggesting them
+5. **Default Assumptions** - When uncertain, ask for clarification or provide both options
+
+**Current Project Context Detection:**
+- **Terminal Type** - PowerShell indicates Windows environment
+- **Path Separators** - Backslashes (\) indicate Windows, forward slashes (/) indicate Unix
+- **File Extensions** - .exe files suggest Windows environment
+- **Environment Variables** - %VAR% (Windows) vs $VAR (Unix)
+
+**Command Selection Priority:**
+1. **Use detected OS commands** - Primary choice based on environment detection
+2. **Provide cross-platform Python** - When shell commands vary significantly
+3. **Document both variants** - In documentation, show Windows and Unix examples
+4. **Test on target platform** - Always validate commands work in the current environment
+
+### 12. Repository Resilience and Clean Operation Standards
+
+**Git Clean Compatibility Requirements:**
+- **ALL essential files** must be committed to the repository and not rely on generated or cached content
+- **ENSURE seamless operation** after `git clean -xdf` command removes all untracked and ignored files
+- **TEST repository resilience** by regularly running `git clean -xdf` and verifying all functionality works
+- **SEPARATE essential files** from generated content through proper `.gitignore` configuration
+
+**Essential Files That Must Be Committed:**
+1. **Source Code** - All Python scripts, configuration files, and application code
+2. **Documentation** - All markdown files, guides, and instructional content
+3. **Configuration Templates** - `.env.example`, config templates, and setup files
+4. **Project Structure** - Directory placeholder files (`.gitkeep`) to maintain folder structure
+5. **Build Scripts** - Setup scripts, deployment configurations, and automation tools
+6. **Development Tools** - VS Code settings, tasks, linting configurations, and development aids
+
+**Generated/Cached Content (Should NOT be committed):**
+1. **Virtual Environments** - `.venv/`, `venv/`, `env/` directories
+2. **Downloaded Models** - Large model files, cached data, and external dependencies
+3. **Runtime Data** - Logs, temporary files, cache directories, and session data
+4. **User-Specific Files** - Local configuration overrides and personal settings
+5. **Build Artifacts** - Compiled code, distribution packages, and generated documentation
+6. **External Dependencies** - `node_modules/`, Python package caches, and downloaded libraries
+
+**Repository Resilience Testing:**
+```powershell
+# Windows PowerShell - Test repository resilience
+git clean -xdf                           # Remove all untracked and ignored files
+python scripts/setup/validate-setup.py   # Verify core functionality works
+python scripts/initialize.py            # Test complete setup process
+```
+
+**Implementation Standards:**
+1. **Directory Structure Preservation** - Use `.gitkeep` files to maintain empty directories
+2. **Configuration Templates** - Provide example configurations without sensitive data
+3. **Setup Automation** - Ensure initialization scripts recreate necessary runtime directories
+4. **Dependency Management** - Use `requirements.txt` and package managers for reproducible environments
+5. **Documentation Completeness** - Include all setup instructions for clean repository initialization
+
+**Clean Operation Verification:**
+- **After `git clean -xdf`** - All essential functionality should remain intact
+- **Setup Scripts Work** - Initialization and setup scripts should run without errors
+- **Documentation Available** - All guides and instructions should be accessible
+- **Configuration Valid** - Template files should provide clear setup guidance
+- **Development Tools** - VS Code workspace should function with all tasks and settings
+
+**Recovery Process After Git Clean:**
+1. **Python Environment** - Automatically recreated by `configure_python_environment` tool
+2. **Dependencies** - Reinstalled via `requirements.txt` and setup scripts
+3. **Runtime Directories** - Recreated by initialization scripts (`models/`, `data/`, etc.)
+4. **Downloaded Content** - Re-downloaded as needed by model management scripts
+5. **Cache Files** - Regenerated during normal operation
+
 ## Enforcement
 
 These guidelines are **mandatory** for all development work on this project. Any LLM working on this project must:
@@ -294,6 +476,12 @@ These guidelines are **mandatory** for all development work on this project. Any
 17. **Use secure configuration patterns** with environment variables and template files
 18. **Implement data classification standards** to protect sensitive information at all levels
 19. **Follow security remediation protocols** if sensitive data is accidentally exposed
+20. **ALWAYS use ASCII characters** in code, configuration files, and structured data to prevent encoding issues
+21. **Test all files for encoding compatibility** across different platforms and ensure universal accessibility
+22. **DETECT the current operating system** and use appropriate platform-specific commands
+23. **Use Windows PowerShell commands** when working in Windows environments, Linux/Mac bash commands otherwise
+24. **ENSURE repository resilience** by committing all essential files and testing `git clean -xdf` compatibility
+25. **SEPARATE essential files** from generated content and verify seamless operation after clean operations
 
 ## Updates to Guidelines
 
