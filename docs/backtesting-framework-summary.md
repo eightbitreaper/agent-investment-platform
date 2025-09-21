@@ -11,7 +11,7 @@ The Agent Investment Platform now features a **comprehensive backtesting framewo
 ```
 src/backtesting/
 ├── __init__.py                 # Module interface and exports
-├── backtest_engine.py          # Core backtesting simulation engine  
+├── backtest_engine.py          # Core backtesting simulation engine
 ├── performance_analyzer.py     # Advanced performance metrics and analysis
 └── data_manager.py            # Historical data management and validation
 ```
@@ -25,7 +25,7 @@ src/backtesting/
 - **Trade Execution**: Market orders with realistic execution modeling
 - **Performance Tracking**: Real-time portfolio valuation and metrics
 
-#### 2. **DataManager** (`data_manager.py`)  
+#### 2. **DataManager** (`data_manager.py`)
 - **Multi-Source Support**: Extensible data source architecture (Yahoo Finance, Alpha Vantage, etc.)
 - **Intelligent Caching**: Efficient data storage and retrieval with SQLite backend
 - **Data Quality Assessment**: Comprehensive validation with quality scoring
@@ -43,7 +43,7 @@ src/backtesting/
 
 ### Data Models
 - **Trade**: Individual trade records with P&L tracking
-- **PortfolioSnapshot**: Time-series portfolio state tracking  
+- **PortfolioSnapshot**: Time-series portfolio state tracking
 - **RiskMetrics**: Comprehensive risk and performance metrics
 - **DataQualityReport**: Data validation and quality assessment
 
@@ -69,7 +69,7 @@ src/backtesting/
 
 ### Quality Assurance
 - **Data Validation**: Missing data detection, outlier identification
-- **OHLC Consistency**: Price data integrity checks  
+- **OHLC Consistency**: Price data integrity checks
 - **Statistical Significance**: T-tests for performance validation
 - **Quality Scoring**: Automated data quality assessment
 

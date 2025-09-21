@@ -3,7 +3,7 @@ Backtesting Framework for the Agent Investment Platform.
 
 This module provides comprehensive backtesting capabilities including:
 - Backtesting engine for strategy performance validation
-- Performance analysis and risk metrics calculation  
+- Performance analysis and risk metrics calculation
 - Data management for historical market data
 - Comprehensive reporting and visualization
 
@@ -52,7 +52,7 @@ from .data_manager import (
 __all__ = [
     # Core backtesting
     'BacktestEngine',
-    'BacktestConfig', 
+    'BacktestConfig',
     'BacktestResult',
     'BacktestStatus',
     'Trade',
@@ -61,23 +61,23 @@ __all__ = [
     'OrderType',
     'create_sample_backtest_config',
     'run_strategy_backtest',
-    
+
     # Data management
     'DataManager',
     'DataSource',
     'DataQuality',
-    'DataSourceConfig', 
+    'DataSourceConfig',
     'DataQualityReport',
     'MarketDataPoint',
     'create_sample_data_manager',
     'generate_backtest_dataset',
-    
+
     # Performance analysis (commented out for now)
     # 'PerformanceAnalyzer',
     # 'PerformanceReport',
     # 'PerformanceCategory',
     # 'BenchmarkComparison',
-    # 'PerformanceAttribution', 
+    # 'PerformanceAttribution',
     # 'RiskAnalysis',
     # 'compare_strategies',
     # 'generate_executive_summary'
