@@ -1,0 +1,16 @@
+[tool.pytest.ini_options]
+# Pytest configuration for Agent Investment Platform
+minversion = "6.0"
+addopts = "-ra -q --tb=short"
+testpaths = ["tests"]
+python_paths = ["src"]
+markers = [
+    "slow: marks tests as slow (deselect with '-m \"not slow\"')",
+    "integration: marks tests as integration tests",
+    "unit: marks tests as unit tests",
+    "performance: marks tests as performance tests"
+]
+
+[build-system]
+requires = ["setuptools>=45", "wheel", "setuptools_scm[toml]>=6.2"]
+build-backend = "setuptools.build_meta"
