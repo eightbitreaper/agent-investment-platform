@@ -1,0 +1,53 @@
+{
+  "user_preferences": {
+    "coding_style": {
+      "documentation_level": "comprehensive",
+      "comment_style": "detailed_docstrings",
+      "error_handling": "robust_with_logging",
+      "file_organization": "strict_directory_structure",
+      "cross_platform_support": true
+    },
+    "communication_style": {
+      "detail_level": "high",
+      "progress_updates": "frequent_with_status_indicators", 
+      "response_format": "structured_with_sections",
+      "proactive_suggestions": "appreciated",
+      "completion_confirmation": "required_before_proceeding"
+    },
+    "workflow_preferences": {
+      "task_progression": "systematic_sequential",
+      "validation_approach": "comprehensive_testing",
+      "documentation_updates": "immediate_after_completion",
+      "guidelines_compliance": "mandatory_strict_enforcement"
+    }
+  },
+  "technical_preferences": {
+    "platforms": ["windows", "linux", "macos"],
+    "deployment": "docker_containerized",
+    "llm_approach": "hybrid_local_and_cloud",
+    "configuration_style": "external_yaml_json_files",
+    "documentation_format": "markdown_with_navigation"
+  },
+  "quality_standards": {
+    "code_completeness": "production_ready_no_placeholders",
+    "documentation_organization": "docs_folder_with_readme_branching",
+    "error_handling": "comprehensive_with_informative_messages",
+    "cross_referencing": "maintain_all_navigation_links",
+    "platform_compatibility": "full_windows_linux_macos_support"
+  },
+  "session_patterns": {
+    "task_completion_ritual": [
+      "implement_full_solution",
+      "update_task_status_immediately", 
+      "provide_implementation_summary",
+      "highlight_key_features",
+      "ask_permission_for_next_task"
+    ],
+    "guidelines_compliance": [
+      "always_reference_guidelines_first",
+      "place_files_in_correct_directories",
+      "update_parent_readme_navigation",
+      "cross_reference_related_docs"
+    ]
+  }
+}

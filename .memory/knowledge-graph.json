@@ -1,0 +1,132 @@
+{
+  "project_entities": {
+    "agent-investment-platform": {
+      "type": "project",
+      "status": "active_development",
+      "owner": "eightbitreaper",
+      "repository": "https://github.com/eightbitreaper/agent-investment-platform",
+      "purpose": "ai_powered_stock_investment_analysis_platform"
+    },
+    "eightbitreaper": {
+      "type": "user",
+      "role": "project_owner_and_developer",
+      "preferences": "systematic_comprehensive_documentation_focused",
+      "workflow": "task_based_with_explicit_approval_gates"
+    }
+  },
+  "task_relationships": {
+    "initialization_system": {
+      "parent_task": "0.0_vs_code_agent_initialization_system",
+      "dependencies": ["0.1", "0.2", "0.3", "0.4", "0.5", "0.6", "0.7", "0.8", "0.9"],
+      "completed": ["0.1", "0.2", "0.3", "0.4"],
+      "current_focus": "0.5_download_models_py",
+      "critical_path": true
+    },
+    "infrastructure_setup": {
+      "parent_task": "1.0_infrastructure_and_environment_setup", 
+      "depends_on": "0.0_completion",
+      "includes": ["docker_compose", "dockerfile", "requirements_txt", "directory_structure"],
+      "status": "pending"
+    },
+    "mcp_integration": {
+      "parent_task": "2.0_mcp_server_integration_and_data_ingestion",
+      "depends_on": "1.0_completion", 
+      "agents": ["stock_data", "news", "youtube", "reddit", "twitter"],
+      "status": "pending"
+    }
+  },
+  "component_relationships": {
+    "configuration_system": {
+      "files": [
+        "config/llm-config.yaml",
+        "config/mcp-servers.json", 
+        "config/data-sources.yaml",
+        "config/strategies.yaml",
+        "config/notification-config.yaml"
+      ],
+      "managed_by": "scripts/setup/configure-environment.py",
+      "template": ".env.example",
+      "user_config": ".env"
+    },
+    "initialization_flow": {
+      "entry_point": "docs/setup/initialize.prompt.md",
+      "orchestrator": "scripts/initialize.py",
+      "steps": [
+        "scripts/setup/install-dependencies.py",
+        "scripts/setup/configure-environment.py", 
+        "scripts/setup/download-models.py",
+        "scripts/setup/validate-setup.py"
+      ]
+    },
+    "documentation_hierarchy": {
+      "root": "README.md",
+      "docs_index": "docs/README.md",
+      "sections": {
+        "setup": ["initialize.prompt.md", "installation-guide.md", "local-llm-setup.md"],
+        "api": ["README.md", "mcp-server-reference.md"],
+        "development": ["README.md", "contributing.md"],
+        "deployment": ["docker-deployment.md"],
+        "troubleshooting": ["common-issues.md"]
+      }
+    }
+  },
+  "knowledge_connections": {
+    "llm_integration": {
+      "local_options": ["ollama", "lmstudio"],
+      "cloud_options": ["openai_gpt4", "anthropic_claude"],
+      "configuration": "config/llm-config.yaml",
+      "models": {
+        "analysis": "llama3.1",
+        "reporting": "llama3.1:70b", 
+        "coding": "codellama"
+      }
+    },
+    "data_pipeline": {
+      "sources": ["stock_apis", "news_feeds", "youtube_channels", "social_media"],
+      "processing": ["mcp_servers", "sentiment_analysis", "technical_analysis"],
+      "output": ["markdown_reports", "github_integration", "notifications"]
+    },
+    "development_workflow": {
+      "guidelines": ".vscode/guidelines.prompt.md",
+      "task_tracking": "tasks/tasks-prd.md", 
+      "memory_system": ".memory/",
+      "quality_gates": ["guidelines_compliance", "documentation_updates", "task_status_tracking"]
+    }
+  },
+  "temporal_relationships": {
+    "session_2025_09_21": {
+      "start_context": "new_project_initialization",
+      "major_decisions": [
+        "documentation_organization_strategy",
+        "vs_code_agent_integration_approach",
+        "hybrid_llm_architecture",
+        "guidelines_enforcement_system"
+      ],
+      "completion_pattern": "systematic_task_progression_with_comprehensive_implementations",
+      "user_satisfaction_indicators": [
+        "emphasis_on_documentation_organization", 
+        "appreciation_for_comprehensive_solutions",
+        "request_for_guidelines_enforcement",
+        "preference_for_automatic_agent_discovery"
+      ]
+    }
+  },
+  "semantic_clusters": {
+    "platform_architecture": [
+      "mcp_servers", "docker_containers", "llm_integration", 
+      "configuration_management", "cross_platform_support"
+    ],
+    "user_experience": [
+      "one_command_setup", "vs_code_integration", "interactive_configuration",
+      "comprehensive_documentation", "contributor_onboarding"
+    ],
+    "quality_assurance": [
+      "guidelines_enforcement", "error_handling", "validation_systems",
+      "cross_platform_testing", "documentation_consistency"
+    ],
+    "investment_domain": [
+      "stock_analysis", "sentiment_analysis", "technical_indicators",
+      "report_generation", "strategy_configuration"
+    ]
+  }
+}

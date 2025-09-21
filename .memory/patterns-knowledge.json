@@ -1,0 +1,110 @@
+{
+  "implementation_patterns": {
+    "error_handling": {
+      "pattern": "comprehensive_try_catch_with_custom_exceptions",
+      "example": "DependencyError, InitializationError with detailed messages",
+      "logging": "structured_logging_with_debug_info",
+      "user_feedback": "clear_error_messages_with_remediation_steps"
+    },
+    "configuration_management": {
+      "pattern": "environment_variables_with_yaml_overrides",
+      "template_approach": "example_files_with_variable_substitution",
+      "validation": "runtime_validation_with_helpful_error_messages",
+      "defaults": "sensible_defaults_for_development_mode"
+    },
+    "cross_platform_support": {
+      "detection": "platform_system_calls_with_fallbacks",
+      "package_managers": "chocolatey_homebrew_apt_yum_pacman_support",
+      "path_handling": "pathlib_for_cross_platform_paths",
+      "command_execution": "subprocess_with_timeout_and_error_handling"
+    },
+    "interactive_setup": {
+      "pattern": "guided_prompts_with_validation",
+      "defaults": "smart_defaults_based_on_system_detection",
+      "feedback": "immediate_validation_and_confirmation",
+      "persistence": "automatic_env_file_updates"
+    }
+  },
+  "code_quality_patterns": {
+    "documentation": {
+      "docstrings": "comprehensive_class_and_method_documentation",
+      "comments": "explain_why_not_what_for_complex_logic",
+      "type_hints": "full_type_annotations_with_optional_handling",
+      "examples": "provide_usage_examples_in_docstrings"
+    },
+    "modularity": {
+      "class_design": "single_responsibility_with_clear_interfaces",
+      "method_length": "focused_methods_with_single_purpose",
+      "dependency_injection": "pass_dependencies_via_constructor",
+      "configuration_separation": "external_config_files_not_hardcoded"
+    },
+    "testing_approach": {
+      "validation": "comprehensive_setup_validation_methods",
+      "error_simulation": "test_failure_scenarios_explicitly", 
+      "platform_testing": "test_on_multiple_operating_systems",
+      "integration_testing": "end_to_end_setup_validation"
+    }
+  },
+  "file_organization_patterns": {
+    "directory_structure": {
+      "scripts": "setup_scripts_in_scripts_setup_subdirectory",
+      "config": "configuration_files_in_config_directory", 
+      "docs": "all_documentation_in_docs_with_section_subdirs",
+      "source": "application_code_in_src_with_feature_modules"
+    },
+    "naming_conventions": {
+      "files": "lowercase_with_hyphens_for_readability",
+      "classes": "PascalCase_with_descriptive_names",
+      "methods": "snake_case_with_verb_noun_pattern",
+      "constants": "UPPER_CASE_with_underscores"
+    },
+    "import_organization": {
+      "standard_library": "first_group_alphabetically_sorted",
+      "third_party": "second_group_alphabetically_sorted", 
+      "local_imports": "third_group_with_relative_imports",
+      "type_imports": "separate_from_typing_when_applicable"
+    }
+  },
+  "user_interaction_patterns": {
+    "progress_communication": {
+      "status_indicators": "use_emojis_and_checkmarks_for_clarity",
+      "section_headers": "clear_hierarchical_organization",
+      "completion_summaries": "highlight_key_accomplishments_and_features",
+      "next_steps": "explicit_permission_request_before_proceeding"
+    },
+    "technical_explanations": {
+      "feature_highlights": "bullet_points_with_key_capabilities",
+      "architecture_context": "explain_how_component_fits_in_system",
+      "implementation_rationale": "justify_technical_choices_made",
+      "future_extensibility": "mention_how_solution_supports_growth"
+    }
+  },
+  "session_continuity_patterns": {
+    "context_preservation": {
+      "task_status_tracking": "immediate_updates_to_task_markdown",
+      "decision_logging": "record_architectural_choices_and_rationale",
+      "preference_learning": "adapt_to_user_feedback_and_patterns",
+      "knowledge_accumulation": "build_on_previous_session_insights"
+    },
+    "quality_consistency": {
+      "guidelines_enforcement": "always_reference_project_guidelines",
+      "pattern_replication": "maintain_established_code_patterns",
+      "documentation_updates": "keep_navigation_and_cross_references_current",
+      "standard_compliance": "follow_established_naming_and_organization"
+    }
+  },
+  "domain_knowledge_patterns": {
+    "investment_platform": {
+      "data_sources": "multiple_apis_with_rate_limiting_and_fallbacks",
+      "analysis_types": "sentiment_technical_fundamental_social_analysis",
+      "reporting_requirements": "markdown_with_buy_sell_hold_recommendations",
+      "privacy_considerations": "local_llm_options_for_sensitive_analysis"
+    },
+    "ai_integration": {
+      "llm_selection": "task_appropriate_model_selection_strategy",
+      "prompt_engineering": "structured_prompts_with_consistent_formatting",
+      "response_processing": "parse_and_validate_llm_outputs",
+      "fallback_handling": "graceful_degradation_when_llm_unavailable"
+    }
+  }
+}

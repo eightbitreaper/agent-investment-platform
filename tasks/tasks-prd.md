@@ -33,6 +33,13 @@
 - `docs/setup/initialize.prompt.md` - VS Code agent prompt for one-command setup
 - `docs/setup/installation-guide.md` - Comprehensive installation instructions
 - `.vscode/guidelines.prompt.md` - Master development guidelines and documentation standards
+- `.memory/` - AI memory bank system for persistent knowledge and context
+- `.memory/project-context.md` - Comprehensive project context and evolution
+- `.memory/user-preferences.json` - User preferences and working patterns
+- `.memory/architecture-decisions.md` - Technical decisions and rationale
+- `.memory/patterns-knowledge.json` - Implementation patterns and code quality standards
+- `.memory/knowledge-graph.json` - Semantic relationships between project components
+- `.memory/memory_bank.py` - Memory bank API for context retrieval and updates
 - `docs/setup/configuration-guide.md` - Configuration and customization guide
 - `docs/api/README.md` - API documentation index
 - `docs/development/README.md` - Development guide index
