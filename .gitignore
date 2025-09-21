@@ -152,6 +152,9 @@ models/
 config/local-*.json
 config/local-*.yaml
 
+# Generated model configurations (runtime data)
+config/huggingface-models.json
+
 # Docker volumes and data
 docker-data/
 data/
@@ -175,6 +178,9 @@ Thumbs.db
 # Temporary files
 *.tmp
 *.temp
+*.backup
+*.bak
+*~
 validation-report.md
 
 # Session files

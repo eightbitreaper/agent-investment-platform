@@ -3,15 +3,52 @@
 
 # Default LLM Configuration
 default:
-  provider: "ollama"  # Options: ollama, openai, anthropic
-  model: "llama3.1:8b"
+  provider: "huggingface"  # Options: huggingface, ollama, openai, anthropic
+  model: "microsoft/Phi-3-mini-4k-instruct"
   max_tokens: 4096
   temperature: 0.1
-  timeout: 300
+  timeout: 120
 
 # Provider-specific configurations
 providers:
-  # Local LLM via Ollama
+  # Hugging Face Models (Free, automatically updated)
+  huggingface:
+    cache_dir: "${HF_HOME:-models/.huggingface_cache}"
+    models_dir: "models"
+    models:
+      - name: "microsoft/Phi-3-mini-4k-instruct"
+        description: "Phi-3 Mini - Small, efficient model for general financial analysis"
+        context_length: 4096
+        size_gb: 2.4
+        use_cases: ["general", "classification", "summarization"]
+        model_type: "text-generation"
+        repo_id: "microsoft/Phi-3-mini-4k-instruct"
+      - name: "ProsusAI/finbert"
+        description: "FinBERT - BERT model fine-tuned for financial sentiment analysis"
+        context_length: 512
+        size_gb: 0.4
+        use_cases: ["sentiment", "classification", "news_analysis"]
+        model_type: "text-classification"
+        repo_id: "ProsusAI/finbert"
+      - name: "sentence-transformers/all-MiniLM-L6-v2"
+        description: "All-MiniLM-L6-v2 - Sentence embeddings for semantic similarity"
+        context_length: 256
+        size_gb: 0.1
+        use_cases: ["embeddings", "similarity", "clustering"]
+        model_type: "sentence-transformers"
+        repo_id: "sentence-transformers/all-MiniLM-L6-v2"
+      - name: "microsoft/codebert-base"
+        description: "CodeBERT - Code understanding for trading strategy analysis"
+        context_length: 512
+        size_gb: 0.5
+        use_cases: ["code_analysis", "strategy_validation"]
+        model_type: "text-generation"
+        repo_id: "microsoft/codebert-base"
+    auto_update: true
+    free_download: true
+    timeout: 120
+    
+  # Local LLM via Ollama (Optional)
   ollama:
     host: "${OLLAMA_HOST:-http://localhost:11434}"
     models:
@@ -70,54 +107,63 @@ providers:
 task_assignments:
   # Financial analysis tasks
   stock_analysis:
-    primary: "llama3.1:8b"
+    primary: "microsoft/Phi-3-mini-4k-instruct"
     fallback: "gpt-4-turbo-preview"
     temperature: 0.1
-
+    
   market_sentiment:
-    primary: "llama3.1:8b"
+    primary: "ProsusAI/finbert"
     fallback: "claude-3-sonnet-20240229"
     temperature: 0.2
-
+    
   technical_analysis:
-    primary: "llama3.1:70b"
+    primary: "microsoft/Phi-3-mini-4k-instruct"
     fallback: "gpt-4"
     temperature: 0.1
-
+    
   # Research and strategy tasks
   investment_strategy:
-    primary: "llama3.1:70b"
+    primary: "microsoft/Phi-3-mini-4k-instruct"
     fallback: "gpt-4-turbo-preview"
     temperature: 0.3
-
+    
   risk_assessment:
-    primary: "llama3.1:8b"
+    primary: "microsoft/Phi-3-mini-4k-instruct"
     fallback: "claude-3-sonnet-20240229"
     temperature: 0.1
-
+    
   # Content generation tasks
   report_generation:
-    primary: "llama3.1:8b"
+    primary: "microsoft/Phi-3-mini-4k-instruct"
     fallback: "gpt-4-turbo-preview"
     temperature: 0.2
-
+    
   news_summarization:
-    primary: "llama3.1:8b"
+    primary: "microsoft/Phi-3-mini-4k-instruct"
     fallback: "gpt-3.5-turbo"
     temperature: 0.1
-
+    
   # Data processing tasks
   data_extraction:
-    primary: "llama3.1:8b"
+    primary: "microsoft/Phi-3-mini-4k-instruct"
     fallback: "claude-3-haiku-20240307"
     temperature: 0.0
-
+    
   classification:
-    primary: "mistral:7b"
+    primary: "ProsusAI/finbert"
     fallback: "gpt-3.5-turbo"
     temperature: 0.0
-
-# Model health monitoring
+    
+  # Embedding and similarity tasks
+  document_embeddings:
+    primary: "sentence-transformers/all-MiniLM-L6-v2"
+    fallback: "microsoft/Phi-3-mini-4k-instruct"
+    temperature: 0.0
+    
+  semantic_search:
+    primary: "sentence-transformers/all-MiniLM-L6-v2"
+    fallback: "microsoft/Phi-3-mini-4k-instruct"
+    temperature: 0.0# Model health monitoring
 health_check:
   enabled: true
   interval_seconds: 300

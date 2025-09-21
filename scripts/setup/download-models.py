@@ -1,9 +1,9 @@
 #!/usr/bin/env python3
 """
-Local LLM Model Download and Management Script for Agent Investment Platform
+Hugging Face Model Download and Management Script for Agent Investment Platform
 
-This script handles automated downloading, installation, and management of local LLM models
-for privacy-focused AI analysis. Supports Ollama, LMStudio, and other local inference engines.
+This script handles automated downloading and management of LLM models from Hugging Face Hub.
+Leverages free model downloads and automatic repository syncing for latest model definitions.
 """
 
 import os
@@ -16,7 +16,6 @@ from pathlib import Path
 from typing import Dict, List, Optional, Tuple, Any
 import logging
 import time
-import hashlib
 from dataclasses import dataclass
 import platform
 
@@ -24,31 +23,37 @@ import platform
 logger = logging.getLogger(__name__)
 
 @dataclass
-class ModelInfo:
-    """Information about a local LLM model"""
+class HuggingFaceModel:
+    """Information about a Hugging Face model"""
+    repo_id: str
     name: str
     size_gb: float
     description: str
-    use_case: str
-    download_url: Optional[str] = None
-    ollama_name: Optional[str] = None
-    huggingface_id: Optional[str] = None
+    use_case: List[str]
+    model_type: str  # "text-generation", "text-classification", etc.
     required_ram_gb: float = 8.0
-    quantization: str = "Q4_K_M"
+    quantized: bool = False
+    local_path: Optional[str] = None
+    config_file: str = "config.json"
+    tokenizer_file: str = "tokenizer.json"
 
 class ModelDownloadError(Exception):
     """Custom exception for model download failures"""
     pass
 
-class ModelDownloader:
-    """Handles local LLM model downloading and management"""
+class HuggingFaceModelManager:
+    """Handles Hugging Face model downloading and management"""
     
-    def __init__(self, config_dir: Path, llm_choice: str = "local"):
+    def __init__(self, config_dir: Path):
         self.config_dir = config_dir
-        self.llm_choice = llm_choice
         self.project_root = config_dir.parent
         self.models_dir = self.project_root / "models"
-        self.ollama_available = self._check_ollama_available()
+        self.hf_cache_dir = self.models_dir / ".huggingface_cache"
+        self.available_models = self._define_huggingface_models()
+        
+        # Ensure directories exist
+        self.models_dir.mkdir(exist_ok=True)
+        self.hf_cache_dir.mkdir(exist_ok=True)
         self.lmstudio_available = self._check_lmstudio_available()
         
         # Create models directory
