@@ -1,7 +1,7 @@
 ```prompt
 ---
 description: Initialize Agent Investment Platform - Complete Setup
-globs: 
+globs:
 alwaysApply: false
 ---
 # Agent Investment Platform Initialization
@@ -64,7 +64,7 @@ Before starting, the system will verify:
 ## MCP Server Configuration
 The initialization will set up MCP servers for:
 - **Stock Data**: Polygon API
-- **News Sources**: Google News, Reddit, Twitter/X APIs  
+- **News Sources**: Google News, Reddit, Twitter/X APIs
 - **YouTube**: Transcript extraction from configured channels
 - **Market Data**: Real-time and historical price feeds
 

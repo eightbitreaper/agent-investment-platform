@@ -262,7 +262,7 @@ volume_ratio >= 1.2
 IF (growth_rate_declining AND competitive_pressure_increasing)
     THEN Sell (growth story broken)
 ELIF (valuation_extreme AND momentum_fading)
-    THEN Trim (profit-taking)  
+    THEN Trim (profit-taking)
 ELIF (fundamental_story_intact AND temporary_dip)
     THEN Hold/Add (buying opportunity)
 ELSE

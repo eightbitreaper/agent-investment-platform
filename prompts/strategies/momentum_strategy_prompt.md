@@ -74,7 +74,7 @@ Entry Trigger: [Breakout/Continuation/Acceleration]
 MOMENTUM METRICS:
 Price Performance:
 - 1 Month: +[XX]% (vs SPY: +[XX]%)
-- 3 Month: +[XX]% (vs SPY: +[XX]%)  
+- 3 Month: +[XX]% (vs SPY: +[XX]%)
 - 6 Month: +[XX]% (vs SPY: +[XX]%)
 - YTD: +[XX]% (vs SPY: +[XX]%)
 - Relative Strength Rank: [XX/100]
@@ -94,7 +94,7 @@ Earnings Momentum:
 - Guidance: [Raised/Maintained/Lowered] ([Date])
 
 Revenue Momentum:
-- Latest Revenue Growth: +[XX]% Y/Y  
+- Latest Revenue Growth: +[XX]% Y/Y
 - Revenue Acceleration: [Accelerating/Decelerating/Stable]
 - Revenue Surprise (last 4Q): [+X%, +X%, +X%, +X%]
 
@@ -173,7 +173,7 @@ Fundamental:
 
 Catalysts (Next 90 days):
 1. [Date - Specific catalyst and expected impact]
-2. [Date - Specific catalyst and expected impact]  
+2. [Date - Specific catalyst and expected impact]
 3. [Date - Specific catalyst and expected impact]
 
 RISK FACTORS:
@@ -255,7 +255,7 @@ Emerging Momentum:
 - [Sector]: Earnings revisions turning positive
 - [Sector]: Institutional rotation beginning
 
-Fading Momentum:  
+Fading Momentum:
 - [Sector]: Relative strength deteriorating
 - [Sector]: Key stocks breaking down
 - [Sector]: Earnings estimates coming down
@@ -271,7 +271,7 @@ Fading Momentum:
 
 **Breakout Momentum:**
 - Enter on volume-confirmed breakouts
-- Use tight stops below breakout level  
+- Use tight stops below breakout level
 - Scale into position on follow-through
 - Target: 15-25% gains in 30-90 days
 
@@ -288,19 +288,19 @@ EXIT DECISION FRAMEWORK:
 
 IF (momentum_fading AND below_20day_MA)
     THEN Sell 50% (momentum breaking)
-    
+
 ELIF (target_reached AND overbought_RSI > 80)
     THEN Take_profits 25-50% (overbought)
-    
-ELIF (stop_loss_hit OR breakdown_confirmed)  
+
+ELIF (stop_loss_hit OR breakdown_confirmed)
     THEN Sell_all (preserve capital)
-    
+
 ELIF (time_stop_reached AND no_progress)
     THEN Sell_all (opportunity cost)
-    
+
 ELIF (fundamental_deterioration AND estimate_cuts)
     THEN Sell_all (thesis broken)
-    
+
 ELSE
     THEN Hold_and_trail_stop
 ```

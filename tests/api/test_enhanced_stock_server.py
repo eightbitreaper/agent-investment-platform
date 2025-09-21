@@ -20,7 +20,7 @@ from src.mcp_base.mcp_error import MCPError
 
 class EnhancedStockDataServer(StockDataServer):
     """Enhanced Stock Data Server with multiple data sources."""
-    
+
     def __init__(self):
         super().__init__()
         self.sources_enabled = {
@@ -28,21 +28,21 @@ class EnhancedStockDataServer(StockDataServer):
             "yahoo": True,  # Always available
             "tradingview": True  # Always available
         }
-    
+
     async def get_multi_source_quote(self, symbol: str) -> Optional[StockQuote]:
         """Get stock quote with automatic fallback between sources."""
-        
+
         # Define source priority
         sources = []
-        
+
         if self.polygon_key:
             sources.append(("Polygon", self._get_polygon_quote_enhanced))
-        
+
         sources.extend([
             ("Yahoo Finance", self._get_yahoo_quote),
             ("TradingView", self._get_tradingview_quote)
         ])
-        
+
         for source_name, method in sources:
             try:
                 quote = await method(symbol)
@@ -52,30 +52,30 @@ class EnhancedStockDataServer(StockDataServer):
             except Exception as e:
                 self.logger.warning(f"{source_name} failed for {symbol}: {e}")
                 continue
-        
+
         return None
-    
+
     async def _get_polygon_quote_enhanced(self, symbol: str) -> Optional[StockQuote]:
         """Enhanced Polygon quote with better error handling."""
         url = f"https://api.polygon.io/v2/aggs/ticker/{symbol}/prev?adjusted=true&apikey={self.polygon_key}"
-        
+
         async with aiohttp.ClientSession() as session:
             async with session.get(url) as response:
                 if response.status == 429:
                     raise Exception("Rate limit exceeded")
                 elif response.status != 200:
                     raise Exception(f"HTTP {response.status}")
-                    
+
                 data = await response.json()
                 if data.get("status") != "OK" or not data.get("results"):
                     raise Exception("No data available")
-                
+
                 result = data["results"][0]
                 open_price = float(result.get("o", 0))
                 close_price = float(result.get("c", 0))
                 change = close_price - open_price
                 change_percent = (change / open_price * 100) if open_price > 0 else 0
-                
+
                 return StockQuote(
                     symbol=symbol.upper(),
                     price=close_price,
@@ -84,33 +84,33 @@ class EnhancedStockDataServer(StockDataServer):
                     volume=int(result.get("v", 0)),
                     timestamp=datetime.fromtimestamp(result.get("t", 0) / 1000) if result.get("t") else datetime.now()
                 )
-    
+
     async def _get_yahoo_quote(self, symbol: str) -> Optional[StockQuote]:
         """Get quote from Yahoo Finance."""
         url = f"https://query1.finance.yahoo.com/v8/finance/chart/{symbol}"
-        
+
         headers = {
             'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36'
         }
-        
+
         async with aiohttp.ClientSession() as session:
             async with session.get(url, headers=headers) as response:
                 if response.status != 200:
                     raise Exception(f"HTTP {response.status}")
-                
+
                 data = await response.json()
                 result = data['chart']['result'][0]
                 meta = result['meta']
-                
+
                 current_price = meta.get('regularMarketPrice')
                 previous_close = meta.get('previousClose')
-                
+
                 if not current_price or not previous_close:
                     raise Exception("Missing price data")
-                
+
                 change = current_price - previous_close
                 change_percent = (change / previous_close * 100) if previous_close > 0 else 0
-                
+
                 return StockQuote(
                     symbol=meta.get('symbol', symbol).upper(),
                     price=float(current_price),
@@ -119,36 +119,36 @@ class EnhancedStockDataServer(StockDataServer):
                     volume=int(meta.get('regularMarketVolume', 0)),
                     timestamp=datetime.now()
                 )
-    
+
     async def _get_tradingview_quote(self, symbol: str) -> Optional[StockQuote]:
         """Get quote from TradingView screener."""
         url = "https://scanner.tradingview.com/america/scan"
-        
+
         headers = {
             'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36',
             'Referer': 'https://www.tradingview.com/',
             'Origin': 'https://www.tradingview.com',
             'Content-Type': 'application/json'
         }
-        
+
         payload = {
             "filter": [{"left": "name", "operation": "match", "right": symbol}],
             "columns": ["name", "close", "change", "change_abs", "volume"],
             "sort": {"sortBy": "name", "sortOrder": "asc"},
             "range": [0, 1]
         }
-        
+
         async with aiohttp.ClientSession() as session:
             async with session.post(url, json=payload, headers=headers) as response:
                 if response.status != 200:
                     raise Exception(f"HTTP {response.status}")
-                
+
                 data = await response.json()
                 if not data.get('data') or len(data['data']) == 0:
                     raise Exception("No data found")
-                
+
                 row = data['data'][0]['d']
-                
+
                 return StockQuote(
                     symbol=row[0],
                     price=float(row[1]),
@@ -157,7 +157,7 @@ class EnhancedStockDataServer(StockDataServer):
                     volume=int(row[4]) if row[4] else 0,
                     timestamp=datetime.now()
                 )
-    
+
     async def _handle_get_stock_quote(self, params: Dict[str, Any]) -> Dict[str, Any]:
         """Enhanced stock quote handler with multi-source fallback."""
         symbol = params.get("symbol", "").upper()
@@ -187,7 +187,7 @@ class EnhancedStockDataServer(StockDataServer):
                 "sources_active": [k for k, v in self.sources_enabled.items() if v]
             }
         }
-    
+
     async def health_check(self) -> Dict[str, Any]:
         """Enhanced health check showing all data sources."""
         status = {
@@ -209,7 +209,7 @@ class EnhancedStockDataServer(StockDataServer):
                 }
             }
         }
-        
+
         # Test connectivity for available sources
         if self.polygon_key:
             try:
@@ -219,16 +219,16 @@ class EnhancedStockDataServer(StockDataServer):
                 }
             except:
                 status["connectivity_test"] = {"polygon": "failed"}
-        
+
         return status
 
 async def test_enhanced_server():
     """Test the enhanced multi-source server."""
     print("🚀 Testing Enhanced Multi-Source Stock Data Server...")
     print()
-    
+
     server = EnhancedStockDataServer()
-    
+
     # Test health check
     health = await server.health_check()
     print("📊 Health Check:")
@@ -239,10 +239,10 @@ async def test_enhanced_server():
         api_key = "🔑" if info['requires_api_key'] else "🆓"
         print(f"     {status} {source} {api_key}")
     print()
-    
+
     # Test stock quote with fallback
     test_symbols = ["AAPL", "MSFT", "INVALID"]
-    
+
     for symbol in test_symbols:
         try:
             result = await server._handle_get_stock_quote({"symbol": symbol})
@@ -250,7 +250,7 @@ async def test_enhanced_server():
             print(f"✅ {symbol}: ${data['price']:.2f} ({data['change_percent']:+.2f}%)")
         except Exception as e:
             print(f"❌ {symbol}: {e}")
-    
+
     print()
     print("🎉 Enhanced server testing completed!")
 

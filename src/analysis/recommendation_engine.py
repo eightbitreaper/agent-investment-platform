@@ -60,7 +60,7 @@ class AnalysisWeights:
     technical: float = 0.4
     sentiment: float = 0.3
     fundamental: float = 0.3
-    
+
     def __post_init__(self):
         """Normalize weights to sum to 1.0."""
         total = self.technical + self.sentiment + self.fundamental
@@ -100,28 +100,28 @@ class InvestmentRecommendation:
     confidence: ConfidenceLevel
     target_price: Optional[float]
     current_price: float
-    
+
     # Analysis scores (normalized -1.0 to 1.0)
     technical_score: float
     sentiment_score: float
     fundamental_score: Optional[float]
     composite_score: float
-    
+
     # Risk and sizing
     risk_metrics: RiskMetrics
     position_sizing: PositionSizing
-    
+
     # Supporting analysis
     technical_analysis: Optional[TechnicalAnalysis]
     market_sentiment: Optional[MarketSentiment]
     strategy_alignment: float  # How well it fits the chosen strategy
-    
+
     # Metadata
     analysis_timestamp: datetime
     data_freshness: Dict[str, datetime]  # When each data source was last updated
     reasoning: List[str]  # Human-readable reasoning points
     warnings: List[str]  # Risk warnings and caveats
-    
+
     # Strategy context
     strategy_name: str
     time_horizon: str
@@ -131,30 +131,30 @@ class InvestmentRecommendation:
 class RecommendationEngine:
     """
     Unified recommendation engine combining all analysis components.
-    
-    This class orchestrates sentiment analysis, technical analysis, and 
+
+    This class orchestrates sentiment analysis, technical analysis, and
     fundamental analysis to generate comprehensive investment recommendations
     tailored to specific investment strategies and risk profiles.
     """
-    
+
     def __init__(self, config_path: str = "config/strategies.yaml"):
         """
         Initialize recommendation engine.
-        
+
         Args:
             config_path: Path to strategies configuration file
         """
         self.logger = logging.getLogger(__name__)
         self.config_path = config_path
         self.strategies_config = self._load_strategies_config()
-        
+
         # Initialize analysis components
         self.sentiment_analyzer = FinancialSentimentAnalyzer()
         self.chart_analyzer = TechnicalChartAnalyzer()
-        
+
         # Default analysis weights (can be overridden by strategy)
         self.default_weights = AnalysisWeights()
-        
+
         self.logger.info("Recommendation engine initialized successfully")
 
     def _load_strategies_config(self) -> Dict[str, Any]:
@@ -179,7 +179,7 @@ class RecommendationEngine:
     ) -> InvestmentRecommendation:
         """
         Generate comprehensive investment recommendation.
-        
+
         Args:
             symbol: Stock symbol to analyze
             strategy_name: Investment strategy to use
@@ -187,27 +187,27 @@ class RecommendationEngine:
             news_data: Recent news articles for sentiment analysis
             fundamental_data: Fundamental analysis data
             custom_weights: Custom analysis weights
-            
+
         Returns:
             Comprehensive investment recommendation
         """
         self.logger.info(f"Analyzing investment for {symbol} using {strategy_name} strategy")
-        
+
         start_time = datetime.now()
         analysis_timestamp = start_time
         data_freshness = {}
         reasoning = []
         warnings = []
-        
+
         # Get strategy configuration
         strategy_config = self._get_strategy_config(strategy_name)
         weights = custom_weights or self._get_strategy_weights(strategy_config)
-        
+
         # Initialize scores
         technical_score = 0.0
         sentiment_score = 0.0
         fundamental_score = None
-        
+
         # 1. Technical Analysis
         technical_analysis = None
         if price_data is not None and not price_data.empty:
@@ -219,15 +219,15 @@ class RecommendationEngine:
                 technical_score = self._convert_technical_to_score(technical_analysis)
                 data_freshness['technical'] = analysis_timestamp
                 reasoning.append(f"Technical analysis shows {technical_analysis.trend_direction.name.lower()} trend")
-                
+
                 self.logger.debug(f"Technical analysis completed for {symbol}: score {technical_score:.3f}")
-                
+
             except Exception as e:
                 self.logger.warning(f"Technical analysis failed for {symbol}: {e}")
                 warnings.append("Technical analysis data unavailable or incomplete")
         else:
             warnings.append("No price data available for technical analysis")
-        
+
         # 2. Sentiment Analysis
         market_sentiment = None
         if news_data:
@@ -242,7 +242,7 @@ class RecommendationEngine:
                             source=article.get('source', 'news')
                         )
                         sentiment_results.append(result)
-                
+
                 if sentiment_results:
                     market_sentiment = await self.sentiment_analyzer.analyze_symbol_sentiment(
                         symbol=symbol,
@@ -251,15 +251,15 @@ class RecommendationEngine:
                     sentiment_score = market_sentiment.overall_score
                     data_freshness['sentiment'] = analysis_timestamp
                     reasoning.append(f"Market sentiment score: {sentiment_score:.2f}")
-                    
+
                     self.logger.debug(f"Sentiment analysis completed for {symbol}: score {sentiment_score:.3f}")
-                    
+
             except Exception as e:
                 self.logger.warning(f"Sentiment analysis failed for {symbol}: {e}")
                 warnings.append("Sentiment analysis data unavailable or incomplete")
         else:
             warnings.append("No news data available for sentiment analysis")
-        
+
         # 3. Fundamental Analysis (placeholder - to be enhanced)
         if fundamental_data:
             try:
@@ -269,7 +269,7 @@ class RecommendationEngine:
             except Exception as e:
                 self.logger.warning(f"Fundamental analysis failed for {symbol}: {e}")
                 warnings.append("Fundamental analysis data unavailable or incomplete")
-        
+
         # 4. Composite Score Calculation
         composite_score = self._calculate_composite_score(
             technical_score=technical_score,
@@ -277,7 +277,7 @@ class RecommendationEngine:
             fundamental_score=fundamental_score,
             weights=weights
         )
-        
+
         # 5. Generate Recommendation
         recommendation_type = self._score_to_recommendation(composite_score, strategy_config)
         confidence = self._calculate_confidence(
@@ -285,7 +285,7 @@ class RecommendationEngine:
             market_sentiment=market_sentiment,
             data_availability=data_freshness
         )
-        
+
         # 6. Risk Assessment
         risk_metrics = self._assess_risk(
             symbol=symbol,
@@ -293,7 +293,7 @@ class RecommendationEngine:
             price_data=price_data,
             strategy_config=strategy_config
         )
-        
+
         # 7. Position Sizing
         position_sizing = self._calculate_position_sizing(
             recommendation_type=recommendation_type,
@@ -301,21 +301,21 @@ class RecommendationEngine:
             strategy_config=strategy_config,
             current_price=price_data.iloc[-1]['close'].item() if price_data is not None and not price_data.empty else None
         )
-        
+
         # 8. Strategy Alignment
         strategy_alignment = self._calculate_strategy_alignment(
             composite_score=composite_score,
             technical_analysis=technical_analysis,
             strategy_config=strategy_config
         )
-        
+
         # 9. Target Price Calculation
         target_price = self._calculate_target_price(
             current_price=position_sizing.suggested_entry_price or (price_data.iloc[-1]['close'].item() if price_data is not None and not price_data.empty else None),
             technical_analysis=technical_analysis,
             recommendation_type=recommendation_type
         )
-        
+
         # Create final recommendation
         recommendation = InvestmentRecommendation(
             symbol=symbol,
@@ -340,10 +340,10 @@ class RecommendationEngine:
             time_horizon=strategy_config.get('time_horizon', 'medium_term'),
             risk_tolerance=strategy_config.get('risk_level', 'moderate')
         )
-        
+
         duration = (datetime.now() - start_time).total_seconds()
         self.logger.info(f"Analysis completed for {symbol} in {duration:.2f}s: {recommendation_type.name}")
-        
+
         return recommendation
 
     def _get_strategy_config(self, strategy_name: str) -> Dict[str, Any]:
@@ -351,13 +351,13 @@ class RecommendationEngine:
         strategies = self.strategies_config.get('strategies', {})
         if strategy_name in strategies:
             return strategies[strategy_name]
-        
+
         # Fallback to default strategy
         default_name = self.strategies_config.get('default_strategy', {}).get('name', 'balanced_growth')
         if default_name in strategies:
             self.logger.warning(f"Strategy '{strategy_name}' not found, using default '{default_name}'")
             return strategies[default_name]
-        
+
         # Ultimate fallback
         self.logger.warning(f"Neither '{strategy_name}' nor default strategy found, using conservative defaults")
         return {
@@ -380,20 +380,20 @@ class RecommendationEngine:
         """Convert technical analysis to normalized score (-1.0 to 1.0)."""
         if not technical_analysis:
             return 0.0
-        
+
         # Weight different aspects of technical analysis
         trend_score = self._trend_to_score(technical_analysis.trend_direction)
         momentum_score = technical_analysis.trend_strength / 100.0  # Normalize to -1 to 1
-        
+
         # Combine indicators
         bullish_signals = sum(1 for indicator in technical_analysis.indicators if indicator.signal == 'BUY')
         bearish_signals = sum(1 for indicator in technical_analysis.indicators if indicator.signal == 'SELL')
         total_signals = len(technical_analysis.indicators)
-        
+
         signal_score = 0.0
         if total_signals > 0:
             signal_score = (bullish_signals - bearish_signals) / total_signals
-        
+
         # Weighted combination
         score = 0.4 * trend_score + 0.3 * momentum_score + 0.3 * signal_score
         return max(-1.0, min(1.0, score))
@@ -412,12 +412,12 @@ class RecommendationEngine:
     def _analyze_fundamentals(self, fundamental_data: Dict, strategy_config: Dict) -> float:
         """
         Analyze fundamental data (placeholder implementation).
-        
+
         This is a simplified fundamental analysis. In a production system,
         this would include comprehensive financial metrics analysis.
         """
         score = 0.0
-        
+
         # P/E Ratio analysis
         pe_ratio = fundamental_data.get('pe_ratio')
         if pe_ratio:
@@ -426,7 +426,7 @@ class RecommendationEngine:
                 score += 0.2
             elif pe_ratio > max_pe * 1.5:
                 score -= 0.2
-        
+
         # Revenue growth
         revenue_growth = fundamental_data.get('revenue_growth')
         if revenue_growth:
@@ -434,7 +434,7 @@ class RecommendationEngine:
                 score += 0.3
             elif revenue_growth < 0:
                 score -= 0.2
-        
+
         # Profit margins
         profit_margin = fundamental_data.get('profit_margin')
         if profit_margin:
@@ -442,7 +442,7 @@ class RecommendationEngine:
                 score += 0.2
             elif profit_margin < 0:
                 score -= 0.3
-        
+
         # Debt to equity
         debt_to_equity = fundamental_data.get('debt_to_equity')
         if debt_to_equity:
@@ -451,7 +451,7 @@ class RecommendationEngine:
                 score += 0.2
             elif debt_to_equity > max_debt * 2:
                 score -= 0.3
-        
+
         return max(-1.0, min(1.0, score))
 
     def _calculate_composite_score(
@@ -482,7 +482,7 @@ class RecommendationEngine:
     def _score_to_recommendation(self, score: float, strategy_config: Dict) -> RecommendationType:
         """Convert composite score to recommendation type."""
         risk_level = strategy_config.get('risk_level', 'moderate')
-        
+
         # Adjust thresholds based on risk level
         if risk_level == 'low':
             # More conservative thresholds
@@ -521,24 +521,24 @@ class RecommendationEngine:
     ) -> ConfidenceLevel:
         """Calculate confidence level in recommendation."""
         confidence_score = 0
-        
+
         # Data availability contributes to confidence
         available_sources = len(data_availability)
         confidence_score += available_sources * 0.2
-        
+
         # Technical analysis confidence
         if technical_analysis:
             if technical_analysis.confidence > 0.8:
                 confidence_score += 0.3
             elif technical_analysis.confidence > 0.6:
                 confidence_score += 0.2
-        
+
         # Sentiment analysis confidence
         if market_sentiment and market_sentiment.confidence > 0.7:
             confidence_score += 0.3
         elif market_sentiment and market_sentiment.confidence > 0.5:
             confidence_score += 0.2
-        
+
         # Convert to confidence level
         if confidence_score >= 0.8:
             return ConfidenceLevel.VERY_HIGH
@@ -565,22 +565,22 @@ class RecommendationEngine:
             returns = price_data['close'].pct_change().dropna()
             volatility = returns.std() * math.sqrt(252)  # Annualized volatility
             volatility_score = min(1.0, volatility / 0.5)  # Normalize to 0-1 scale
-        
+
         # Estimate beta (simplified - would need market data for accurate calculation)
         beta = 1.0  # Default market beta
-        
+
         # Max drawdown risk based on volatility and technical signals
         max_drawdown_risk = volatility_score * 0.6
         if technical_analysis and technical_analysis.trend_direction in [TrendDirection.BEARISH, TrendDirection.STRONG_BEARISH]:
             max_drawdown_risk *= 1.5
-        
-        # Liquidity risk (simplified - would need volume data)  
+
+        # Liquidity risk (simplified - would need volume data)
         liquidity_risk = 0.3  # Assume moderate liquidity for most stocks
-        
+
         # Concentration risk based on strategy
         max_position = strategy_config.get('position_sizing', {}).get('max_single_position', 0.08)
         concentration_risk = max_position * 2  # Higher allowed position = higher concentration risk
-        
+
         # Overall risk score
         overall_risk_score = (
             0.3 * volatility_score +
@@ -588,7 +588,7 @@ class RecommendationEngine:
             0.2 * liquidity_risk +
             0.3 * concentration_risk
         )
-        
+
         return RiskMetrics(
             volatility_score=volatility_score,
             beta=beta,
@@ -614,25 +614,25 @@ class RecommendationEngine:
             RecommendationType.SELL: 0.0,
             RecommendationType.STRONG_SELL: 0.0
         }.get(recommendation_type, 0.0)
-        
+
         # Adjust for risk
         risk_adjustment = 1.0 - risk_metrics.overall_risk_score * 0.5
         recommended_allocation = base_allocation * risk_adjustment
-        
+
         # Strategy-specific limits
         max_position = strategy_config.get('position_sizing', {}).get('max_single_position', 0.08)
         recommended_allocation = min(recommended_allocation, max_position)
-        
+
         # Stop loss and take profit
         stop_loss_pct = strategy_config.get('risk_management', {}).get('stop_loss_default', 0.08)
         take_profit_pct = strategy_config.get('risk_management', {}).get('take_profit_default', 0.15)
-        
+
         stop_loss_price = None
         take_profit_price = None
         if current_price:
             stop_loss_price = current_price * (1 - stop_loss_pct)
             take_profit_price = current_price * (1 + take_profit_pct)
-        
+
         return PositionSizing(
             recommended_allocation=recommended_allocation,
             max_position_size=max_position,
@@ -650,7 +650,7 @@ class RecommendationEngine:
     ) -> float:
         """Calculate how well the investment aligns with the strategy."""
         alignment_score = 0.0
-        
+
         # Check if score aligns with strategy risk tolerance
         risk_level = strategy_config.get('risk_level', 'moderate')
         if risk_level == 'low' and abs(composite_score) < 0.5:
@@ -659,7 +659,7 @@ class RecommendationEngine:
             alignment_score += 0.3  # Aggressive strategy likes strong signals
         elif risk_level == 'moderate':
             alignment_score += 0.3  # Moderate strategy is flexible
-        
+
         # Time horizon alignment
         time_horizon = strategy_config.get('time_horizon', 'medium_term')
         if technical_analysis:
@@ -669,11 +669,11 @@ class RecommendationEngine:
                 alignment_score += 0.4
             else:
                 alignment_score += 0.2
-        
+
         # Strategy-specific criteria alignment
         # (This would be expanded based on specific strategy requirements)
         alignment_score += 0.3  # Base alignment
-        
+
         return min(1.0, alignment_score)
 
     def _calculate_target_price(
@@ -685,7 +685,7 @@ class RecommendationEngine:
         """Calculate target price based on analysis."""
         if not current_price:
             return None
-        
+
         # Base target based on recommendation
         multiplier = {
             RecommendationType.STRONG_BUY: 1.20,
@@ -694,18 +694,18 @@ class RecommendationEngine:
             RecommendationType.SELL: 0.95,
             RecommendationType.STRONG_SELL: 0.85
         }.get(recommendation_type, 1.0)
-        
+
         # Adjust based on technical analysis
         if technical_analysis:
             # Use support/resistance levels if available
             if hasattr(technical_analysis, 'support_resistance') and technical_analysis.support_resistance:
                 resistance_levels = getattr(technical_analysis.support_resistance, 'resistance_levels', [])
                 if resistance_levels:
-                    nearest_resistance = min(resistance_levels, 
+                    nearest_resistance = min(resistance_levels,
                                            key=lambda x: abs(x - current_price))
                     if nearest_resistance > current_price:
                         multiplier = min(multiplier, nearest_resistance / current_price)
-        
+
         return current_price * multiplier
 
     async def generate_batch_recommendations(
@@ -717,31 +717,31 @@ class RecommendationEngine:
     ) -> List[InvestmentRecommendation]:
         """
         Generate recommendations for multiple symbols.
-        
+
         Args:
             symbols: List of stock symbols to analyze
             strategy_name: Investment strategy to use
             price_data_source: Function to fetch price data for a symbol
             news_data_source: Function to fetch news data for a symbol
-            
+
         Returns:
             List of investment recommendations
         """
         self.logger.info(f"Generating batch recommendations for {len(symbols)} symbols")
-        
+
         recommendations = []
-        
+
         for symbol in symbols:
             try:
                 # Fetch data if sources provided
                 price_data = None
                 news_data = None
-                
+
                 if price_data_source:
                     price_data = await price_data_source(symbol)
                 if news_data_source:
                     news_data = await news_data_source(symbol)
-                
+
                 # Generate recommendation
                 recommendation = await self.analyze_investment(
                     symbol=symbol,
@@ -749,16 +749,16 @@ class RecommendationEngine:
                     price_data=price_data,
                     news_data=news_data
                 )
-                
+
                 recommendations.append(recommendation)
-                
+
             except Exception as e:
                 self.logger.error(f"Failed to analyze {symbol}: {e}")
                 continue
-        
+
         # Sort by composite score (best recommendations first)
         recommendations.sort(key=lambda x: x.composite_score, reverse=True)
-        
+
         self.logger.info(f"Generated {len(recommendations)} recommendations")
         return recommendations
 
@@ -799,36 +799,36 @@ class RecommendationEngine:
     ) -> Dict[str, Any]:
         """
         Generate portfolio-level recommendations and allocation.
-        
+
         Args:
             recommendations: List of individual stock recommendations
             total_portfolio_value: Total portfolio value for position sizing
-            
+
         Returns:
             Portfolio recommendations and allocation
         """
         # Filter to only buy recommendations
         buy_recommendations = [
-            r for r in recommendations 
+            r for r in recommendations
             if r.recommendation in [RecommendationType.BUY, RecommendationType.STRONG_BUY]
         ]
-        
+
         # Calculate total recommended allocation
         total_allocation = sum(r.position_sizing.recommended_allocation for r in buy_recommendations)
-        
+
         # Scale allocations if they exceed 100%
         if total_allocation > 1.0:
             scale_factor = 0.9 / total_allocation  # Leave 10% cash
             for rec in buy_recommendations:
                 rec.position_sizing.recommended_allocation *= scale_factor
-        
+
         # Calculate dollar amounts
         portfolio_allocation = []
         for rec in buy_recommendations:
             dollar_amount = total_portfolio_value * rec.position_sizing.recommended_allocation
             current_price = float(rec.current_price) if hasattr(rec.current_price, '__float__') else rec.current_price
             shares = int(dollar_amount / current_price) if current_price > 0 else 0
-            
+
             portfolio_allocation.append({
                 'symbol': rec.symbol,
                 'allocation_percent': rec.position_sizing.recommended_allocation * 100,
@@ -838,11 +838,11 @@ class RecommendationEngine:
                 'confidence': rec.confidence.name,
                 'expected_return': ((rec.target_price or rec.current_price) - rec.current_price) / rec.current_price if rec.current_price > 0 else 0
             })
-        
+
         # Portfolio metrics
         portfolio_risk = np.mean([r.risk_metrics.overall_risk_score for r in buy_recommendations]) if buy_recommendations else 0.0
         expected_return = np.mean([a['expected_return'] for a in portfolio_allocation]) if portfolio_allocation else 0.0
-        
+
         return {
             'total_positions': len(portfolio_allocation),
             'total_allocated_percent': sum(a['allocation_percent'] for a in portfolio_allocation),
@@ -859,7 +859,7 @@ class RecommendationEngine:
 async def example_usage():
     """Example usage of the RecommendationEngine."""
     engine = RecommendationEngine()
-    
+
     # Example price data (would normally come from MCP stock data server)
     price_data = pd.DataFrame({
         'date': pd.date_range('2024-01-01', periods=100),
@@ -869,13 +869,13 @@ async def example_usage():
         'close': np.random.randn(100).cumsum() + 100,
         'volume': np.random.randint(1000000, 5000000, 100)
     })
-    
+
     # Example news data
     news_data = [
         {'title': 'Company reports strong earnings', 'description': 'Revenue up 15%', 'source': 'reuters'},
         {'title': 'Market outlook positive', 'description': 'Analysts bullish', 'source': 'bloomberg'}
     ]
-    
+
     # Generate recommendation
     recommendation = await engine.analyze_investment(
         symbol='AAPL',
@@ -883,7 +883,7 @@ async def example_usage():
         price_data=price_data,
         news_data=news_data
     )
-    
+
     print(f"Recommendation for AAPL: {recommendation.recommendation.name}")
     print(f"Confidence: {recommendation.confidence.name}")
     print(f"Target Price: ${recommendation.target_price:.2f}")
@@ -893,6 +893,6 @@ async def example_usage():
 if __name__ == "__main__":
     # Setup logging
     logging.basicConfig(level=logging.INFO)
-    
+
     # Run example
     asyncio.run(example_usage())

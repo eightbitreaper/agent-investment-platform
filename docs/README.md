@@ -45,7 +45,7 @@ The Agent Investment Platform follows a modular architecture with these key comp
 ├── Stock APIs         ├── MCP Servers         ├── Report Generator
 ├── News Sources       ├── Sentiment Analysis  ├── GitHub Integration
 ├── YouTube Feeds      ├── Technical Analysis  └── Notifications
-└── Market Data        └── Strategy Engine     
+└── Market Data        └── Strategy Engine
 ```
 
 ## 📋 Project Resources
@@ -55,7 +55,7 @@ The Agent Investment Platform follows a modular architecture with these key comp
 - **[Task Roadmap](../tasks/tasks-prd.md)** - Development progress and next steps
 - **[Architecture Overview](architecture.md)** - Technical system design
 
-### Project Guidelines  
+### Project Guidelines
 - **[Contributing Guidelines](CONTRIBUTING.md)** - How to contribute code and documentation
 - **[Code of Conduct](CODE_OF_CONDUCT.md)** - Community standards and expectations
 - **[License (MIT)](LICENSE.md)** - Usage rights and limitations

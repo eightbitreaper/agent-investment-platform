@@ -2,9 +2,9 @@
 
 ## Project Context & Overview
 
-**Project Name**: Agent Investment Platform  
-**Owner**: eightbitreaper  
-**Repository**: https://github.com/eightbitreaper/agent-investment-platform  
+**Project Name**: Agent Investment Platform
+**Owner**: eightbitreaper
+**Repository**: https://github.com/eightbitreaper/agent-investment-platform
 **Purpose**: AI-powered stock investment analysis platform with real-time insights and automated reporting
 
 ### Project Goals
@@ -53,7 +53,7 @@
 
 **Key Technical Decisions:**
 1. **Guidelines System**: Created `.vscode/guidelines.prompt.md` with `alwaysApply: true` for automatic enforcement
-2. **Documentation Structure**: All markdown files in `docs/` with README branching structure  
+2. **Documentation Structure**: All markdown files in `docs/` with README branching structure
 3. **Initialization Strategy**: One-command setup via `@workspace run docs/setup/initialize.prompt`
 4. **Configuration Approach**: Environment variables + YAML configs for maximum flexibility
 
@@ -67,7 +67,7 @@
 
 ### Completed Tasks ✅
 - **0.1**: `docs/setup/initialize.prompt.md` - VS Code agent setup instructions
-- **0.2**: `scripts/initialize.py` - Main initialization orchestrator  
+- **0.2**: `scripts/initialize.py` - Main initialization orchestrator
 - **0.3**: `scripts/setup/install-dependencies.py` - Cross-platform dependency installer
 - **0.4**: `scripts/setup/configure-environment.py` - Environment configuration automation
 
@@ -91,7 +91,7 @@
 Data Sources → MCP Servers → Analysis Engine → Report Generator → GitHub
      ↓              ↓             ↓              ↓           ↓
 Stock APIs    Stock Agent   Sentiment      Markdown    Version Control
-News Feeds    News Agent    Technical      Templates   Report History  
+News Feeds    News Agent    Technical      Templates   Report History
 YouTube       YT Agent      Strategy       LLM Gen     Notifications
 ```
 

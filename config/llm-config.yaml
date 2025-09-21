@@ -47,7 +47,7 @@ providers:
     auto_update: true
     free_download: true
     timeout: 120
-    
+
   # Local LLM via Ollama (Optional)
   ollama:
     host: "${OLLAMA_HOST:-http://localhost:11434}"
@@ -110,56 +110,56 @@ task_assignments:
     primary: "microsoft/Phi-3-mini-4k-instruct"
     fallback: "gpt-4-turbo-preview"
     temperature: 0.1
-    
+
   market_sentiment:
     primary: "ProsusAI/finbert"
     fallback: "claude-3-sonnet-20240229"
     temperature: 0.2
-    
+
   technical_analysis:
     primary: "microsoft/Phi-3-mini-4k-instruct"
     fallback: "gpt-4"
     temperature: 0.1
-    
+
   # Research and strategy tasks
   investment_strategy:
     primary: "microsoft/Phi-3-mini-4k-instruct"
     fallback: "gpt-4-turbo-preview"
     temperature: 0.3
-    
+
   risk_assessment:
     primary: "microsoft/Phi-3-mini-4k-instruct"
     fallback: "claude-3-sonnet-20240229"
     temperature: 0.1
-    
+
   # Content generation tasks
   report_generation:
     primary: "microsoft/Phi-3-mini-4k-instruct"
     fallback: "gpt-4-turbo-preview"
     temperature: 0.2
-    
+
   news_summarization:
     primary: "microsoft/Phi-3-mini-4k-instruct"
     fallback: "gpt-3.5-turbo"
     temperature: 0.1
-    
+
   # Data processing tasks
   data_extraction:
     primary: "microsoft/Phi-3-mini-4k-instruct"
     fallback: "claude-3-haiku-20240307"
     temperature: 0.0
-    
+
   classification:
     primary: "ProsusAI/finbert"
     fallback: "gpt-3.5-turbo"
     temperature: 0.0
-    
+
   # Embedding and similarity tasks
   document_embeddings:
     primary: "sentence-transformers/all-MiniLM-L6-v2"
     fallback: "microsoft/Phi-3-mini-4k-instruct"
     temperature: 0.0
-    
+
   semantic_search:
     primary: "sentence-transformers/all-MiniLM-L6-v2"
     fallback: "microsoft/Phi-3-mini-4k-instruct"

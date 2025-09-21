@@ -18,8 +18,8 @@ def run_integration_tests():
     """Run integration tests for MCP servers."""
     print("🧪 Running Integration Tests...")
     return pytest.main([
-        "tests/integration/", 
-        "-v", 
+        "tests/integration/",
+        "-v",
         "--tb=short",
         "--durations=10"
     ])
@@ -28,8 +28,8 @@ def run_api_tests():
     """Run API tests (requires API keys)."""
     print("🌐 Running API Tests...")
     return pytest.main([
-        "tests/api/", 
-        "-v", 
+        "tests/api/",
+        "-v",
         "--tb=short"
     ])
 
@@ -37,8 +37,8 @@ def run_unit_tests():
     """Run unit tests."""
     print("⚡ Running Unit Tests...")
     return pytest.main([
-        "tests/", 
-        "-v", 
+        "tests/",
+        "-v",
         "--ignore=tests/integration",
         "--ignore=tests/api"
     ])
@@ -47,22 +47,22 @@ def run_all_tests():
     """Run all tests."""
     print("🎯 Running All Tests...")
     return pytest.main([
-        "tests/", 
-        "-v", 
+        "tests/",
+        "-v",
         "--tb=short"
     ])
 
 if __name__ == "__main__":
     import argparse
-    
+
     parser = argparse.ArgumentParser(description="Agent Investment Platform Test Runner")
     parser.add_argument("--integration", action="store_true", help="Run integration tests")
     parser.add_argument("--api", action="store_true", help="Run API tests")
     parser.add_argument("--unit", action="store_true", help="Run unit tests")
     parser.add_argument("--all", action="store_true", help="Run all tests")
-    
+
     args = parser.parse_args()
-    
+
     if args.integration:
         sys.exit(run_integration_tests())
     elif args.api:

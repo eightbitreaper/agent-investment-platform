@@ -128,7 +128,7 @@ agent-investment-platform/
 # Run all tests
 python run_tests.py --all
 
-# Run specific test categories  
+# Run specific test categories
 python run_tests.py --integration  # MCP server tests
 python run_tests.py --api          # API integration tests (Polygon, etc.)
 ```

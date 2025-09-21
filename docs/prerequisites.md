@@ -181,7 +181,7 @@ python --version
 ```
 
 **If Python needs installation:**
-- **Windows**: Download from [python.org](https://www.python.org/downloads/) 
+- **Windows**: Download from [python.org](https://www.python.org/downloads/)
 - **Installation**: ✅ "Add Python to PATH"
 
 ### 2. Install Project Dependencies

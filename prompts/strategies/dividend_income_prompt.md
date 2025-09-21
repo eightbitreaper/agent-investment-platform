@@ -139,7 +139,7 @@ Management Quality:
 **Utilities (Traditional Dividend Sector):**
 - Regulated rate base growth
 - Renewable energy transition plans
-- Rate case outcomes and timing  
+- Rate case outcomes and timing
 - Weather normalization factors
 - Regulatory jurisdiction stability
 
@@ -168,7 +168,7 @@ Management Quality:
 - Cash generation and deployment
 - R&D investment requirements
 - Market position sustainability
-- Competitive threat assessment  
+- Competitive threat assessment
 - International tax considerations
 
 ### 5. Investment Recommendation Template
@@ -257,7 +257,7 @@ MONITORING METRICS:
 
 **Core-Satellite Approach:**
 - Core Holdings (60%): High-quality dividend aristocrats
-- Satellite Holdings (30%): Higher-yield sector specialists  
+- Satellite Holdings (30%): Higher-yield sector specialists
 - Opportunistic (10%): Special situations and REITs
 
 **Sector Diversification:**
@@ -271,7 +271,7 @@ MONITORING METRICS:
 
 **Yield Ladder Construction:**
 - High Yield (5-8%): 30% allocation
-- Medium Yield (3-5%): 50% allocation  
+- Medium Yield (3-5%): 50% allocation
 - Low Yield Growth (2-4%): 20% allocation
 
 ### 7. Risk Management Framework

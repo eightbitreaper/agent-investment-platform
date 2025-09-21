@@ -6,7 +6,7 @@
 tests/
 ├── integration/           # Integration tests for MCP servers
 │   └── test_mcp_servers.py
-├── api/                   # External API integration tests  
+├── api/                   # External API integration tests
 │   ├── test_polygon_direct.py
 │   └── test_polygon_mcp.py
 ├── analysis/              # Financial analysis tests

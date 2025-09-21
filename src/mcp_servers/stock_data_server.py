@@ -103,7 +103,7 @@ class PolygonClient:
                     raise MCPError(-32602, f"No data available for symbol: {symbol}")
 
                 result = data["results"][0]
-                
+
                 # Calculate change from open to close
                 open_price = float(result.get("o", 0))
                 close_price = float(result.get("c", 0))
@@ -133,25 +133,25 @@ class PolygonClient:
         # Map intervals to Polygon timespan
         timespan_map = {
             "daily": "day",
-            "weekly": "week", 
+            "weekly": "week",
             "monthly": "month"
         }
-        
+
         timespan = timespan_map.get(interval, "day")
-        
+
         # Get data for last 30 days for daily, adjust for other intervals
         from datetime import datetime, timedelta
         end_date = datetime.now()
         if interval == "daily":
             start_date = end_date - timedelta(days=30)
         elif interval == "weekly":
-            start_date = end_date - timedelta(weeks=52) 
+            start_date = end_date - timedelta(weeks=52)
         else:  # monthly
             start_date = end_date - timedelta(days=365)
-            
+
         start_str = start_date.strftime("%Y-%m-%d")
         end_str = end_date.strftime("%Y-%m-%d")
-        
+
         url = f"{self.base_url}/v2/aggs/ticker/{symbol}/range/1/{timespan}/{start_str}/{end_str}?adjusted=true&sort=asc&apikey={self.api_key}"
 
         try:
@@ -160,22 +160,22 @@ class PolygonClient:
                     raise MCPError(-32603, f"Polygon API error: {response.status}")
 
                 data = await response.json()
-                
+
                 if data.get("status") != "OK":
                     return {"Time Series": {}}
-                
+
                 # Convert Polygon format to Alpha Vantage-like format for compatibility
                 time_series = {}
                 for result in data.get("results", []):
                     date_str = datetime.fromtimestamp(result["t"] / 1000).strftime("%Y-%m-%d")
                     time_series[date_str] = {
                         "1. open": str(result.get("o", 0)),
-                        "2. high": str(result.get("h", 0)), 
+                        "2. high": str(result.get("h", 0)),
                         "3. low": str(result.get("l", 0)),
                         "4. close": str(result.get("c", 0)),
                         "5. volume": str(result.get("v", 0))
                     }
-                
+
                 return {"Time Series": time_series}
 
         except aiohttp.ClientError as e:
@@ -194,12 +194,12 @@ class PolygonClient:
                     return None
 
                 data = await response.json()
-                
+
                 if data.get("status") != "OK" or not data.get("results"):
                     return None
-                
+
                 result = data["results"]
-                
+
                 return CompanyFundamentals(
                     symbol=result.get("ticker", symbol),
                     name=result.get("name", ""),

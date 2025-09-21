@@ -139,9 +139,9 @@ This document describes the comprehensive architecture of the **Agent Investment
 - **20 Automation Tasks**: Complete development workflow automation
 - **85+ Workspace Settings**: Optimized development environment
 - **Development Guidelines**: Mandatory standards enforcement
-- **Memory Bank System**: AI persistence across development sessions  
-- **Stock API Agent** — retrieves price data, charts, and technical indicators.  
-- **News Agent** — pulls relevant news articles (Google/Bing, etc.).  
+- **Memory Bank System**: AI persistence across development sessions
+- **Stock API Agent** — retrieves price data, charts, and technical indicators.
+- **News Agent** — pulls relevant news articles (Google/Bing, etc.).
 
 ### 3. Analysis Layer
 - Sentiment analysis (LLM-assisted).
@@ -149,38 +149,38 @@ This document describes the comprehensive architecture of the **Agent Investment
 - Backtesting to compare predictions with actual outcomes.
 
 ### 4. Reporting Layer
-- Outputs structured Markdown summaries.  
-- Includes daily/hourly reports and retrospective corrections.  
+- Outputs structured Markdown summaries.
+- Includes daily/hourly reports and retrospective corrections.
 - Pushes reports into GitHub for versioning and collaboration.
 
 ### 5. Interfaces
-- **Conversational UI** — debugging, clarifications, real-time queries.  
-- **Markdown Reports** — official record, shared via GitHub.  
+- **Conversational UI** — debugging, clarifications, real-time queries.
+- **Markdown Reports** — official record, shared via GitHub.
 - **(Optional)** Email or alert system for urgent events.
 
 ---
 
 ## Deployment
 
-- **Primary environment:** Windows desktop (with NVIDIA GPU for LLM acceleration).  
-- **Containerized services:** Run via Docker/WSL2.  
-- **Hybrid LLM strategy:**  
-  - Local models (for privacy and GPU use).  
+- **Primary environment:** Windows desktop (with NVIDIA GPU for LLM acceleration).
+- **Containerized services:** Run via Docker/WSL2.
+- **Hybrid LLM strategy:**
+  - Local models (for privacy and GPU use).
   - Cloud-hosted LLMs (fallback for heavier workloads, via ChatGPT Plus or other APIs).
 
 ---
 
 ## Security Considerations
 
-- No external exposure — services run locally or behind secure tunnels.  
-- Sensitive data (API keys, credentials) managed via `.env` files.  
+- No external exposure — services run locally or behind secure tunnels.
+- Sensitive data (API keys, credentials) managed via `.env` files.
 - GitHub repo for collaboration, but no secrets checked in.
 
 ---
 
 ## Open Questions
 
-- Which stock APIs offer the best tradeoff between cost, latency, and completeness?  
-- Should backtesting be implemented as a standalone service or within each agent?  
-- Do we need database persistence (e.g., Postgres/SQLite) for incremental learning, or will flat-file Markdown + Git history be sufficient?  
+- Which stock APIs offer the best tradeoff between cost, latency, and completeness?
+- Should backtesting be implemented as a standalone service or within each agent?
+- Do we need database persistence (e.g., Postgres/SQLite) for incremental learning, or will flat-file Markdown + Git history be sufficient?
 
