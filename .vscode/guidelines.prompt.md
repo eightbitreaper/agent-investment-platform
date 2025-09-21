@@ -120,14 +120,73 @@ Brief description of what this document covers and who it's for.
 - Does the content follow the established formatting patterns?
 - Are cross-references helpful and accurate?
 
+### 6. Code Validation and Testing Requirements
+
+**Implementation Validation:**
+- **ALL code implementations** must be tested to ensure they work as expected
+- **Commands and scripts** must be validated on the target platform before completion
+- **Configuration files** must be syntax-checked and tested for proper loading
+- **Installation instructions** must be verified through actual execution
+
+**Testing Requirements:**
+1. **Script Testing** - Run any created Python scripts to verify they execute without syntax errors
+2. **Command Validation** - Test shell commands and verify they produce expected output
+3. **Configuration Testing** - Load and parse configuration files to ensure valid syntax
+4. **Integration Testing** - Verify components work together as designed
+5. **Platform Testing** - Test on the appropriate operating system when possible
+
+**Validation Process:**
+- Before marking any task as complete, validate the implementation works
+- Test critical paths and error handling scenarios
+- Verify that any provided instructions are accurate and complete
+- Document any limitations or platform-specific requirements
+- If testing reveals issues, fix them before task completion
+
+**Documentation of Testing:**
+- Include testing results in task completion notes
+- Document any platform-specific behaviors discovered
+- Note any prerequisites or dependencies found during testing
+- Provide troubleshooting guidance for common issues encountered
+
+### 7. Memory Bank Integration Requirements
+
+**Memory Bank Usage:**
+- **ALWAYS reference** the `.memory/` directory for project context and patterns
+- **Leverage stored knowledge** about user preferences, architectural decisions, and implementation patterns
+- **Update memory bank** with new learnings, patterns, and project evolution
+- **Maintain continuity** by building on previous session knowledge and decisions
+
+**Memory Bank Components:**
+1. **Project Context** (`.memory/project-context.md`) - Reference for overall project status and history
+2. **User Preferences** (`.memory/user-preferences.json`) - Apply established coding and communication patterns
+3. **Architecture Decisions** (`.memory/architecture-decisions.md`) - Follow established technical choices and rationale
+4. **Implementation Patterns** (`.memory/patterns-knowledge.json`) - Use proven code patterns and quality standards
+5. **Knowledge Graph** (`.memory/knowledge-graph.json`) - Understand relationships between project components
+
+**Memory Integration Process:**
+- **Before starting work** - Review relevant memory bank files for context and patterns
+- **During implementation** - Apply learned patterns and maintain consistency with previous decisions
+- **After task completion** - Update memory bank with new insights, patterns, or architectural decisions
+- **Session transitions** - Document progress and learnings for future session continuity
+
+**Memory Bank Maintenance:**
+- Update project context with task completions and architectural changes
+- Record new implementation patterns discovered during development
+- Document user feedback and preference changes
+- Maintain knowledge graph relationships as project evolves
+
 ## Enforcement
 
-These guidelines are **mandatory** for all development work on this project. Any LLM working on documentation tasks must:
+These guidelines are **mandatory** for all development work on this project. Any LLM working on this project must:
 
-1. **Reference these guidelines** before creating or modifying any markdown files
+1. **Reference these guidelines** before creating or modifying any files
 2. **Follow the directory structure** requirements without exception
 3. **Update navigation** in parent README files when adding new documentation
 4. **Maintain consistency** with established patterns and conventions
+5. **Validate all implementations** through testing before marking tasks complete
+6. **Verify code functionality** by running scripts and commands when possible
+7. **Test configuration files** for proper syntax and loading behavior
+8. **Document testing results** and any platform-specific findings
 
 ## Updates to Guidelines
 
