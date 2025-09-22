@@ -13,15 +13,15 @@ Components:
 from .sentiment_analyzer import FinancialSentimentAnalyzer
 from .chart_analyzer import TechnicalChartAnalyzer
 from .recommendation_engine import (
-    RecommendationEngine, 
-    InvestmentRecommendation, 
-    RecommendationType, 
+    RecommendationEngine,
+    InvestmentRecommendation,
+    RecommendationType,
     ConfidenceLevel
 )
 
 __all__ = [
     'FinancialSentimentAnalyzer',
-    'TechnicalChartAnalyzer', 
+    'TechnicalChartAnalyzer',
     'RecommendationEngine',
     'InvestmentRecommendation',
     'RecommendationType',
