@@ -186,7 +186,12 @@ python --version
 
 ### 2. Install Project Dependencies
 
-Navigate to the project directory and install required packages:
+First, ensure you have the latest pip version for security updates:
+```powershell
+python -m pip install --upgrade pip>=25.2
+```
+
+Then navigate to the project directory and install required packages:
 ```powershell
 cd d:\code\agent-investment-platform
 pip install -r requirements.txt

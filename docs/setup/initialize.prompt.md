@@ -36,7 +36,7 @@ Before starting, the system will verify:
 
 ### Linux/WSL Setup
 - Install Docker and Docker Compose
-- Ensure Python 3.11+ with pip
+- Ensure Python 3.11+ with pip 25.2+ (for security updates)
 - Install system dependencies (curl, wget, etc.)
 
 ### macOS Setup

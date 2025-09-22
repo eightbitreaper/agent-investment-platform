@@ -20,6 +20,9 @@ WORKDIR /app
 # Copy requirements first (for better caching)
 COPY requirements.txt .
 
+# Upgrade pip to latest version for security updates
+RUN pip install --upgrade pip>=25.2
+
 # Install Python dependencies
 RUN pip install --no-cache-dir -r requirements.txt
 
@@ -52,6 +55,9 @@ CMD ["python", "-m", "src.main"]
 
 # Development stage
 FROM base as development
+
+# Ensure latest pip for development stage too
+RUN pip install --upgrade pip>=25.2
 
 # Install development dependencies
 RUN pip install --no-cache-dir pytest pytest-cov black flake8 mypy jupyter

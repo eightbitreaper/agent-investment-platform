@@ -1,5 +1,8 @@
 # Agent Investment Platform - Python Dependencies
 
+# Package Management (ensure latest pip with security updates)
+pip>=25.2
+
 # Core Requirements
 requests>=2.31.0
 PyYAML>=6.0.1

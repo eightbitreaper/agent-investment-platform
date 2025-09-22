@@ -271,8 +271,8 @@ class DependencyInstaller:
         """Install Python package dependencies"""
         logger.info("Installing Python dependencies...")
         
-        # Ensure pip is up to date
-        self._run_command([sys.executable, "-m", "pip", "install", "--upgrade", "pip"])
+        # Ensure pip is up to date (minimum version 25.2 for security updates)
+        self._run_command([sys.executable, "-m", "pip", "install", "--upgrade", "pip>=25.2"])
         
         # Install from requirements.txt if it exists
         if self.requirements_file.exists():
