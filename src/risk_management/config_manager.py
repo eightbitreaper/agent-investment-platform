@@ -260,7 +260,7 @@ class RiskConfigManager:
         logger.warning(f"Strategy config not found for {strategy_name}, using default")
         return StrategyRiskConfig(strategy_name=strategy_name)
 
-    def get_position_sizing_config(self, method: str = None) -> Dict[str, Any]:
+    def get_position_sizing_config(self, method: Optional[str] = None) -> Dict[str, Any]:
         """
         Get position sizing configuration
 
@@ -284,7 +284,7 @@ class RiskConfigManager:
 
         return method_config
 
-    def get_stop_loss_config(self, method: str = None) -> Dict[str, Any]:
+    def get_stop_loss_config(self, method: Optional[str] = None) -> Dict[str, Any]:
         """
         Get stop-loss configuration
 
@@ -310,7 +310,7 @@ class RiskConfigManager:
 
         return method_config
 
-    def get_take_profit_config(self, method: str = None) -> Dict[str, Any]:
+    def get_take_profit_config(self, method: Optional[str] = None) -> Dict[str, Any]:
         """
         Get take-profit configuration
 

@@ -553,7 +553,8 @@ class TestRiskConfigManager:
             yaml.dump(config_data, f, default_flow_style=False)
 
         config_manager = RiskConfigManager(config_path=temp_config_file)
-        original_risk = config_manager.global_config.max_portfolio_risk
+        global_config = config_manager.get_global_config()
+        original_risk = global_config.max_portfolio_risk
 
         # Apply bull market regime
         success = config_manager.apply_market_regime(MarketRegime.BULL_MARKET)
@@ -561,7 +562,8 @@ class TestRiskConfigManager:
         assert success is True
         assert config_manager.current_regime == MarketRegime.BULL_MARKET
         # Risk should be increased by multiplier
-        assert config_manager.global_config.max_portfolio_risk > original_risk
+        updated_global_config = config_manager.get_global_config()
+        assert updated_global_config.max_portfolio_risk > original_risk
 
     def test_config_validation(self, temp_config_file):
         """Test configuration validation"""

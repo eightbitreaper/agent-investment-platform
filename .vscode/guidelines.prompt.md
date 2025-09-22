@@ -41,7 +41,7 @@ docs/
 - All documentation must include proper relative links to related sections
 - README files must maintain updated tables of contents and navigation links
 - When creating new documentation, update parent README files with appropriate links
-- Use consistent link formatting: `[Clear Description](path/to/file.md)`
+- Use consistent markdown link formatting with clear descriptions and relative paths
 
 ### 2. File Naming Conventions
 
@@ -70,15 +70,13 @@ docs/
 Brief description of what this document covers and who it's for.
 
 ## Table of Contents (if applicable)
-- [Section 1](#section-1)
-- [Section 2](#section-2)
+Use anchor links to major sections and keep ToC concise and scannable.
 
 ## Section Content
 [Organized, scannable content with proper formatting]
 
 ## Related Documentation
-- [Related Guide](../path/to/related.md)
-- [Parent Section](README.md)
+Link to related guides using relative paths and reference main project documentation as needed.
 ```
 
 ### 4. Update Requirements
@@ -581,3 +579,8 @@ When project needs require changes to these guidelines:
 
 **Remember**: Good documentation organization is crucial for project maintainability and contributor onboarding. These guidelines ensure every piece of documentation has a logical place and clear navigation path.
 ```
+
+Sunday, September 21, 2025 5:44:56 PM
+
+
+

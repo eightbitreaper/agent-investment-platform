@@ -24,7 +24,7 @@ from datetime import datetime, timedelta
 from typing import Dict, List
 
 from src.backtesting.enhanced_backtest_engine import EnhancedBacktestEngine, EnhancedBacktestConfig
-from src.analysis.recommendation_engine import RecommendationEngine, InvestmentRecommendation, RecommendationType, ConfidenceLevel, Strategy
+from src.analysis.recommendation_engine import RecommendationEngine, InvestmentRecommendation, RecommendationType, ConfidenceLevel
 from src.analysis.sentiment_analyzer import FinancialSentimentAnalyzer
 from src.analysis.chart_analyzer import TechnicalChartAnalyzer
 
@@ -141,17 +141,23 @@ async def run_enhanced_backtest_comparison():
     # Create test data
     price_data, symbols = create_enhanced_backtest_data()
 
+    # Define backtest period (matching the test data)
+    start_date = datetime(2022, 1, 1)
+    end_date = datetime(2024, 1, 1)
+
     # Initialize analysis components
     sentiment_analyzer = FinancialSentimentAnalyzer()
     chart_analyzer = TechnicalChartAnalyzer()
-    recommendation_engine = RecommendationEngine(sentiment_analyzer, chart_analyzer)
+    recommendation_engine = RecommendationEngine()
 
     # Test configurations
     test_configs = [
         {
             'name': 'Conservative Risk Management',
             'config': EnhancedBacktestConfig(
-                initial_cash=100000,
+                start_date=start_date,
+                end_date=end_date,
+                initial_capital=100000,
                 enable_risk_management=True,
                 strategy_name='value',  # Conservative strategy
                 max_portfolio_risk_override=0.015,  # 1.5% max risk
@@ -165,7 +171,9 @@ async def run_enhanced_backtest_comparison():
         {
             'name': 'Aggressive Risk Management',
             'config': EnhancedBacktestConfig(
-                initial_cash=100000,
+                start_date=start_date,
+                end_date=end_date,
+                initial_capital=100000,
                 enable_risk_management=True,
                 strategy_name='momentum',  # Aggressive strategy
                 max_portfolio_risk_override=0.025,  # 2.5% max risk
@@ -179,7 +187,9 @@ async def run_enhanced_backtest_comparison():
         {
             'name': 'Basic Backtesting (No Risk Management)',
             'config': EnhancedBacktestConfig(
-                initial_cash=100000,
+                start_date=start_date,
+                end_date=end_date,
+                initial_capital=100000,
                 enable_risk_management=False,
                 enable_dynamic_stops=False,
                 enable_portfolio_monitoring=False
@@ -206,11 +216,9 @@ async def run_enhanced_backtest_comparison():
             end_date = datetime(2023, 12, 31)
 
             await engine.run_backtest(
+                strategy_name=test_config['config'].strategy_name,
                 symbols=list(symbols.keys()),
-                start_date=start_date,
-                end_date=end_date,
-                price_data=price_data,
-                recommendation_engine=recommendation_engine
+                price_data=price_data
             )
 
             # Get results
@@ -312,16 +320,22 @@ async def demonstrate_specific_risk_scenarios():
     # Create test data
     price_data, symbols = create_enhanced_backtest_data()
 
+    # Define backtest period (matching the test data)
+    start_date = datetime(2022, 6, 1)  # Start closer to crash event
+    end_date = datetime(2024, 1, 1)
+
     # Initialize analysis components
     sentiment_analyzer = FinancialSentimentAnalyzer()
     chart_analyzer = TechnicalChartAnalyzer()
-    recommendation_engine = RecommendationEngine(sentiment_analyzer, chart_analyzer)
+    recommendation_engine = RecommendationEngine()
 
     scenarios = [
         {
             'name': 'High Concentration Risk Detection',
             'config': EnhancedBacktestConfig(
-                initial_cash=50000,  # Smaller portfolio to force concentration
+                start_date=start_date,
+                end_date=end_date,
+                initial_capital=50000,  # Smaller portfolio to force concentration
                 enable_risk_management=True,
                 strategy_name='momentum',
                 max_position_size_override=0.30,  # Allow large positions to test limits
@@ -332,7 +346,9 @@ async def demonstrate_specific_risk_scenarios():
         {
             'name': 'Dynamic Stop-Loss Management',
             'config': EnhancedBacktestConfig(
-                initial_cash=100000,
+                start_date=start_date,
+                end_date=end_date,
+                initial_capital=100000,
                 enable_risk_management=True,
                 strategy_name='swing_trading',
                 enable_dynamic_stops=True,
@@ -344,7 +360,9 @@ async def demonstrate_specific_risk_scenarios():
         {
             'name': 'Maximum Drawdown Protection',
             'config': EnhancedBacktestConfig(
-                initial_cash=100000,
+                start_date=start_date,
+                end_date=end_date,
+                initial_capital=100000,
                 enable_risk_management=True,
                 strategy_name='value',
                 max_drawdown_override=0.10,  # 10% max drawdown
@@ -369,11 +387,9 @@ async def demonstrate_specific_risk_scenarios():
             end_date = datetime(2023, 6, 1)
 
             await engine.run_backtest(
+                strategy_name=scenario['config'].strategy_name,
                 symbols=list(symbols.keys())[:5],  # Use fewer symbols for clarity
-                start_date=start_date,
-                end_date=end_date,
-                price_data=price_data,
-                recommendation_engine=recommendation_engine
+                price_data=price_data
             )
 
             results = engine.get_enhanced_results()
@@ -474,3 +490,4 @@ if __name__ == '__main__':
     else:
         print(f"\nDemonstration failed at: {datetime.now().strftime('%Y-%m-%d %H:%M:%S')}")
         sys.exit(1)
+
