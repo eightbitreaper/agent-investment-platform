@@ -1,0 +1,339 @@
+# Agent Investment Platform - Alert System Configuration
+#
+# This file configures intelligent alert rules for market conditions,
+# portfolio risks, and system health monitoring.
+
+# Global alert system settings
+global_settings:
+  enabled: true
+  default_cooldown_minutes: 60
+  max_active_alerts: 100
+  history_retention_days: 30
+  auto_acknowledgment: false
+
+# Alert rules configuration
+alert_rules:
+  # Market Movement Alerts
+  - id: "market_large_move"
+    name: "Large Price Movement"
+    alert_type: "market_movement"
+    condition: "price_change_percent"
+    threshold: 5.0
+    severity: "high"
+    enabled: true
+    cooldown_minutes: 30
+    description: "Alert when stock price moves more than 5% in a day"
+
+  - id: "market_volume_spike"
+    name: "Volume Spike"
+    alert_type: "market_movement"
+    condition: "volume_spike"
+    threshold: 3.0
+    severity: "medium"
+    enabled: true
+    cooldown_minutes: 60
+    description: "Alert when volume is 3x above average"
+
+  - id: "market_volatility_spike"
+    name: "High Volatility"
+    alert_type: "market_movement"
+    condition: "volatility_spike"
+    threshold: 0.30
+    severity: "medium"
+    enabled: true
+    cooldown_minutes: 120
+    description: "Alert when volatility exceeds 30%"
+
+  # Portfolio Risk Alerts
+  - id: "portfolio_drawdown"
+    name: "Portfolio Drawdown"
+    alert_type: "portfolio_risk"
+    condition: "portfolio_drawdown"
+    threshold: 0.10
+    severity: "critical"
+    enabled: true
+    cooldown_minutes: 30
+    escalation_minutes: 60
+    description: "Alert when portfolio drawdown exceeds 10%"
+
+  - id: "position_concentration"
+    name: "Position Concentration Risk"
+    alert_type: "portfolio_risk"
+    condition: "position_concentration"
+    threshold: 0.20
+    severity: "high"
+    enabled: true
+    cooldown_minutes: 60
+    description: "Alert when single position exceeds 20% of portfolio"
+
+  - id: "var_breach"
+    name: "Value at Risk Breach"
+    alert_type: "portfolio_risk"
+    condition: "var_breach"
+    threshold: 2.0
+    severity: "high"
+    enabled: true
+    cooldown_minutes: 60
+    description: "Alert when VaR exceeds 2% of portfolio value"
+
+  # Technical Indicator Alerts
+  - id: "rsi_overbought"
+    name: "RSI Overbought"
+    alert_type: "technical_indicator"
+    condition: "rsi_overbought"
+    threshold: 80
+    severity: "medium"
+    enabled: true
+    cooldown_minutes: 240
+    description: "Alert when RSI exceeds 80 (overbought)"
+
+  - id: "rsi_oversold"
+    name: "RSI Oversold"
+    alert_type: "technical_indicator"
+    condition: "rsi_oversold"
+    threshold: 20
+    severity: "medium"
+    enabled: true
+    cooldown_minutes: 240
+    description: "Alert when RSI falls below 20 (oversold)"
+
+  - id: "macd_bullish_cross"
+    name: "MACD Bullish Crossover"
+    alert_type: "technical_indicator"
+    condition: "macd_signal"
+    threshold: "bullish_crossover"
+    severity: "low"
+    enabled: true
+    cooldown_minutes: 480
+    description: "Alert on MACD bullish crossover signal"
+
+  - id: "bollinger_squeeze"
+    name: "Bollinger Band Squeeze"
+    alert_type: "technical_indicator"
+    condition: "bollinger_squeeze"
+    threshold: 0.5
+    severity: "low"
+    enabled: true
+    cooldown_minutes: 480
+    description: "Alert when Bollinger Bands contract (volatility squeeze)"
+
+  # System Health Alerts
+  - id: "high_cpu_usage"
+    name: "High CPU Usage"
+    alert_type: "system_health"
+    condition: "cpu_usage"
+    threshold: 80.0
+    severity: "high"
+    enabled: true
+    cooldown_minutes: 15
+    escalation_minutes: 30
+    description: "Alert when CPU usage exceeds 80%"
+
+  - id: "high_memory_usage"
+    name: "High Memory Usage"
+    alert_type: "system_health"
+    condition: "memory_usage"
+    threshold: 85.0
+    severity: "high"
+    enabled: true
+    cooldown_minutes: 15
+    description: "Alert when memory usage exceeds 85%"
+
+  - id: "disk_space_low"
+    name: "Low Disk Space"
+    alert_type: "system_health"
+    condition: "disk_usage"
+    threshold: 90.0
+    severity: "critical"
+    enabled: true
+    cooldown_minutes: 60
+    escalation_minutes: 120
+    description: "Alert when disk usage exceeds 90%"
+
+  - id: "high_response_time"
+    name: "High Response Time"
+    alert_type: "system_health"
+    condition: "response_time"
+    threshold: 5000
+    severity: "medium"
+    enabled: true
+    cooldown_minutes: 30
+    description: "Alert when response time exceeds 5 seconds"
+
+  - id: "high_error_rate"
+    name: "High Error Rate"
+    alert_type: "system_health"
+    condition: "error_rate"
+    threshold: 5.0
+    severity: "high"
+    enabled: true
+    cooldown_minutes: 15
+    escalation_minutes: 60
+    description: "Alert when error rate exceeds 5%"
+
+  - id: "component_failure"
+    name: "Component Failure"
+    alert_type: "system_health"
+    condition: "component_failure"
+    threshold: 1
+    severity: "critical"
+    enabled: true
+    cooldown_minutes: 5
+    escalation_minutes: 15
+    description: "Alert when system component fails"
+
+  # Data Quality Alerts
+  - id: "missing_data"
+    name: "Missing Data"
+    alert_type: "data_quality"
+    condition: "missing_data_percent"
+    threshold: 10.0
+    severity: "medium"
+    enabled: true
+    cooldown_minutes: 60
+    description: "Alert when more than 10% of data is missing"
+
+  - id: "stale_data"
+    name: "Stale Data"
+    alert_type: "data_quality"
+    condition: "stale_data"
+    threshold: 30
+    severity: "medium"
+    enabled: true
+    cooldown_minutes: 30
+    description: "Alert when data is more than 30 minutes old"
+
+  - id: "data_anomaly"
+    name: "Data Anomaly"
+    alert_type: "data_quality"
+    condition: "data_anomaly"
+    threshold: 0.95
+    severity: "high"
+    enabled: true
+    cooldown_minutes: 60
+    description: "Alert when data anomaly score exceeds 95%"
+
+  # Performance Alerts
+  - id: "analysis_failure_rate"
+    name: "High Analysis Failure Rate"
+    alert_type: "performance"
+    condition: "analysis_failure_rate"
+    threshold: 20.0
+    severity: "high"
+    enabled: true
+    cooldown_minutes: 30
+    description: "Alert when analysis failure rate exceeds 20%"
+
+  - id: "large_queue_size"
+    name: "Large Queue Size"
+    alert_type: "performance"
+    condition: "queue_size"
+    threshold: 50
+    severity: "medium"
+    enabled: true
+    cooldown_minutes: 30
+    description: "Alert when processing queue exceeds 50 items"
+
+  - id: "slow_processing"
+    name: "Slow Processing"
+    alert_type: "performance"
+    condition: "processing_latency"
+    threshold: 300
+    severity: "medium"
+    enabled: true
+    cooldown_minutes: 60
+    description: "Alert when average processing time exceeds 5 minutes"
+
+  # News Sentiment Alerts
+  - id: "extreme_sentiment"
+    name: "Extreme Market Sentiment"
+    alert_type: "news_sentiment"
+    condition: "sentiment_extreme"
+    threshold: 0.8
+    severity: "medium"
+    enabled: true
+    cooldown_minutes: 120
+    description: "Alert when market sentiment is extremely positive or negative"
+
+  - id: "sentiment_shift"
+    name: "Rapid Sentiment Change"
+    alert_type: "news_sentiment"
+    condition: "sentiment_shift"
+    threshold: 0.5
+    severity: "medium"
+    enabled: true
+    cooldown_minutes: 60
+    description: "Alert when sentiment changes rapidly"
+
+  - id: "negative_news_flood"
+    name: "High Volume of Negative News"
+    alert_type: "news_sentiment"
+    condition: "negative_news_volume"
+    threshold: 10
+    severity: "high"
+    enabled: true
+    cooldown_minutes: 60
+    description: "Alert when there are many negative news articles"
+
+# Alert processing settings
+processing:
+  max_concurrent_evaluations: 10
+  evaluation_interval_seconds: 30
+  batch_processing: true
+  batch_size: 100
+
+# Alert suppression and grouping
+suppression:
+  enabled: true
+  duplicate_window_minutes: 30
+  max_suppressed_alerts: 5
+  group_similar_alerts: true
+  similarity_threshold: 0.8
+
+# Integration settings
+integrations:
+  notification_system: true
+  monitoring_dashboard: true
+  external_webhooks: false
+
+# Escalation policies
+escalation_policies:
+  default:
+    - level: 1
+      delay_minutes: 30
+      channels: ["email"]
+    - level: 2
+      delay_minutes: 60
+      channels: ["email", "discord"]
+    - level: 3
+      delay_minutes: 120
+      channels: ["email", "discord", "webhook"]
+
+  critical:
+    - level: 1
+      delay_minutes: 5
+      channels: ["email", "discord"]
+    - level: 2
+      delay_minutes: 15
+      channels: ["email", "discord", "webhook"]
+
+# Historical analysis and machine learning
+ml_features:
+  enabled: false
+  anomaly_detection: false
+  pattern_recognition: false
+  predictive_alerting: false
+
+# Alert metrics and analytics
+metrics:
+  track_alert_effectiveness: true
+  measure_false_positive_rate: true
+  analyze_alert_patterns: true
+  generate_reports: true
+
+# Development and testing
+development:
+  test_mode: false
+  simulate_alerts: false
+  mock_data_sources: false
+  verbose_logging: false
