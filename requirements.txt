@@ -49,6 +49,9 @@ huggingface_hub>=0.19.0
 transformers>=4.35.0
 torch>=2.1.0
 
+# GitHub Integration
+PyGithub>=1.59.0
+
 # Backtesting and Financial Analysis
 plotly>=5.17.0  # For interactive charts
 dash>=2.14.0    # For web-based dashboards (optional)
