@@ -95,12 +95,7 @@
     "markdown.validate.enabled": true,
     "markdown.validate.fileLinks": "warning",
     "markdown.validate.fragmentLinks": "warning",
-    "markdown.validate.ignoredLinks": [
-        "#section-1",
-        "#section-2",
-        "../path/to/related.md",
-        "path/to/file.md"
-    ],
+    "markdown.validate.ignoredLinks": [],
     "git.ignoreLimitWarning": true,
     "git.autoRepositoryDetection": true,
     "git.autofetch": true,
