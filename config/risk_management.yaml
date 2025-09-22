@@ -1,0 +1,303 @@
+# Risk Management Configuration
+#
+# This file contains comprehensive risk management settings for the investment platform.
+# Different risk profiles and strategy-specific settings can be configured here.
+
+# Global Risk Settings
+global_risk:
+  # Portfolio-level risk limits
+  max_portfolio_risk: 0.02        # Maximum 2% daily VaR
+  max_position_size: 0.05         # Maximum 5% per single position
+  max_sector_concentration: 0.20  # Maximum 20% per sector
+  max_correlation: 0.70           # Maximum 70% average correlation
+  max_leverage: 1.0               # No leverage by default
+  max_daily_loss: 0.03            # Maximum 3% daily loss
+  max_drawdown: 0.15              # Maximum 15% drawdown
+  min_liquidity_ratio: 0.05       # Minimum 5% cash reserves
+
+# Position Sizing Configuration
+position_sizing:
+  default_method: "volatility_based"  # Default sizing method
+
+  # Kelly Criterion settings
+  kelly:
+    lookback_period: 252          # 1 year lookback for calculations
+    max_kelly_fraction: 0.25      # Maximum 25% Kelly position size
+    min_win_rate: 0.35            # Minimum win rate to use Kelly
+    min_data_points: 50           # Minimum trades for reliable calculation
+
+  # Risk Parity settings
+  risk_parity:
+    lookback_period: 60           # 60 days for volatility calculation
+    target_positions: 20          # Target number of equal risk positions
+    min_volatility: 0.01          # Minimum 1% volatility threshold
+    max_weight_deviation: 0.10    # Maximum 10% deviation from equal risk
+
+  # Volatility-based sizing
+  volatility_based:
+    target_volatility: 0.15       # Target 15% portfolio volatility
+    lookback_period: 30           # 30 days for volatility estimation
+    volatility_floor: 0.05        # Minimum 5% volatility assumption
+    volatility_cap: 0.50          # Maximum 50% volatility cap
+
+  # Fixed fractional sizing
+  fixed_fractional:
+    default_fraction: 0.02        # Default 2% position size
+
+  # Maximum drawdown sizing
+  max_drawdown_sizing:
+    max_acceptable_drawdown: 0.20 # Maximum 20% acceptable drawdown
+    lookback_period: 252          # 1 year lookback for drawdown calculation
+    confidence_level: 0.95        # 95% confidence level
+
+# Stop Loss Configuration
+stop_loss:
+  default_method: "atr_based"     # Default stop-loss method
+
+  # ATR-based stops
+  atr_based:
+    atr_period: 14                # 14-period ATR calculation
+    atr_multiplier: 2.0           # 2x ATR stop distance
+    min_atr_periods: 20           # Minimum periods for reliable ATR
+
+  # Percentage-based stops
+  percentage_based:
+    default_percentage: 0.05      # Default 5% stop
+
+  # Trailing stops
+  trailing_stop:
+    activation_profit: 0.03       # Activate after 3% profit
+    trail_percentage: 0.05        # 5% trailing distance
+    step_size: 0.01               # 1% minimum step size
+
+  # Support/Resistance stops
+  support_resistance:
+    lookback_period: 20           # 20 periods for S/R identification
+    buffer_percentage: 0.005      # 0.5% buffer from S/R levels
+    min_touches: 2                # Minimum touches to confirm level
+
+  # Volatility-adjusted stops
+  volatility_adjusted:
+    base_stop_percentage: 0.03    # Base 3% stop
+    volatility_multiplier: 50     # Volatility scaling factor
+    min_multiplier: 0.5           # Minimum volatility multiplier
+    max_multiplier: 3.0           # Maximum volatility multiplier
+    lookback_period: 20           # Volatility calculation period
+
+  # Global stop-loss limits
+  max_stop_loss: 0.10             # Maximum 10% stop-loss
+  min_stop_loss: 0.01             # Minimum 1% stop-loss
+
+# Take Profit Configuration
+take_profit:
+  default_method: "risk_reward_ratio"  # Default take-profit method
+
+  # Risk-reward ratio targets
+  risk_reward_ratio:
+    default_ratio: 2.0            # Default 2:1 risk-reward
+    min_ratio: 1.2                # Minimum 1.2:1 ratio
+    max_ratio: 5.0                # Maximum 5:1 ratio
+
+  # Fibonacci levels
+  fibonacci_levels:
+    extension_levels: [0.618, 1.0, 1.618, 2.618]  # Fibonacci extensions
+    retracement_levels: [0.382, 0.5, 0.618]       # Fibonacci retracements
+    lookback_period: 50           # Period for swing high/low identification
+
+  # Moving average targets
+  moving_average:
+    ma_period: 50                 # Moving average period
+    target_multiplier: 1.05       # 5% above/below MA target
+
+  # Partial profit taking
+  partial_profit:
+    levels: [1.5, 2.5, 4.0]       # Multiple R-R ratio levels
+    position_reductions: [0.33, 0.33, 0.34]  # Percentage to close at each level
+
+  # Volatility-based targets
+  volatility_target:
+    sigma_multiplier: 2.0         # 2-sigma price movement target
+    lookback_period: 20           # Volatility calculation period
+    min_target_percentage: 0.05   # Minimum 5% target
+
+# Portfolio Monitoring Configuration
+monitoring:
+  # Risk thresholds for alerts
+  thresholds:
+    var_95_warning: 0.015         # Warning at 1.5% VaR
+    var_95_critical: 0.025        # Critical at 2.5% VaR
+    var_99_warning: 0.03          # Warning at 3% VaR 99%
+    var_99_critical: 0.06         # Critical at 6% VaR 99%
+    drawdown_warning: 0.10        # Warning at 10% drawdown
+    drawdown_critical: 0.15       # Critical at 15% drawdown
+    concentration_warning: 0.15   # Warning at 15% single position
+    concentration_critical: 0.25  # Critical at 25% single position
+    correlation_warning: 0.70     # Warning at 70% correlation
+    correlation_critical: 0.85    # Critical at 85% correlation
+
+  # Monitoring frequency and settings
+  check_interval_minutes: 15      # Monitor every 15 minutes
+  alert_cooldown_minutes: 60      # 1 hour cooldown between similar alerts
+  max_alerts_per_hour: 10         # Maximum alerts per hour
+
+  # Risk score thresholds
+  risk_score:
+    warning_level: 6              # Warning at risk score 6
+    critical_level: 8             # Critical at risk score 8
+    emergency_level: 9            # Emergency at risk score 9
+
+  # Historical data retention
+  history_retention_days: 30      # Keep 30 days of monitoring history
+  snapshot_interval_minutes: 5   # Take snapshot every 5 minutes
+
+# Strategy-Specific Risk Settings
+strategies:
+  # Conservative value investing strategy
+  value:
+    max_portfolio_risk: 0.015     # Lower risk tolerance
+    max_position_size: 0.08       # Larger positions allowed
+    position_sizing_method: "risk_parity"
+    stop_loss_method: "percentage_based"
+    stop_loss_percentage: 0.08    # Wider stops for long-term holds
+    take_profit_method: "risk_reward_ratio"
+    target_risk_reward: 3.0       # 3:1 target for patient capital
+    max_correlation: 0.60         # Lower correlation tolerance
+
+  # Growth momentum strategy
+  momentum:
+    max_portfolio_risk: 0.025     # Higher risk tolerance
+    max_position_size: 0.04       # Smaller individual positions
+    position_sizing_method: "kelly"
+    stop_loss_method: "atr_based"
+    atr_multiplier: 1.5           # Tighter ATR stops
+    take_profit_method: "partial_profit"
+    target_risk_reward: 2.0       # Standard 2:1 target
+    max_correlation: 0.75         # Higher correlation allowed
+
+  # Mean reversion strategy
+  mean_reversion:
+    max_portfolio_risk: 0.02      # Moderate risk tolerance
+    max_position_size: 0.06       # Medium position sizes
+    position_sizing_method: "volatility_based"
+    stop_loss_method: "support_resistance"
+    take_profit_method: "moving_average"
+    target_risk_reward: 1.5       # Lower R:R for quick profits
+    max_correlation: 0.50         # Low correlation preferred
+
+  # High-frequency trading strategy
+  high_frequency:
+    max_portfolio_risk: 0.01      # Very low risk per trade
+    max_position_size: 0.02       # Small positions
+    position_sizing_method: "fixed_fractional"
+    fixed_fraction: 0.01          # 1% per position
+    stop_loss_method: "percentage_based"
+    stop_loss_percentage: 0.02    # Very tight stops
+    take_profit_method: "risk_reward_ratio"
+    target_risk_reward: 1.2       # Quick small profits
+
+  # Swing trading strategy
+  swing_trading:
+    max_portfolio_risk: 0.02      # Standard risk tolerance
+    max_position_size: 0.05       # Standard position sizes
+    position_sizing_method: "volatility_based"
+    stop_loss_method: "trailing_stop"
+    trailing_activation: 0.04     # Activate after 4% profit
+    trailing_percentage: 0.06     # 6% trailing distance
+    take_profit_method: "fibonacci_levels"
+    target_risk_reward: 2.5       # 2.5:1 target
+
+# Risk Profile Templates
+risk_profiles:
+  # Conservative profile
+  conservative:
+    max_portfolio_risk: 0.01      # Very low risk
+    max_position_size: 0.10       # Larger positions, fewer holdings
+    max_drawdown: 0.08            # Low drawdown tolerance
+    position_sizing_method: "risk_parity"
+    stop_loss_method: "percentage_based"
+    stop_loss_percentage: 0.06    # Moderate stops
+    take_profit_method: "risk_reward_ratio"
+    target_risk_reward: 2.5       # Conservative targets
+
+  # Moderate profile
+  moderate:
+    max_portfolio_risk: 0.02      # Standard risk
+    max_position_size: 0.05       # Standard position sizes
+    max_drawdown: 0.15            # Moderate drawdown tolerance
+    position_sizing_method: "volatility_based"
+    stop_loss_method: "atr_based"
+    take_profit_method: "partial_profit"
+    target_risk_reward: 2.0       # Standard targets
+
+  # Aggressive profile
+  aggressive:
+    max_portfolio_risk: 0.03      # Higher risk tolerance
+    max_position_size: 0.04       # Smaller positions, more diversification
+    max_drawdown: 0.25            # Higher drawdown tolerance
+    position_sizing_method: "kelly"
+    stop_loss_method: "trailing_stop"
+    take_profit_method: "fibonacci_levels"
+    target_risk_reward: 3.0       # Aggressive targets
+
+# Market Regime Adjustments
+market_regimes:
+  # Bull market settings
+  bull_market:
+    risk_multiplier: 1.2          # Increase risk in bull markets
+    position_size_multiplier: 1.1 # Slightly larger positions
+    stop_loss_multiplier: 1.1     # Wider stops
+    take_profit_multiplier: 1.2   # Higher targets
+
+  # Bear market settings
+  bear_market:
+    risk_multiplier: 0.7          # Reduce risk in bear markets
+    position_size_multiplier: 0.8 # Smaller positions
+    stop_loss_multiplier: 0.9     # Tighter stops
+    take_profit_multiplier: 0.8   # Lower targets
+
+  # High volatility settings
+  high_volatility:
+    risk_multiplier: 0.8          # Reduce risk in volatile markets
+    position_size_multiplier: 0.7 # Much smaller positions
+    stop_loss_multiplier: 1.3     # Wider stops for volatility
+    take_profit_multiplier: 1.1   # Slightly higher targets
+
+  # Low volatility settings
+  low_volatility:
+    risk_multiplier: 1.1          # Increase risk in calm markets
+    position_size_multiplier: 1.2 # Larger positions
+    stop_loss_multiplier: 0.8     # Tighter stops
+    take_profit_multiplier: 0.9   # Lower targets
+
+# Emergency Risk Controls
+emergency_controls:
+  # Circuit breakers
+  daily_loss_limit: 0.05          # Emergency stop at 5% daily loss
+  flash_crash_protection: 0.10    # Emergency stop at 10% rapid decline
+  correlation_breakdown: 0.95     # Emergency alert at 95% correlation
+
+  # Auto-hedging triggers
+  auto_hedge_triggers:
+    portfolio_var_99: 0.08        # Auto-hedge at 8% VaR 99%
+    max_drawdown: 0.20            # Auto-hedge at 20% drawdown
+
+  # Position limits in crisis
+  crisis_position_limit: 0.02     # Reduce all positions to 2% in crisis
+  crisis_cash_target: 0.20        # Target 20% cash in crisis
+
+# Backtesting Risk Settings
+backtesting:
+  # Historical risk validation
+  lookback_years: 3               # 3 years of backtesting data
+  confidence_levels: [0.90, 0.95, 0.99]  # VaR confidence levels
+  stress_test_scenarios: 10       # Number of stress test scenarios
+
+  # Performance attribution
+  risk_attribution: true          # Enable risk attribution analysis
+  regime_analysis: true           # Enable market regime analysis
+  correlation_analysis: true      # Enable correlation analysis
+
+  # Validation thresholds
+  min_sharpe_ratio: 0.5           # Minimum acceptable Sharpe ratio
+  max_var_breach_rate: 0.10       # Maximum 10% VaR breach rate
+  min_profit_factor: 1.2          # Minimum 1.2 profit factor
