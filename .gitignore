@@ -204,4 +204,31 @@ ollama_data/
 test_data/
 backup/
 logs/health-check-report.json
-logs/health-check-report.json
+
+# Security: API Keys and Sensitive Data
+# ====================================
+# Prevent accidental commits of API keys in any file
+*api_key*
+*API_KEY*
+*secret*
+*SECRET*
+*token*
+*TOKEN*
+*password*
+*PASSWORD*
+*.pem
+*.key
+*.crt
+*.p12
+*.pfx
+
+# Backup files that might contain secrets
+*.bak
+*.backup
+*.orig
+*.save
+
+# Test files that might contain real API keys
+test_*_api.py
+*_test_direct.py
+*_api_test.py
