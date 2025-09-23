@@ -1,40 +1,72 @@
 # 📚 Agent Investment Platform Documentation
 
-Welcome to the comprehensive documentation for the Agent Investment Platform. This guide will help you get started, configure the system, and contribute to the project.
+Welcome to the Agent Investment Platform documentation. This comprehensive guide covers everything from quick start to advanced development.
 
-## 🚀 Getting Started
+## 🚀 Quick Start
 
-### New User? Start Here!
-- **[Initialize Platform](setup/initialize.prompt.md)** - One-command VS Code setup
-- **[Installation Guide](setup/installation-guide.md)** - Detailed setup instructions
-- **[Local LLM Setup](setup/local-llm-setup.md)** - Configure local AI models
-- **[Configuration Guide](setup/configuration-guide.md)** - Customize strategies and settings
+### New Users - Get Started in 5 Minutes
+1. **[Installation Guide](setup/installation-guide.md)** - Complete setup from scratch
+2. **[Configuration Guide](setup/configuration-guide.md)** - Customize for your needs
+3. **[Local LLM Setup](setup/local-llm-setup.md)** - Configure private AI models
 
-## 📖 Documentation Sections
+**One-Command Setup**:
+```powershell
+git clone https://github.com/your-username/agent-investment-platform.git
+cd agent-investment-platform
+python scripts/initialize.py --interactive
+```
+
+### For Developers
+1. **[API Documentation](api/README.md)** - Complete API reference
+2. **[Development Guide](development/README.md)** - Development standards (Coming Soon)
+3. **[Contributing Guide](development/contributing.md)** - How to contribute (Coming Soon)
+
+### For DevOps
+1. **[Docker Deployment](deployment/docker-deployment.md)** - Production deployment
+2. **[Troubleshooting](troubleshooting/common-issues.md)** - Problem resolution
+
+## 📖 Complete Documentation Index
 
 ### ⚙️ Setup & Installation
-| Document | Description | Status |
-|----------|-------------|--------|
-| [Initialize Prompt](setup/initialize.prompt.md) | VS Code agent one-command setup | ✅ Available |
-| [Prerequisites Guide](prerequisites.md) | System requirements and setup prerequisites | ✅ Available |
+| Document | Description | Status | Audience |
+|----------|-------------|--------|----------|
+| **[Installation Guide](setup/installation-guide.md)** | Complete platform setup for all platforms | ✅ Complete | All Users |
+| **[Configuration Guide](setup/configuration-guide.md)** | LLM, strategies, and system configuration | ✅ Complete | All Users |
+| **[Local LLM Setup](setup/local-llm-setup.md)** | Ollama, LM Studio, Hugging Face setup | ✅ Complete | Privacy-focused Users |
+| [Initialize Prompt](setup/initialize.prompt.md) | VS Code agent one-command setup | ✅ Available | VS Code Users |
+| [Prerequisites](prerequisites.md) | System requirements | ✅ Available | All Users |
+
+### 🐋 Deployment & Infrastructure
+| Document | Description | Status | Audience |
+|----------|-------------|--------|----------|
+| **[Docker Deployment](deployment/docker-deployment.md)** | Production containerized deployment | ✅ Complete | DevOps |
+
+### 🔧 Troubleshooting & Support
+| Document | Description | Status | Audience |
+|----------|-------------|--------|----------|
+| **[Common Issues](troubleshooting/common-issues.md)** | Comprehensive troubleshooting guide | ✅ Complete | All Users |
+
+### 🔌 API & Development
+| Document | Description | Status | Audience |
+|----------|-------------|--------|----------|
+| **[API Documentation](api/README.md)** | Complete API reference and examples | ✅ Complete | Developers |
+| [MCP Server Reference](api/mcp-server-reference.md) | Detailed MCP server API docs | 📝 Planned | Advanced Developers |
+| [Development Guide](development/README.md) | Development workflows | 📝 Planned | Contributors |
+| [Contributing Guide](development/contributing.md) | Contribution guidelines | 📝 Planned | Contributors |
 
 ### 🏗️ Architecture & Technical
-| Document | Description | Status |
-|----------|-------------|--------|
-| [Architecture Overview](architecture.md) | Technical system design and components | ✅ Available |
-| [MCP Server Integration](mcp-server-integration.md) | Complete MCP server documentation | ✅ Available |
+| Document | Description | Status | Audience |
+|----------|-------------|--------|----------|
+| [Architecture Overview](architecture.md) | Technical system design | ✅ Available | Architects |
+| [MCP Server Integration](mcp-server-integration.md) | MCP implementation details | ✅ Available | Developers |
+| [Backtesting Framework](backtesting-framework-summary.md) | Investment backtesting system | ✅ Available | Quant Analysts |
 
-### 🔧 Development & Contributing
-| Document | Description | Status |
-|----------|-------------|--------|
-| [Contributing Guide](CONTRIBUTING.md) | How to contribute to the project | ✅ Available |
-| [Code of Conduct](CODE_OF_CONDUCT.md) | Community standards and expectations | ✅ Available |
-| [License](LICENSE.md) | MIT License terms and conditions | ✅ Available |
-
-### 📋 Project Management
-| Document | Description | Status |
-|----------|-------------|--------|
-| [Documentation Index](index.md) | Complete documentation overview | ✅ Available |
+### 📋 Project Information
+| Document | Description | Status | Audience |
+|----------|-------------|--------|----------|
+| [Contributing Guidelines](CONTRIBUTING.md) | How to contribute | ✅ Available | Contributors |
+| [Code of Conduct](CODE_OF_CONDUCT.md) | Community standards | ✅ Available | All |
+| [License](LICENSE.md) | MIT License | ✅ Available | Legal |
 
 ## 🏗️ Platform Architecture
 
