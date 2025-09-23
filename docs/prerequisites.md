@@ -269,7 +269,7 @@ Before starting development, ensure you have:
 - [ ] **Health check passed** via `python scripts/health-check.py`
 
 **Next Steps:**
-1. See [CONTRIBUTING.md](CONTRIBUTING.md) for development workflow
+1. See [Contributing Guide](development/contributing.md) for development workflow
 2. Check [README.md](../README.md) for project overview
 3. Review [architecture.md](architecture.md) for system design
 
@@ -284,5 +284,5 @@ Before starting development, ensure you have:
 
 **Resources:**
 - [Project Documentation](../docs/)
-- [Contributing Guidelines](CONTRIBUTING.md)
+- [Contributing Guidelines](development/contributing.md)
 - [Architecture Overview](architecture.md)

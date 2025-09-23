@@ -18,8 +18,8 @@ python scripts/initialize.py --interactive
 
 ### For Developers
 1. **[API Documentation](api/README.md)** - Complete API reference
-2. **[Development Guide](development/README.md)** - Development standards (Coming Soon)
-3. **[Contributing Guide](development/contributing.md)** - How to contribute (Coming Soon)
+2. **[Development Guide](development/README.md)** - Development standards and workflows
+3. **[Contributing Guide](development/contributing.md)** - How to contribute to the project
 
 ### For DevOps
 1. **[Docker Deployment](deployment/docker-deployment.md)** - Production deployment
@@ -50,9 +50,9 @@ python scripts/initialize.py --interactive
 | Document | Description | Status | Audience |
 |----------|-------------|--------|----------|
 | **[API Documentation](api/README.md)** | Complete API reference and examples | ✅ Complete | Developers |
-| [MCP Server Reference](api/mcp-server-reference.md) | Detailed MCP server API docs | 📝 Planned | Advanced Developers |
-| [Development Guide](development/README.md) | Development workflows | 📝 Planned | Contributors |
-| [Contributing Guide](development/contributing.md) | Contribution guidelines | 📝 Planned | Contributors |
+| **[MCP Server Reference](api/mcp-server-reference.md)** | Detailed MCP server API docs | ✅ Complete | Advanced Developers |
+| **[Development Guide](development/README.md)** | Development workflows and standards | ✅ Complete | Contributors |
+| **[Contributing Guide](development/contributing.md)** | Contribution guidelines and process | ✅ Complete | Contributors |
 
 ### 🏗️ Architecture & Technical
 | Document | Description | Status | Audience |
@@ -64,7 +64,7 @@ python scripts/initialize.py --interactive
 ### 📋 Project Information
 | Document | Description | Status | Audience |
 |----------|-------------|--------|----------|
-| [Contributing Guidelines](CONTRIBUTING.md) | How to contribute | ✅ Available | Contributors |
+| [Contributing Guidelines](development/contributing.md) | How to contribute | ✅ Available | Contributors |
 | [Code of Conduct](CODE_OF_CONDUCT.md) | Community standards | ✅ Available | All |
 | [License](LICENSE.md) | MIT License | ✅ Available | Legal |
 
@@ -88,7 +88,7 @@ The Agent Investment Platform follows a modular architecture with these key comp
 - **[Architecture Overview](architecture.md)** - Technical system design
 
 ### Project Guidelines
-- **[Contributing Guidelines](CONTRIBUTING.md)** - How to contribute code and documentation
+- **[Contributing Guidelines](development/contributing.md)** - How to contribute code and documentation
 - **[Code of Conduct](CODE_OF_CONDUCT.md)** - Community standards and expectations
 - **[License (MIT)](LICENSE.md)** - Usage rights and limitations
 
@@ -98,9 +98,9 @@ The Agent Investment Platform follows a modular architecture with these key comp
 - 🆕 **First-time setup** → [Initialize Platform](setup/initialize.prompt.md)
 - 🏗️ **System architecture** → [Architecture Overview](architecture.md)
 - 🤖 **MCP servers** → [MCP Server Integration](mcp-server-integration.md)
-- �‍💻 **Contributing code** → [Contributing Guide](CONTRIBUTING.md)
+- 👩‍💻 **Contributing code** → [Contributing Guide](development/contributing.md)
 - � **System requirements** → [Prerequisites](prerequisites.md)
-- � **Project overview** → [Documentation Index](index.md)
+- 📋 **Project overview** → [Documentation Index](README.md)
 
 ## 💡 Pro Tips
 
