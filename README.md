@@ -234,7 +234,8 @@ agent-investment-platform/
 ├── 📄 docker-compose.yml       # ✅ Multi-service orchestration
 ├── 📄 Dockerfile              # ✅ Container configuration
 ├── 📄 requirements.txt         # ✅ Python dependencies
-├── 📄 run_mcp_server.py        # ✅ MCP server runner
+├── scripts/
+│   ├── 📄 run_mcp_server.py    # ✅ MCP server runner
 ├── 📄 run_tests.py             # ✅ Test suite runner
 ├── 📄 TESTING.md               # ✅ Testing strategy documentation
 └── 📄 .env.example            # ✅ Environment template

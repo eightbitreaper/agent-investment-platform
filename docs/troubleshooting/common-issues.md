@@ -572,16 +572,16 @@ print('Anthropic API connection successful')
 **Solutions**:
 ```powershell
 # Check MCP server status
-python run_mcp_server.py --health-check
+python scripts/run_mcp_server.py --health-check
 
 # View MCP server logs
 Get-Content logs\\mcp-servers.log -Tail 50
 
 # Restart individual servers
-python run_mcp_server.py --restart stock-data-server
+python scripts/run_mcp_server.py --restart stock-data-server
 
 # Restart all servers
-python run_mcp_server.py --restart-all
+python scripts/run_mcp_server.py --restart-all
 
 # Test server connectivity
 python -c \"

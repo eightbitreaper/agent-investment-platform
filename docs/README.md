@@ -16,6 +16,7 @@ Welcome to the comprehensive documentation for the Agent Investment Platform. Th
 
 ### 🔧 Development & Contributing
 - [Development Setup](development/development-setup.md) - Environment setup for contributors
+- [Ollama Integration](development/ollama-integration.md) - Ollama WebUI integration and configuration
 - [Debugging Guides](development/debugging/) - Troubleshooting Python scripts and components
 - [Contributing Guidelines](development/contributing.md) - How to contribute to the project
 - [Code Standards](development/code-standards.md) - Coding conventions and best practices

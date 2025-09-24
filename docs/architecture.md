@@ -181,7 +181,7 @@ Based on this current information, should I invest in AAPL?"
 - "What are the risks shown in this current market data?"
 - **Logging**: Comprehensive structured logging with rotation
 
-**Unified Runner** (`run_mcp_server.py`)
+**Unified Runner** (`scripts/run_mcp_server.py`)
 - **Individual Server Execution**: Run specific servers for development/testing
 - **Batch Server Management**: Start all servers with single command
 - **Development Support**: Hot reload, debug mode, testing integration

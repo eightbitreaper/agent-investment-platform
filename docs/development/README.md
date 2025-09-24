@@ -93,7 +93,7 @@ python scripts/initialize.py --interactive
    docker compose --profile development up -d
 
    # Option 2: Local development servers
-   python run_mcp_server.py --start-all
+   python scripts/run_mcp_server.py --start-all
    python orchestrator.py --dev-mode
    ```
 

@@ -507,8 +507,8 @@ taskkill /PID <process_id> /F
 ```powershell
 # Problem: Cannot connect to MCP servers
 # Solution: Check server status and restart
-python run_mcp_server.py --health-check
-python run_mcp_server.py --restart-all
+python scripts/run_mcp_server.py --health-check
+python scripts/run_mcp_server.py --restart-all
 ```
 
 #### GPU Not Detected (Local LLMs)

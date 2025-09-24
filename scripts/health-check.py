@@ -396,7 +396,7 @@ class SystemHealthChecker:
                 "src/mcp_servers/report_generator_server.py",
                 "src/mcp-servers/news-analysis-server.js",
                 "src/mcp_servers/manager.py",
-                "run_mcp_server.py"
+                "scripts/run_mcp_server.py"
             ]
 
             available_servers = []

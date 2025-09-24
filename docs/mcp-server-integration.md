@@ -93,9 +93,9 @@ Use the MCP server runner script:
 
 ```bash
 # Run specific server
-python run_mcp_server.py --server stock-data
-python run_mcp_server.py --server analysis-engine
-python run_mcp_server.py --server report-generator
+python scripts/run_mcp_server.py --server stock-data
+python scripts/run_mcp_server.py --server analysis-engine
+python scripts/run_mcp_server.py --server report-generator
 
 # Run Node.js server
 cd src/mcp-servers
@@ -106,16 +106,16 @@ node news-analysis-server.js
 
 ```bash
 # Run all servers with manager
-python run_mcp_server.py --manager
+python scripts/run_mcp_server.py --manager
 
 # Custom configuration
-python run_mcp_server.py --manager --config custom-config.json
+python scripts/run_mcp_server.py --manager --config custom-config.json
 ```
 
 ### List Available Servers
 
 ```bash
-python run_mcp_server.py --list
+python scripts/run_mcp_server.py --list
 ```
 
 ## MCP Protocol Implementation
@@ -285,7 +285,7 @@ Comprehensive logging with:
 ### Debug Mode
 Enable debug logging:
 ```bash
-python run_mcp_server.py --server stock-data --log-level DEBUG
+python scripts/run_mcp_server.py --server stock-data --log-level DEBUG
 ```
 
 ### Health Status
