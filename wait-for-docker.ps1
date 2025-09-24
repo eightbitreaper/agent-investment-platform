@@ -30,13 +30,13 @@ function Test-DockerOperations {
     try {
         # Test basic docker command
         docker --version | Out-Null
-        
+
         # Test docker daemon connectivity
         docker system info | Out-Null
-        
+
         # Test image pulling capability
         docker images | Out-Null
-        
+
         return $true
     } catch {
         return $false
@@ -54,11 +54,11 @@ Write-Host ""
 
 while ($timer -lt $timeout) {
     Write-Host "[$attempt] Testing Docker connectivity..." -ForegroundColor Cyan
-    
+
     $dockerTest = Test-DockerReady
     Write-Host "    Status: $($dockerTest.Status)" -ForegroundColor $(if ($dockerTest.Status -eq "Ready") { "Green" } else { "Yellow" })
     Write-Host "    Message: $($dockerTest.Message)" -ForegroundColor Gray
-    
+
     if ($dockerTest.Status -eq "Ready") {
         Write-Host "    Testing Docker operations..." -ForegroundColor Cyan
         if (Test-DockerOperations) {
@@ -70,7 +70,7 @@ while ($timer -lt $timeout) {
             Write-Host "    Docker operations test: FAILED" -ForegroundColor Yellow
         }
     }
-    
+
     Write-Host ""
     Start-Sleep -Seconds $checkInterval
     $timer += $checkInterval
@@ -124,7 +124,7 @@ $services = @(
 while ($serviceTimer -lt $serviceTimeout) {
     Write-Host ""
     Write-Host "Service Health Check (Attempt $([math]::Floor($serviceTimer / $serviceCheckInterval) + 1)):" -ForegroundColor Cyan
-    
+
     $allHealthy = $true
     foreach ($service in $services) {
         $health = Test-ServiceHealth -ServiceName $service.Name -Port $service.Port -Path $service.Path
@@ -132,7 +132,7 @@ while ($serviceTimer -lt $serviceTimeout) {
         Write-Host "    $($service.Name): $($health.Status)" -ForegroundColor $color
         if ($health.Status -ne "Healthy") { $allHealthy = $false }
     }
-    
+
     if ($allHealthy) {
         Write-Host ""
         Write-Host "[SUCCESS] All services are healthy!" -ForegroundColor Green

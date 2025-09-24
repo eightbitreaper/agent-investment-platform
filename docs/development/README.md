@@ -91,7 +91,7 @@ python scripts/initialize.py --interactive
    ```powershell
    # Option 1: Docker development environment
    docker compose --profile development up -d
-   
+
    # Option 2: Local development servers
    python run_mcp_server.py --start-all
    python orchestrator.py --dev-mode
@@ -218,15 +218,15 @@ class ConfigurationData:
 # Main classes
 class ModuleClass:
     \"\"\"Main module class with clear responsibilities.\"\"\"
-    
+
     def __init__(self, config: ConfigurationData):
         self.config = config
         self.logger = logging.getLogger(__name__)
-    
+
     async def public_method(self, param: str) -> Dict[str, Any]:
         \"\"\"Public method with type hints and docstring.\"\"\"
         return await self._private_method(param)
-    
+
     async def _private_method(self, param: str) -> Dict[str, Any]:
         \"\"\"Private method for internal use.\"\"\"
         # Implementation
@@ -325,47 +325,47 @@ We follow PEP 8 with some modifications:
 
 class ExampleClass:
     \"\"\"Example class demonstrating coding standards.
-    
+
     This class shows proper Python style including type hints,
     docstrings, and error handling.
-    
+
     Args:
         config: Configuration object
         timeout: Request timeout in seconds
-    
+
     Raises:
         ValueError: Invalid configuration
         ConnectionError: Network connection failed
     \"\"\"
-    
+
     def __init__(self, config: Dict[str, Any], timeout: int = 30):
         self.config = config
         self.timeout = timeout
         self._validate_config()
-    
+
     async def fetch_data(self, symbol: str) -> Optional[Dict[str, Any]]:
         \"\"\"Fetch data for the given symbol.
-        
+
         Args:
             symbol: Stock ticker symbol
-            
+
         Returns:
             Data dictionary or None if not found
-            
+
         Raises:
             ValueError: Invalid symbol format
             APIError: External API error
         \"\"\"
         if not symbol or not symbol.isalpha():
             raise ValueError(f\"Invalid symbol: {symbol}\")
-        
+
         try:
             response = await self._make_request(symbol)
             return self._parse_response(response)
         except Exception as e:
             self.logger.error(f\"Failed to fetch data for {symbol}: {e}\")
             raise APIError(f\"Data fetch failed: {e}\") from e
-    
+
     def _validate_config(self) -> None:
         \"\"\"Validate configuration parameters.\"\"\"
         required_keys = ['api_key', 'base_url']
@@ -390,12 +390,12 @@ class NewsAnalysisServer {
     constructor(config) {
         this.config = config;
         this.apiKey = process.env.NEWS_API_KEY;
-        
+
         if (!this.apiKey) {
             throw new Error('NEWS_API_KEY environment variable required');
         }
     }
-    
+
     /**
      * Analyze news sentiment for a stock.
      * @param {string} symbol - Stock ticker symbol
@@ -406,7 +406,7 @@ class NewsAnalysisServer {
         try {
             const articles = await this.fetchNews(symbol, daysBack);
             const sentiment = await this.calculateSentiment(articles);
-            
+
             return {
                 symbol,
                 sentiment: sentiment.score,
@@ -419,11 +419,11 @@ class NewsAnalysisServer {
             throw new Error(`Failed to analyze sentiment: ${error.message}`);
         }
     }
-    
+
     async fetchNews(symbol, daysBack) {
         // Implementation
     }
-    
+
     async calculateSentiment(articles) {
         // Implementation
     }
@@ -442,32 +442,32 @@ from typing import List, Optional
 
 class ServerConfig(BaseSettings):
     \"\"\"Server configuration with validation.\"\"\"
-    
+
     # API Configuration
     api_key: str
     base_url: str = \"https://api.example.com\"
     timeout: int = 30
-    
+
     # Feature flags
     enable_caching: bool = True
     enable_metrics: bool = True
-    
+
     # Rate limiting
     requests_per_minute: int = 60
     burst_limit: int = 10
-    
+
     @validator('api_key')
     def validate_api_key(cls, v):
         if not v or len(v) < 10:
             raise ValueError('Invalid API key')
         return v
-    
+
     @validator('timeout')
     def validate_timeout(cls, v):
         if v < 1 or v > 300:
             raise ValueError('Timeout must be between 1 and 300 seconds')
         return v
-    
+
     class Config:
         env_file = '.env'
         env_prefix = 'SERVER_'
@@ -501,7 +501,7 @@ from src.analysis.sentiment_analyzer import SentimentAnalyzer
 
 class TestSentimentAnalyzer:
     \"\"\"Test suite for SentimentAnalyzer.\"\"\"
-    
+
     @pytest.fixture
     def analyzer(self):
         \"\"\"Create analyzer instance for testing.\"\"\"
@@ -510,33 +510,33 @@ class TestSentimentAnalyzer:
             'confidence_threshold': 0.5
         }
         return SentimentAnalyzer(config)
-    
+
     @pytest.mark.asyncio
     async def test_analyze_positive_sentiment(self, analyzer):
         \"\"\"Test positive sentiment analysis.\"\"\"
         text = \"Great company with strong fundamentals and growth prospects\"
-        
+
         result = await analyzer.analyze(text)
-        
+
         assert result.sentiment > 0
         assert result.confidence > 0.5
         assert result.label == 'POSITIVE'
-    
+
     @pytest.mark.asyncio
     async def test_analyze_empty_text_raises_error(self, analyzer):
         \"\"\"Test that empty text raises appropriate error.\"\"\"
         with pytest.raises(ValueError, match=\"Text cannot be empty\"):
             await analyzer.analyze(\"\")
-    
+
     @pytest.mark.asyncio
     @patch('src.analysis.sentiment_analyzer.model_client')
     async def test_model_api_error_handling(self, mock_client, analyzer):
         \"\"\"Test handling of model API errors.\"\"\"
         mock_client.analyze.side_effect = ConnectionError(\"API unavailable\")
-        
+
         with pytest.raises(AnalysisError, match=\"Sentiment analysis failed\"):
             await analyzer.analyze(\"test text\")
-    
+
     def test_confidence_threshold_validation(self):
         \"\"\"Test configuration validation.\"\"\"
         with pytest.raises(ValueError, match=\"Confidence threshold\"):
@@ -553,12 +553,12 @@ from src.main import app
 
 class TestMCPIntegration:
     \"\"\"Integration tests for MCP server communication.\"\"\"
-    
+
     @pytest.fixture
     def client(self):
         \"\"\"Create test client.\"\"\"
         return TestClient(app)
-    
+
     @pytest.mark.asyncio
     async def test_stock_quote_integration(self, client):
         \"\"\"Test full stock quote workflow.\"\"\"
@@ -566,13 +566,13 @@ class TestMCPIntegration:
             \"/api/v1/analysis\",
             json={\"symbol\": \"AAPL\", \"analysis_type\": \"quote\"}
         )
-        
+
         assert response.status_code == 200
         data = response.json()
         assert \"price\" in data
         assert \"symbol\" in data
         assert data[\"symbol\"] == \"AAPL\"
-    
+
     @pytest.mark.asyncio
     async def test_mcp_server_health_checks(self):
         \"\"\"Test that all MCP servers are healthy.\"\"\"
@@ -582,7 +582,7 @@ class TestMCPIntegration:
             \"http://localhost:3003\",
             \"http://localhost:3004\"
         ]
-        
+
         async with httpx.AsyncClient() as client:
             for server_url in servers:
                 response = await client.get(f\"{server_url}/health\")
@@ -655,36 +655,36 @@ Use Google-style docstrings:
 ```python
 def complex_function(param1: str, param2: int, param3: Optional[bool] = None) -> Dict[str, Any]:
     \"\"\"Perform complex operation with multiple parameters.
-    
+
     This function demonstrates the standard docstring format used throughout
     the project. It includes detailed parameter and return descriptions.
-    
+
     Args:
         param1: Description of the first parameter
         param2: Description of the second parameter with more detail about
             what values are acceptable and their meaning
         param3: Optional parameter with default behavior description
-    
+
     Returns:
         Dictionary containing the results with the following keys:
             - 'status': Operation status ('success' or 'error')
             - 'data': Result data or None if error
             - 'message': Human-readable status message
-    
+
     Raises:
         ValueError: When param1 is empty or param2 is negative
         ConnectionError: When external service is unavailable
         ProcessingError: When operation fails due to data issues
-    
+
     Example:
         Basic usage with required parameters:
-        
+
         >>> result = complex_function(\"test\", 42)
         >>> print(result['status'])
         'success'
-        
+
         Usage with optional parameter:
-        
+
         >>> result = complex_function(\"test\", 42, True)
         >>> print(result['data'])
         {'processed': True, 'value': 42}

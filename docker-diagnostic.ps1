@@ -28,7 +28,7 @@ function Get-DockerProcesses {
 # Function to test Docker connectivity with detailed output
 function Test-DockerConnectivity {
     Write-Step "Testing Docker connectivity..."
-    
+
     # Test 1: Docker CLI availability
     try {
         $version = docker --version 2>$null
@@ -37,7 +37,7 @@ function Test-DockerConnectivity {
         Write-Error "Docker CLI not available: $_"
         return $false
     }
-    
+
     # Test 2: Docker daemon ping
     try {
         $ping = docker system ping 2>&1
@@ -50,7 +50,7 @@ function Test-DockerConnectivity {
     } catch {
         Write-Warning "Docker daemon ping exception: $_"
     }
-    
+
     # Test 3: Docker info command
     try {
         $info = docker info 2>&1
@@ -64,14 +64,14 @@ function Test-DockerConnectivity {
     } catch {
         Write-Warning "Docker info exception: $_"
     }
-    
+
     return $false
 }
 
 # Function to diagnose Docker Desktop installation
 function Test-DockerInstallation {
     Write-Step "Diagnosing Docker Desktop installation..."
-    
+
     # Check Docker Desktop executable
     $dockerDesktopPath = "${env:ProgramFiles}\Docker\Docker\Docker Desktop.exe"
     if (Test-Path $dockerDesktopPath) {
@@ -80,7 +80,7 @@ function Test-DockerInstallation {
         Write-Error "Docker Desktop executable not found at: $dockerDesktopPath"
         return $false
     }
-    
+
     # Check Docker CLI
     $dockerCliPath = "${env:ProgramFiles}\Docker\Docker\resources\bin\docker.exe"
     if (Test-Path $dockerCliPath) {
@@ -88,7 +88,7 @@ function Test-DockerInstallation {
     } else {
         Write-Warning "Docker CLI not found at expected location"
     }
-    
+
     # Check WSL2 if on Windows
     try {
         $wslVersion = wsl --version 2>$null
@@ -100,7 +100,7 @@ function Test-DockerInstallation {
     } catch {
         Write-Warning "Could not check WSL2 status"
     }
-    
+
     return $true
 }
 
@@ -138,28 +138,28 @@ Write-Host "==================" -ForegroundColor Cyan
 
 if (-not $connectOk) {
     Write-Warning "Docker daemon is not responding. Attempting recovery..."
-    
+
     # Stop all Docker processes
     Write-Step "Stopping Docker processes..."
     Get-Process | Where-Object {$_.ProcessName -like "*docker*"} | Stop-Process -Force -ErrorAction SilentlyContinue
     Start-Sleep -Seconds 5
-    
+
     # Restart Docker Desktop
     Write-Step "Starting Docker Desktop..."
     Start-Process "${env:ProgramFiles}\Docker\Docker\Docker Desktop.exe" -WindowStyle Minimized
-    
+
     # Wait and test again
     Write-Step "Waiting for Docker Desktop to initialize (60 seconds)..."
     $maxWait = 60
     $waitInterval = 5
     $waited = 0
-    
+
     while ($waited -lt $maxWait) {
         Start-Sleep -Seconds $waitInterval
         $waited += $waitInterval
-        
+
         Write-Host "." -NoNewline -ForegroundColor Yellow
-        
+
         if (Test-DockerConnectivity) {
             Write-Host ""
             Write-Success "Docker Desktop is now running!"
@@ -167,7 +167,7 @@ if (-not $connectOk) {
             break
         }
     }
-    
+
     if (-not $connectOk) {
         Write-Host ""
         Write-Error "Docker Desktop failed to start after $maxWait seconds"
@@ -181,7 +181,7 @@ Write-Host "===============" -ForegroundColor Cyan
 
 if ($connectOk) {
     Write-Success "Docker Desktop is operational!"
-    
+
     # Show Docker system info
     Write-Info "Docker system information:"
     try {
@@ -189,11 +189,11 @@ if ($connectOk) {
     } catch {
         Write-Warning "Could not retrieve system info"
     }
-    
+
     Write-Host ""
     Write-Success "Ready for Docker deployment!"
     Write-Info "Next step: Run deployment script"
-    
+
 } else {
     Write-Error "Docker Desktop is not operational"
     Write-Host ""

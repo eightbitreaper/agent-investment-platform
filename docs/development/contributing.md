@@ -44,7 +44,7 @@ Before you start contributing, make sure you have:
    ```powershell
    # Quick setup
    python scripts/initialize.py --interactive
-   
+
    # Or manual setup
    python -m venv venv
    .\\venv\\Scripts\\activate  # Windows
@@ -55,7 +55,7 @@ Before you start contributing, make sure you have:
    ```powershell
    # Run health check
    python scripts/setup/validate-setup.py --quick
-   
+
    # Run tests
    python -m pytest tests/ -v
    ```
@@ -325,31 +325,31 @@ def analyze_stock_data(
     indicators: Optional[List[str]] = None
 ) -> Dict[str, float]:
     \"\"\"Analyze stock data with specified indicators.
-    
+
     Args:
         symbol: Stock ticker symbol
         data: Price and volume data
         indicators: List of indicators to calculate
-        
+
     Returns:
         Dictionary of calculated indicators
-        
+
     Raises:
         ValueError: Invalid symbol or data format
     \"\"\"
     if not symbol or not data:
         raise ValueError(\"Symbol and data are required\")
-    
+
     indicators = indicators or ['SMA', 'RSI']
     results = {}
-    
+
     for indicator in indicators:
         try:
             results[indicator] = calculate_indicator(indicator, data)
         except Exception as e:
             logger.error(f\"Failed to calculate {indicator} for {symbol}: {e}\")
             continue
-    
+
     return results
 ```
 
@@ -369,12 +369,12 @@ class NewsAnalysisServer {
     constructor(config) {
         this.config = config;
         this.apiKey = process.env.NEWS_API_KEY;
-        
+
         if (!this.apiKey) {
             throw new Error('NEWS_API_KEY environment variable is required');
         }
     }
-    
+
     /**
      * Analyze sentiment for news articles.
      * @param {string} symbol - Stock symbol
@@ -404,17 +404,17 @@ from pydantic import BaseSettings, validator
 
 class ServerConfig(BaseSettings):
     \"\"\"Server configuration with validation.\"\"\"
-    
+
     api_key: str
     timeout: int = 30
     max_retries: int = 3
-    
+
     @validator('timeout')
     def validate_timeout(cls, v):
         if v < 1 or v > 300:
             raise ValueError('Timeout must be between 1 and 300')
         return v
-    
+
     class Config:
         env_file = '.env'
 ```
@@ -442,7 +442,7 @@ class TestSentimentAnalyzer:
         result = analyzer.analyze(\"Great company with strong growth\")
         assert result.sentiment > 0.5
         assert result.label == 'POSITIVE'
-    
+
     def test_empty_input_raises_error(self):
         analyzer = SentimentAnalyzer()
         with pytest.raises(ValueError):
@@ -495,7 +495,7 @@ pytest -n auto
 
 - **Clear and concise** - Avoid unnecessary complexity
 - **Actionable** - Provide specific steps and examples
-- **Complete** - Cover all necessary information  
+- **Complete** - Cover all necessary information
 - **Accurate** - Keep information up-to-date
 - **Accessible** - Write for your target audience
 

@@ -49,7 +49,7 @@ class MCPServer:
         self.tools = {}
         self.resources = {}
         self.prompts = {}
-    
+
     async def handle_request(self, request):
         if request.method == \"tools/list\":
             return self.list_tools()
@@ -79,8 +79,8 @@ Servers are configured via `config/mcp-servers.json`:
 
 ## Stock Data Server
 
-**Port**: 3001  
-**File**: `src/mcp_servers/stock_data_server.py`  
+**Port**: 3001
+**File**: `src/mcp_servers/stock_data_server.py`
 **Purpose**: Real-time and historical stock market data
 
 ### Available Tools
@@ -186,7 +186,7 @@ Calculate technical analysis indicators.
 
 **Available Indicators**:
 - **SMA** - Simple Moving Average
-- **EMA** - Exponential Moving Average  
+- **EMA** - Exponential Moving Average
 - **RSI** - Relative Strength Index
 - **MACD** - Moving Average Convergence Divergence
 - **BOLLINGER** - Bollinger Bands
@@ -244,8 +244,8 @@ Get top gainers, losers, and most active stocks.
 
 ## News Analysis Server
 
-**Port**: 3002  
-**File**: `src/mcp-servers/news-analysis-server.js`  
+**Port**: 3002
+**File**: `src/mcp-servers/news-analysis-server.js`
 **Purpose**: News sentiment analysis and market trend detection
 
 ### Available Tools
@@ -317,8 +317,8 @@ Upcoming earnings with sentiment context and expectations.
 
 ## YouTube Transcript Server
 
-**Port**: 3003  
-**File**: `src/mcp-servers/youtube-transcript-server.js`  
+**Port**: 3003
+**File**: `src/mcp-servers/youtube-transcript-server.js`
 **Purpose**: Financial video analysis and expert opinion extraction
 
 ### Available Tools
@@ -368,8 +368,8 @@ Monitor analyst videos and track recommendation changes.
 
 ## Analysis Engine Server
 
-**Port**: 3004  
-**File**: `src/mcp_servers/analysis_engine_server.py`  
+**Port**: 3004
+**File**: `src/mcp_servers/analysis_engine_server.py`
 **Purpose**: Advanced financial analysis and investment recommendations
 
 ### Available Tools
@@ -566,32 +566,32 @@ class InvestmentAnalyzer:
         self.stock_client = MCPClient(\"http://localhost:3001\")
         self.news_client = MCPClient(\"http://localhost:3002\")
         self.analysis_client = MCPClient(\"http://localhost:3004\")
-    
+
     async def analyze_stock(self, symbol: str):
         # Get current quote
         quote = await self.stock_client.call_tool(
             \"get_stock_quote\",
             {\"symbol\": symbol, \"include_fundamentals\": True}
         )
-        
+
         # Get technical indicators
         technical = await self.stock_client.call_tool(
             \"get_technical_indicators\",
             {\"symbol\": symbol, \"indicators\": [\"RSI\", \"MACD\", \"SMA\"]}
         )
-        
+
         # Get news sentiment
         sentiment = await self.news_client.call_tool(
             \"get_news_sentiment\",
             {\"symbol\": symbol, \"days_back\": 7}
         )
-        
+
         # Generate recommendation
         recommendation = await self.analysis_client.call_tool(
             \"generate_recommendation\",
             {\"symbol\": symbol}
         )
-        
+
         return {
             \"quote\": quote,
             \"technical\": technical,
@@ -614,19 +614,19 @@ class MarketAnalyzer {
         this.stockClient = new MCPClient('http://localhost:3001');
         this.newsClient = new MCPClient('http://localhost:3002');
     }
-    
+
     async getMarketOverview() {
         // Get market movers
         const movers = await this.stockClient.callTool('get_market_movers', {});
-        
+
         // Get overall market sentiment
         const sentiment = await this.newsClient.callTool('get_news_sentiment', {
             days_back: 1
         });
-        
+
         // Get trending topics
         const topics = await this.newsClient.callTool('get_trending_topics', {});
-        
+
         return {
             movers,
             sentiment,
@@ -646,7 +646,7 @@ async def check_server_health():
         ('YouTube', 'http://localhost:3003'),
         ('Analysis Engine', 'http://localhost:3004')
     ]
-    
+
     results = {}
     for name, url in servers:
         try:
@@ -660,7 +660,7 @@ async def check_server_health():
                 'status': 'error',
                 'error': str(e)
             }
-    
+
     return results
 ```
 
@@ -680,13 +680,13 @@ async def check_server_health():
 async def new_tool_handler(arguments: dict) -> dict:
     \"\"\"
     Tool description here.
-    
+
     Args:
         arguments: Tool input parameters
-        
+
     Returns:
         Tool response data
-        
+
     Raises:
         ValueError: Invalid parameters
         APIError: External API error
@@ -695,11 +695,11 @@ async def new_tool_handler(arguments: dict) -> dict:
     symbol = arguments.get('symbol')
     if not symbol:
         raise ValueError(\"Symbol is required\")
-    
+
     try:
         # Implement tool logic
         result = await some_api_call(symbol)
-        
+
         return {
             \"content\": [{
                 \"type\": \"text\",
@@ -734,7 +734,7 @@ async def test_get_stock_quote(server):
         \"symbol\": \"AAPL\",
         \"include_fundamentals\": True
     })
-    
+
     assert \"content\" in result
     assert len(result[\"content\"]) > 0
     assert \"AAPL\" in result[\"content\"][0][\"text\"]

@@ -3,7 +3,7 @@
 
 Write-Host ""
 Write-Host "================================================================" -ForegroundColor Cyan
-Write-Host "    Docker Startup Helper - Agent Investment Platform" -ForegroundColor Cyan  
+Write-Host "    Docker Startup Helper - Agent Investment Platform" -ForegroundColor Cyan
 Write-Host "================================================================" -ForegroundColor Cyan
 Write-Host ""
 
