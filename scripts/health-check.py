@@ -85,7 +85,7 @@ class SystemHealthChecker:
         try:
             # Check critical dependencies
             critical_deps = [
-                "requests", "pyyaml", "click", "rich",
+                "requests", "yaml", "click", "rich",
                 "aiohttp", "jinja2", "markdown"
             ]
 

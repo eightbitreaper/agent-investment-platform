@@ -51,7 +51,7 @@ USER appuser
 EXPOSE 8000 3001 3002 3003 3004 3005 3006
 
 # Default command
-CMD ["python", "-m", "src.main"]
+CMD ["python", "orchestrator.py", "--live"]
 
 # Development stage
 FROM base as development

@@ -51,7 +51,7 @@ scipy>=1.11.0
 yfinance>=0.2.0
 
 # Database and Caching
-sqlite3  # Built-in, no version needed
+# sqlite3 is built into Python 3.x, no installation needed
 pyarrow>=14.0.0  # For parquet file support
 
 # MCP Server Dependencies
