@@ -137,12 +137,20 @@ class AgentPlatformInitializer:
         sys.path.append(str(self.scripts_dir / "setup"))
         
         try:
-            from install_dependencies import DependencyInstaller
-            installer = DependencyInstaller(self.system_info)
+            # Handle hyphenated filename by using importlib
+            import importlib.util
+            spec = importlib.util.spec_from_file_location(
+                "install_dependencies", 
+                self.scripts_dir / "setup" / "install-dependencies.py"
+            )
+            install_dependencies = importlib.util.module_from_spec(spec)
+            spec.loader.exec_module(install_dependencies)
+            
+            installer = install_dependencies.DependencyInstaller(self.system_info)
             installer.install_all()
             logger.info("Dependencies installed successfully")
-        except ImportError:
-            logger.error("Dependency installer not found. Run task 0.3 first.")
+        except (ImportError, FileNotFoundError, AttributeError) as e:
+            logger.error(f"Dependency installer not found or failed to load: {e}")
             raise InitializationError("Missing dependency installer")
     
     def configure_environment(self):
@@ -150,12 +158,20 @@ class AgentPlatformInitializer:
         logger.info("Configuring environment...")
         
         try:
-            from configure_environment import EnvironmentConfigurator
-            configurator = EnvironmentConfigurator(self.project_root)
+            # Handle hyphenated filename by using importlib
+            import importlib.util
+            spec = importlib.util.spec_from_file_location(
+                "configure_environment", 
+                self.scripts_dir / "setup" / "configure-environment.py"
+            )
+            configure_environment = importlib.util.module_from_spec(spec)
+            spec.loader.exec_module(configure_environment)
+            
+            configurator = configure_environment.EnvironmentConfigurator(self.project_root)
             configurator.setup_all()
             logger.info("Environment configured successfully")
-        except ImportError:
-            logger.error("Environment configurator not found. Run task 0.4 first.")
+        except (ImportError, FileNotFoundError, AttributeError) as e:
+            logger.error(f"Environment configurator not found or failed to load: {e}")
             raise InitializationError("Missing environment configurator")
     
     def setup_llm_models(self, llm_choice: str = "local"):
@@ -163,12 +179,20 @@ class AgentPlatformInitializer:
         logger.info(f"Setting up LLM models (choice: {llm_choice})...")
         
         try:
-            from download_models import ModelDownloader
-            downloader = ModelDownloader(self.config_dir, llm_choice)
+            # Handle hyphenated filename by using importlib
+            import importlib.util
+            spec = importlib.util.spec_from_file_location(
+                "download_models", 
+                self.scripts_dir / "setup" / "download-models.py"
+            )
+            download_models = importlib.util.module_from_spec(spec)
+            spec.loader.exec_module(download_models)
+            
+            downloader = download_models.ModelDownloader(self.config_dir, llm_choice)
             downloader.setup_models()
             logger.info("LLM models configured successfully")
-        except ImportError:
-            logger.error("Model downloader not found. Run task 0.5 first.")
+        except (ImportError, FileNotFoundError, AttributeError) as e:
+            logger.error(f"Model downloader not found or failed to load: {e}")
             raise InitializationError("Missing model downloader")
     
     def validate_setup(self) -> bool:
@@ -176,11 +200,19 @@ class AgentPlatformInitializer:
         logger.info("Validating setup...")
         
         try:
-            from validate_setup import SetupValidator
-            validator = SetupValidator(self.project_root)
+            # Handle hyphenated filename by using importlib
+            import importlib.util
+            spec = importlib.util.spec_from_file_location(
+                "validate_setup", 
+                self.scripts_dir / "setup" / "validate-setup.py"
+            )
+            validate_setup = importlib.util.module_from_spec(spec)
+            spec.loader.exec_module(validate_setup)
+            
+            validator = validate_setup.SetupValidator(self.project_root)
             return validator.validate_all()
-        except ImportError:
-            logger.error("Setup validator not found. Run task 0.6 first.")
+        except (ImportError, FileNotFoundError, AttributeError) as e:
+            logger.error(f"Setup validator not found or failed to load: {e}")
             return False
     
     def interactive_setup(self):

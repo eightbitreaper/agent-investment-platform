@@ -5,7 +5,9 @@
             "label": "🚀 Initialize Platform",
             "type": "shell",
             "command": "python",
-            "args": ["scripts/initialize.py"],
+            "args": [
+                "scripts/initialize.py"
+            ],
             "group": {
                 "kind": "build",
                 "isDefault": true
@@ -29,9 +31,11 @@
         },
         {
             "label": "🔍 Validate Setup",
-            "type": "shell", 
+            "type": "shell",
             "command": "python",
-            "args": ["scripts/setup/validate-setup.py"],
+            "args": [
+                "scripts/setup/validate-setup.py"
+            ],
             "group": "test",
             "presentation": {
                 "echo": true,
@@ -47,8 +51,11 @@
         {
             "label": "⚡ Quick Validation",
             "type": "shell",
-            "command": "python", 
-            "args": ["scripts/setup/validate-setup.py", "--quick"],
+            "command": "python",
+            "args": [
+                "scripts/setup/validate-setup.py",
+                "--quick"
+            ],
             "group": "test",
             "presentation": {
                 "echo": true,
@@ -63,7 +70,9 @@
             "label": "🔧 Install Dependencies",
             "type": "shell",
             "command": "python",
-            "args": ["scripts/setup/install-dependencies.py"],
+            "args": [
+                "scripts/setup/install-dependencies.py"
+            ],
             "group": "build",
             "presentation": {
                 "echo": true,
@@ -81,8 +90,11 @@
         {
             "label": "⚙️ Configure Environment",
             "type": "shell",
-            "command": "python", 
-            "args": ["scripts/setup/configure-environment.py", "--interactive"],
+            "command": "python",
+            "args": [
+                "scripts/setup/configure-environment.py",
+                "--interactive"
+            ],
             "group": "build",
             "presentation": {
                 "echo": true,
@@ -97,7 +109,9 @@
             "label": "🤖 Setup Local LLMs",
             "type": "shell",
             "command": "python",
-            "args": ["scripts/setup/download-models.py"],
+            "args": [
+                "scripts/setup/download-models.py"
+            ],
             "group": "build",
             "presentation": {
                 "echo": true,
@@ -112,7 +126,10 @@
             "label": "🐋 Start Docker Services",
             "type": "shell",
             "command": "docker-compose",
-            "args": ["up", "-d"],
+            "args": [
+                "up",
+                "-d"
+            ],
             "group": "build",
             "presentation": {
                 "echo": true,
@@ -122,13 +139,17 @@
             },
             "problemMatcher": [],
             "detail": "Start all Docker services in background",
-            "dependsOn": ["🔍 Validate Setup"]
+            "dependsOn": [
+                "🔍 Validate Setup"
+            ]
         },
         {
-            "label": "🛑 Stop Docker Services", 
+            "label": "🛑 Stop Docker Services",
             "type": "shell",
             "command": "docker-compose",
-            "args": ["down"],
+            "args": [
+                "down"
+            ],
             "group": "build",
             "presentation": {
                 "echo": true,
@@ -143,7 +164,10 @@
             "label": "📊 Generate Test Report",
             "type": "shell",
             "command": "python",
-            "args": ["orchestrator.py", "--test-mode"],
+            "args": [
+                "orchestrator.py",
+                "--test-mode"
+            ],
             "group": "test",
             "presentation": {
                 "echo": true,
@@ -157,8 +181,11 @@
         {
             "label": "📈 Run Live Analysis",
             "type": "shell",
-            "command": "python", 
-            "args": ["orchestrator.py", "--live"],
+            "command": "python",
+            "args": [
+                "orchestrator.py",
+                "--live"
+            ],
             "group": "build",
             "presentation": {
                 "echo": true,
@@ -168,13 +195,17 @@
             },
             "problemMatcher": [],
             "detail": "Run live investment analysis (requires API keys)",
-            "dependsOn": ["🔍 Validate Setup"]
+            "dependsOn": [
+                "🔍 Validate Setup"
+            ]
         },
         {
             "label": "🔄 Update Memory Bank",
             "type": "shell",
             "command": "python",
-            "args": [".memory/memory_bank.py"],
+            "args": [
+                ".memory/memory_bank.py"
+            ],
             "group": "build",
             "presentation": {
                 "echo": true,
@@ -189,7 +220,9 @@
             "label": "📝 View Documentation",
             "type": "shell",
             "command": "code",
-            "args": ["docs/README.md"],
+            "args": [
+                "docs/README.md"
+            ],
             "group": "build",
             "presentation": {
                 "echo": false,
@@ -202,7 +235,10 @@
             "label": "🏗️ Clean Build Artifacts",
             "type": "shell",
             "command": "python",
-            "args": ["-c", "import shutil, pathlib; [shutil.rmtree(p) for p in pathlib.Path('.').glob('**/__pycache__') if p.is_dir()]; [p.unlink() for p in pathlib.Path('.').glob('**/*.pyc')]"],
+            "args": [
+                "-c",
+                "import shutil, pathlib; [shutil.rmtree(p) for p in pathlib.Path('.').glob('**/__pycache__') if p.is_dir()]; [p.unlink() for p in pathlib.Path('.').glob('**/*.pyc')]"
+            ],
             "group": "build",
             "presentation": {
                 "echo": true,
@@ -217,7 +253,10 @@
             "label": "📋 Show System Info",
             "type": "shell",
             "command": "python",
-            "args": ["-c", "import platform, sys; print(f'OS: {platform.system()} {platform.release()}'); print(f'Python: {sys.version}'); print(f'Architecture: {platform.machine()}')"],
+            "args": [
+                "-c",
+                "import platform, sys; print(f'OS: {platform.system()} {platform.release()}'); print(f'Python: {sys.version}'); print(f'Architecture: {platform.machine()}')"
+            ],
             "group": "test",
             "presentation": {
                 "echo": true,
@@ -232,7 +271,10 @@
             "label": "🔒 Check Security Config",
             "type": "shell",
             "command": "python",
-            "args": ["-c", "import os; print('Environment variables:'); [print(f'{k}={'*'*len(v) if 'key' in k.lower() or 'token' in k.lower() or 'password' in k.lower() else v}') for k,v in os.environ.items() if k.startswith(('LLM_', 'API_', 'GITHUB_', 'EMAIL_', 'DISCORD_'))]"],
+            "args": [
+                "-c",
+                "import os; print('Environment variables:'); [print(f'{k}={'*'*len(v) if 'key' in k.lower() or 'token' in k.lower() or 'password' in k.lower() else v}') for k,v in os.environ.items() if k.startswith(('LLM_', 'API_', 'GITHUB_', 'EMAIL_', 'DISCORD_'))]"
+            ],
             "group": "test",
             "presentation": {
                 "echo": true,
@@ -247,7 +289,12 @@
             "label": "🧪 Run All Tests",
             "type": "shell",
             "command": "python",
-            "args": ["-m", "pytest", "tests/", "-v"],
+            "args": [
+                "-m",
+                "pytest",
+                "tests/",
+                "-v"
+            ],
             "group": {
                 "kind": "test",
                 "isDefault": true
@@ -259,14 +306,20 @@
                 "panel": "shared",
                 "clear": true
             },
-            "problemMatcher": ["$python"],
+            "problemMatcher": [
+                "$python"
+            ],
             "detail": "Run complete test suite"
         },
         {
             "label": "📦 Install Requirements",
             "type": "shell",
             "command": "pip",
-            "args": ["install", "-r", "requirements.txt"],
+            "args": [
+                "install",
+                "-r",
+                "requirements.txt"
+            ],
             "group": "build",
             "presentation": {
                 "echo": true,
@@ -281,7 +334,9 @@
             "label": "🔄 Restart Services",
             "type": "shell",
             "command": "docker-compose",
-            "args": ["restart"],
+            "args": [
+                "restart"
+            ],
             "group": "build",
             "presentation": {
                 "echo": true,
@@ -296,7 +351,9 @@
             "label": "📊 Service Status",
             "type": "shell",
             "command": "docker-compose",
-            "args": ["ps"],
+            "args": [
+                "ps"
+            ],
             "group": "test",
             "presentation": {
                 "echo": true,
@@ -311,7 +368,10 @@
             "label": "🔍 View Logs",
             "type": "shell",
             "command": "docker-compose",
-            "args": ["logs", "-f"],
+            "args": [
+                "logs",
+                "-f"
+            ],
             "group": "test",
             "presentation": {
                 "echo": true,
@@ -336,12 +396,12 @@
                     "value": "local"
                 },
                 {
-                    "label": "OpenAI API - High quality", 
+                    "label": "OpenAI API - High quality",
                     "value": "openai"
                 },
                 {
                     "label": "Anthropic API - Excellent analysis",
-                    "value": "anthropic" 
+                    "value": "anthropic"
                 },
                 {
                     "label": "Hybrid - Local + API fallback",
@@ -353,14 +413,14 @@
             "id": "reportType",
             "description": "Choose report type to generate",
             "default": "daily",
-            "type": "pickString", 
+            "type": "pickString",
             "options": [
                 {
                     "label": "Daily Summary",
                     "value": "daily"
                 },
                 {
-                    "label": "Weekly Analysis", 
+                    "label": "Weekly Analysis",
                     "value": "weekly"
                 },
                 {
