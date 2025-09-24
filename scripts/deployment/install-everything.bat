@@ -28,6 +28,11 @@ if %errorLevel% neq 0 (
 )
 
 echo ✅ Running as Administrator
+
+REM Set up project root path and navigate to it
+cd /d "%~dp0..\.."
+set "PROJECT_ROOT=%CD%"
+echo 📁 Project root: %PROJECT_ROOT%
 echo.
 
 REM ============================================================================
@@ -148,6 +153,79 @@ if %errorLevel% neq 0 (
     ) else (
         echo ✅ Docker is running
     )
+
+    REM Test Docker Hub connectivity and authenticate if needed
+    echo Testing Docker Hub connectivity...
+    docker pull hello-world >nul 2>&1
+    if %errorLevel% neq 0 (
+        echo ⚠️  Docker Hub requires authentication for image pulls
+        echo.
+        echo Docker Hub now requires authentication to pull images.
+        echo You need a free Docker Hub account to continue.
+        echo.
+        echo If you don't have an account:
+        echo 1. Visit https://hub.docker.com and create a free account
+        echo 2. Come back and continue with the web-based login below
+        echo.
+        echo The installer will use Docker's secure device activation method.
+        echo This will open your browser for safe authentication - no passwords needed here.
+        echo.
+
+        REM Prompt for Docker Hub login with retry logic
+        set /a attempt=1
+        set /a maxAttempts=3
+        set loginSuccess=false
+
+        :dockerLoginLoop
+        echo Docker Hub login attempt !attempt! of !maxAttempts!
+        echo Using web-based device activation for secure login...
+        echo This will open your browser for authentication.
+        echo.
+        
+        REM Use Docker's device activation flow (web-based login)
+        docker login
+        if %errorLevel% equ 0 (
+            echo ✅ Docker Hub login successful!
+            set loginSuccess=true
+            
+            REM Verify by trying to pull test image
+            echo Verifying Docker Hub access...
+            docker pull hello-world >nul 2>&1
+            if %errorLevel% equ 0 (
+                echo ✅ Docker Hub access verified
+            ) else (
+                echo ⚠️  Login succeeded but image pull still failed
+            )
+            goto :dockerLoginSuccess
+        ) else (
+            echo ❌ Docker Hub login failed
+            set /a attempt+=1
+            
+            if !attempt! leq !maxAttempts! (
+                echo Please try again with correct credentials
+                echo.
+                goto :dockerLoginLoop
+            )
+        )
+
+        :dockerLoginFailed
+        if "!loginSuccess!"=="false" (
+            echo ❌ Failed to authenticate with Docker Hub after !maxAttempts! attempts
+            echo.
+            echo Please ensure you have:
+            echo 1. A valid Docker Hub account (free at https://hub.docker.com)
+            echo 2. Correct username and password/token
+            echo 3. Stable internet connection
+            echo.
+            echo You can also run 'docker login' manually and then re-run this installer
+            pause
+            exit /b 1
+        )
+
+        :dockerLoginSuccess
+    ) else (
+        echo ✅ Docker Hub access is working
+    )
 )
 
 REM ============================================================================
@@ -160,9 +238,9 @@ echo STEP 4: Setting up Python Environment
 echo ========================================
 
 REM Create virtual environment if it doesn't exist
-if not exist ".venv" (
+if not exist "%PROJECT_ROOT%\.venv" (
     echo Creating Python virtual environment...
-    python -m venv .venv
+    python -m venv "%PROJECT_ROOT%\.venv"
     echo ✅ Virtual environment created
 ) else (
     echo ✅ Virtual environment already exists
@@ -170,9 +248,14 @@ if not exist ".venv" (
 
 REM Install Python dependencies
 echo Installing Python dependencies...
-.venv\Scripts\python.exe -m pip install --upgrade pip
-.venv\Scripts\pip.exe install -r requirements.txt
-echo ✅ Python dependencies installed
+"%PROJECT_ROOT%\.venv\Scripts\python.exe" -m pip install --upgrade pip
+if exist "%PROJECT_ROOT%\requirements.txt" (
+    "%PROJECT_ROOT%\.venv\Scripts\pip.exe" install -r "%PROJECT_ROOT%\requirements.txt"
+    echo ✅ Python dependencies installed from requirements.txt
+) else (
+    echo ⚠️  requirements.txt not found at: %PROJECT_ROOT%\requirements.txt
+    echo Skipping package installation - you may need to install packages manually
+)
 
 REM ============================================================================
 REM STEP 5: Configure Environment
@@ -184,19 +267,26 @@ echo STEP 5: Configuring Environment
 echo ========================================
 
 REM Create .env file if it doesn't exist
-if not exist ".env" (
-    copy ".env.example" ".env"
-    echo ✅ Environment file created
+if not exist "%PROJECT_ROOT%\.env" (
+    if exist "%PROJECT_ROOT%\.env.example" (
+        copy "%PROJECT_ROOT%\.env.example" "%PROJECT_ROOT%\.env"
+        echo ✅ Environment file created from template
+    ) else (
+        echo ⚠️  .env.example not found - creating basic .env file
+        echo # Basic environment configuration > "%PROJECT_ROOT%\.env"
+        echo ENVIRONMENT=production >> "%PROJECT_ROOT%\.env"
+        echo LOG_LEVEL=INFO >> "%PROJECT_ROOT%\.env"
+    )
 ) else (
     echo ✅ Environment file already exists
 )
 
 REM Create necessary directories
-if not exist "data" mkdir data
-if not exist "logs" mkdir logs
-if not exist "reports" mkdir reports
-if not exist "models" mkdir models
-if not exist ".memory" mkdir .memory
+if not exist "%PROJECT_ROOT%\data" mkdir "%PROJECT_ROOT%\data"
+if not exist "%PROJECT_ROOT%\logs" mkdir "%PROJECT_ROOT%\logs" 
+if not exist "%PROJECT_ROOT%\reports" mkdir "%PROJECT_ROOT%\reports"
+if not exist "%PROJECT_ROOT%\models" mkdir "%PROJECT_ROOT%\models"
+if not exist "%PROJECT_ROOT%\.memory" mkdir "%PROJECT_ROOT%\.memory"
 echo ✅ Required directories created
 
 REM ============================================================================
@@ -240,10 +330,18 @@ echo Waiting for services to initialize...
 timeout /t 30 /nobreak
 
 echo Running health checks...
-.venv\Scripts\python.exe scripts\health-check.py
+if exist "%PROJECT_ROOT%\scripts\health-check.py" (
+    "%PROJECT_ROOT%\.venv\Scripts\python.exe" "%PROJECT_ROOT%\scripts\health-check.py"
+) else (
+    echo ⚠️  Health check script not found - skipping
+)
 
 echo Running deployment test...
-.venv\Scripts\python.exe deployment_test.py
+if exist "%PROJECT_ROOT%\deployment_test.py" (
+    "%PROJECT_ROOT%\.venv\Scripts\python.exe" "%PROJECT_ROOT%\deployment_test.py"
+) else (
+    echo ⚠️  Deployment test script not found - skipping
+)
 
 REM ============================================================================
 REM COMPLETION

@@ -1,77 +1,5 @@
 # Agent Investment Platform - Master Installation Script
-# This script installs ALL required tools and deploys the complete             if ($timer -ge $timeout) {
-                Write-Error "Docker failed to start within $timeout seconds"
-                Write-Info "Please manually start Docker Desktop and run this script again"
-                exit 1
-            }
-    }
-
-    # Test Docker Hub connectivity and authenticate if needed
-    Write-Step "Testing Docker Hub connectivity..."
-    try {
-        docker pull hello-world 2>$null | Out-Null
-        Write-Success "Docker Hub access is working"
-    } catch {
-        Write-Warning "Docker Hub requires authentication for image pulls"
-        Write-Info ""
-        Write-Info "Docker Hub now requires authentication to pull images."
-        Write-Info "You need a free Docker Hub account to continue."
-        Write-Info ""
-        Write-Info "If you don't have an account:"
-        Write-Info "1. Visit https://hub.docker.com and create a free account"
-        Write-Info "2. Come back and enter your credentials below"
-        Write-Info ""
-        Write-Info "If you already have an account, please login now:"
-        Write-Info ""
-
-        # Prompt for Docker Hub login
-        $maxAttempts = 3
-        $attempt = 1
-        $loginSuccess = $false
-
-        while ($attempt -le $maxAttempts -and -not $loginSuccess) {
-            Write-Step "Docker Hub login attempt $attempt of $maxAttempts"
-
-            # Use docker login interactively so user can enter credentials
-            docker login
-
-            if ($LASTEXITCODE -eq 0) {
-                Write-Success "Docker Hub login successful!"
-                $loginSuccess = $true
-
-                # Verify by trying to pull a test image
-                Write-Step "Verifying Docker Hub access..."
-                try {
-                    docker pull hello-world 2>$null | Out-Null
-                    Write-Success "Docker Hub access verified"
-                } catch {
-                    Write-Warning "Login succeeded but image pull still failed"
-                }
-            } else {
-                Write-Error "Docker Hub login failed"
-                $attempt++
-
-                if ($attempt -le $maxAttempts) {
-                    Write-Info "Please try again with correct credentials"
-                    Write-Info ""
-                }
-            }
-        }
-
-        if (-not $loginSuccess) {
-            Write-Error "Failed to authenticate with Docker Hub after $maxAttempts attempts"
-            Write-Info ""
-            Write-Info "Please ensure you have:"
-            Write-Info "1. A valid Docker Hub account (free at https://hub.docker.com)"
-            Write-Info "2. Correct username and password/token"
-            Write-Info "3. Stable internet connection"
-            Write-Info ""
-            Write-Info "You can also run 'docker login' manually and then re-run this installer"
-            exit 1
-        }
-    }
-} catch {
-    Write-Step "Installing Docker Desktop..."
+# This script installs ALL required tools and deploys the complete platform
 
 param(
     [switch]$SkipChecks,
@@ -116,6 +44,11 @@ if (-not (Test-Administrator)) {
 }
 
 Write-Success "Running as Administrator"
+
+# Set up project root path
+$projectRoot = Split-Path (Split-Path $PSScriptRoot -Parent) -Parent
+Write-Info "Project root: $projectRoot"
+Set-Location $projectRoot
 
 # ============================================================================
 # STEP 1: Install System Requirements
@@ -167,39 +100,102 @@ try {
 
     # Check if Docker is running
     try {
-        docker info 2>$null | Out-Null
+        docker info | Out-Null
         Write-Success "Docker is running"
     } catch {
-        # Check if it's just an API version issue but Docker is actually running
-        try {
-            docker ps 2>$null | Out-Null
-            Write-Success "Docker is running (API version warning is non-critical)"
-        } catch {
-            Write-Warning "Docker is installed but not running"
-            Write-Step "Starting Docker Desktop..."
-            Start-Process "Docker Desktop" -WindowStyle Hidden
-            Write-Info "Waiting for Docker to start..."
+        Write-Warning "Docker is installed but not running"
+        Write-Step "Starting Docker Desktop..."
+        Start-Process "Docker Desktop" -WindowStyle Hidden
+        Write-Info "Waiting for Docker to start..."
+
+        $timeout = 120 # 2 minutes
+        $timer = 0
+        do {
+            Start-Sleep -Seconds 5
+            $timer += 5
+            try {
+                docker info | Out-Null
+                Write-Success "Docker is now running"
+                break
+            } catch {
+                Write-Host "." -NoNewline -ForegroundColor Yellow
+            }
+        } while ($timer -lt $timeout)
+
+        if ($timer -ge $timeout) {
+            Write-Error "Docker failed to start within $timeout seconds"
+            Write-Info "Please manually start Docker Desktop and run this script again"
+            exit 1
+        }
+    }
+
+    # Test Docker Hub connectivity and authenticate if needed
+    Write-Step "Testing Docker Hub connectivity..."
+    try {
+        docker pull hello-world 2>$null | Out-Null
+        Write-Success "Docker Hub access is working"
+    } catch {
+        Write-Warning "Docker Hub requires authentication for image pulls"
+        Write-Info ""
+        Write-Info "Docker Hub now requires authentication to pull images."
+        Write-Info "You need a free Docker Hub account to continue."
+        Write-Info ""
+        Write-Info "If you don't have an account:"
+        Write-Info "1. Visit https://hub.docker.com and create a free account"
+        Write-Info "2. Come back and continue with the web-based login below"
+        Write-Info ""
+        Write-Info "The installer will use Docker's secure device activation method."
+        Write-Info "This will open your browser for safe authentication - no need to enter passwords here."
+        Write-Info ""
+
+        # Prompt for Docker Hub login
+        $maxAttempts = 3
+        $attempt = 1
+        $loginSuccess = $false
+
+        while ($attempt -le $maxAttempts -and -not $loginSuccess) {
+            Write-Step "Docker Hub login attempt $attempt of $maxAttempts"
+            Write-Info "Using web-based device activation for secure login..."
+            Write-Info "This will open your browser for authentication."
+            Write-Host ""
+
+            # Use Docker's device activation flow (web-based login)
+            docker login
+
+            if ($LASTEXITCODE -eq 0) {
+                Write-Success "Docker Hub login successful!"
+                $loginSuccess = $true
+
+                # Verify by trying to pull a test image
+                Write-Step "Verifying Docker Hub access..."
+                try {
+                    docker pull hello-world 2>$null | Out-Null
+                    Write-Success "Docker Hub access verified"
+                } catch {
+                    Write-Warning "Login succeeded but image pull still failed"
+                }
+            } else {
+                Write-Error "Docker Hub login failed"
+                $attempt++
+
+                if ($attempt -le $maxAttempts) {
+                    Write-Info "Please try again with correct credentials"
+                    Write-Info ""
+                }
+            }
         }
 
-            $timeout = 120 # 2 minutes
-            $timer = 0
-            do {
-                Start-Sleep -Seconds 5
-                $timer += 5
-                try {
-                    docker ps 2>$null | Out-Null
-                    Write-Success "Docker is now running"
-                    break
-                } catch {
-                    Write-Host "." -NoNewline -ForegroundColor Yellow
-                }
-            } while ($timer -lt $timeout)
-
-            if ($timer -ge $timeout) {
-                Write-Error "Docker failed to start within $timeout seconds"
-                Write-Info "Please manually start Docker Desktop and run this script again"
-                exit 1
-            }
+        if (-not $loginSuccess) {
+            Write-Error "Failed to authenticate with Docker Hub after $maxAttempts attempts"
+            Write-Info ""
+            Write-Info "Please ensure you have:"
+            Write-Info "1. A valid Docker Hub account (free at https://hub.docker.com)"
+            Write-Info "2. Correct username and password/token"
+            Write-Info "3. Stable internet connection"
+            Write-Info ""
+            Write-Info "You can also run 'docker login' manually and then re-run this installer"
+            exit 1
+        }
     }
 } catch {
     Write-Step "Docker not found. Installing Docker Desktop..."
@@ -260,35 +256,27 @@ try {
 
 # Check virtual environment
 Write-Step "Setting up Python virtual environment..."
-$projectRoot = Split-Path (Split-Path $PSScriptRoot -Parent) -Parent
 $venvPath = Join-Path $projectRoot ".venv"
-
 if (Test-Path $venvPath) {
-    Write-Success "Virtual environment exists at project root"
+    Write-Success "Virtual environment exists"
 } else {
-    Push-Location $projectRoot
-    python -m venv .venv
-    Pop-Location
-    Write-Success "Virtual environment created at project root"
+    python -m venv "$venvPath"
+    Write-Success "Virtual environment created"
 }
 
 # Activate virtual environment and install dependencies
 Write-Step "Installing Python dependencies..."
-$projectRoot = Split-Path (Split-Path $PSScriptRoot -Parent) -Parent
-$venvPython = Join-Path $projectRoot ".venv\Scripts\python.exe"
-$venvPip = Join-Path $projectRoot ".venv\Scripts\pip.exe"
-
-& $venvPython -m pip install --upgrade pip
-
-# Install from requirements.txt in project root
-$requirementsFile = Join-Path $projectRoot "requirements.txt"
-if (Test-Path $requirementsFile) {
-    & $venvPip install -r $requirementsFile
-    Write-Success "Python dependencies installed from project root"
+$pythonExe = Join-Path $venvPath "Scripts\python.exe"
+$pipExe = Join-Path $venvPath "Scripts\pip.exe"
+& "$pythonExe" -m pip install --upgrade pip
+$requirementsPath = Join-Path $projectRoot "requirements.txt"
+if (Test-Path $requirementsPath) {
+    & "$pipExe" install -r "$requirementsPath"
+    Write-Success "Python dependencies installed from requirements.txt"
 } else {
-    Write-Warning "requirements.txt not found in project root, skipping package installation"
+    Write-Warning "requirements.txt not found at: $requirementsPath"
+    Write-Info "Skipping package installation - you may need to install packages manually"
 }
-Write-Success "Python dependencies setup completed"
 
 # ============================================================================
 # STEP 4: Install Node.js
@@ -367,12 +355,6 @@ Write-Host ""
 Write-Host "================================================================" -ForegroundColor Cyan
 Write-Host "STEP 6: Configuring Environment" -ForegroundColor Cyan
 Write-Host "================================================================" -ForegroundColor Cyan
-
-# Configure environment variables with user input and secure defaults
-Write-Step "Configuring environment variables..."
-$projectRoot = Split-Path (Split-Path $PSScriptRoot -Parent) -Parent
-$envFile = Join-Path $projectRoot ".env"
-$envExample = Join-Path $projectRoot ".env.example"
 
 # Function to generate secure passwords
 function Generate-SecurePassword {
@@ -490,8 +472,9 @@ GRAFANA_PASSWORD=$grafanaPassword
 "@
 
 # Write the .env file
-$envContent | Out-File -FilePath $envFile -Encoding UTF8
-Write-Success "Created .env file with secure defaults"
+$envFile = Join-Path $projectRoot ".env"
+$envContent | Out-File -FilePath "$envFile" -Encoding UTF8
+Write-Success "Created .env file with secure defaults at: $envFile"
 
 # Now prompt user for optional configurations
 Write-Host ""
@@ -519,14 +502,14 @@ $llmProviders = @{
 
 $selectedProvider = $llmProviders[$llmChoice]
 if ($selectedProvider) {
-    (Get-Content $envFile) -replace "LLM_PROVIDER=local", "LLM_PROVIDER=$selectedProvider" | Set-Content $envFile
+    (Get-Content "$envFile") -replace "LLM_PROVIDER=local", "LLM_PROVIDER=$selectedProvider" | Set-Content "$envFile"
     Write-Success "Set LLM provider to: $selectedProvider"
 
     # Get API keys if needed
     if ($selectedProvider -eq "openai" -or $selectedProvider -eq "hybrid") {
         $openaiKey = Read-Host "Enter OpenAI API key (or press Enter to skip)"
         if (-not [string]::IsNullOrEmpty($openaiKey)) {
-            (Get-Content $envFile) -replace "OPENAI_API_KEY=", "OPENAI_API_KEY=$openaiKey" | Set-Content $envFile
+            (Get-Content "$envFile") -replace "OPENAI_API_KEY=", "OPENAI_API_KEY=$openaiKey" | Set-Content "$envFile"
             Write-Success "OpenAI API key configured"
         }
     }
@@ -534,7 +517,7 @@ if ($selectedProvider) {
     if ($selectedProvider -eq "anthropic" -or $selectedProvider -eq "hybrid") {
         $anthropicKey = Read-Host "Enter Anthropic API key (or press Enter to skip)"
         if (-not [string]::IsNullOrEmpty($anthropicKey)) {
-            (Get-Content $envFile) -replace "ANTHROPIC_API_KEY=", "ANTHROPIC_API_KEY=$anthropicKey" | Set-Content $envFile
+            (Get-Content "$envFile") -replace "ANTHROPIC_API_KEY=", "ANTHROPIC_API_KEY=$anthropicKey" | Set-Content "$envFile"
             Write-Success "Anthropic API key configured"
         }
     }
@@ -549,10 +532,10 @@ if ($setupEmail -eq "y" -or $setupEmail -eq "Y") {
     $emailPassPlain = [Runtime.InteropServices.Marshal]::PtrToStringAuto([Runtime.InteropServices.Marshal]::SecureStringToBSTR($emailPass))
 
     if (-not [string]::IsNullOrEmpty($emailUser)) {
-        (Get-Content $envFile) -replace "EMAIL_ENABLED=false", "EMAIL_ENABLED=true" | Set-Content $envFile
-        (Get-Content $envFile) -replace "EMAIL_USERNAME=", "EMAIL_USERNAME=$emailUser" | Set-Content $envFile
-        (Get-Content $envFile) -replace "EMAIL_TO_ADDRESS=", "EMAIL_TO_ADDRESS=$emailUser" | Set-Content $envFile
-        (Get-Content $envFile) -replace "EMAIL_PASSWORD=", "EMAIL_PASSWORD=$emailPassPlain" | Set-Content $envFile
+        (Get-Content "$envFile") -replace "EMAIL_ENABLED=false", "EMAIL_ENABLED=true" | Set-Content "$envFile"
+        (Get-Content "$envFile") -replace "EMAIL_USERNAME=", "EMAIL_USERNAME=$emailUser" | Set-Content "$envFile"
+        (Get-Content "$envFile") -replace "EMAIL_TO_ADDRESS=", "EMAIL_TO_ADDRESS=$emailUser" | Set-Content "$envFile"
+        (Get-Content "$envFile") -replace "EMAIL_PASSWORD=", "EMAIL_PASSWORD=$emailPassPlain" | Set-Content "$envFile"
         Write-Success "Email notifications configured"
     }
 }
@@ -563,8 +546,8 @@ $setupDiscord = Read-Host "Setup Discord notifications? (y/N)"
 if ($setupDiscord -eq "y" -or $setupDiscord -eq "Y") {
     $discordWebhook = Read-Host "Enter Discord webhook URL"
     if (-not [string]::IsNullOrEmpty($discordWebhook)) {
-        (Get-Content $envFile) -replace "DISCORD_ENABLED=false", "DISCORD_ENABLED=true" | Set-Content $envFile
-        (Get-Content $envFile) -replace "DISCORD_WEBHOOK_URL=", "DISCORD_WEBHOOK_URL=$discordWebhook" | Set-Content $envFile
+        (Get-Content "$envFile") -replace "DISCORD_ENABLED=false", "DISCORD_ENABLED=true" | Set-Content "$envFile"
+        (Get-Content "$envFile") -replace "DISCORD_WEBHOOK_URL=", "DISCORD_WEBHOOK_URL=$discordWebhook" | Set-Content "$envFile"
         Write-Success "Discord notifications configured"
     }
 }
@@ -572,16 +555,14 @@ if ($setupDiscord -eq "y" -or $setupDiscord -eq "Y") {
 Write-Host ""
 Write-Success "Environment configuration completed!"
 Write-Info "Database passwords: Auto-generated and secure"
-Write-Info "You can add more API keys later by editing: .env"
+Write-Info "You can add more API keys later by editing: $envFile"
 Write-Host ""
 
 # Create necessary directories
-$projectRoot = Split-Path (Split-Path $PSScriptRoot -Parent) -Parent
 $directories = @("data", "logs", "reports", "models", ".memory")
 foreach ($dir in $directories) {
-    $fullPath = Join-Path $projectRoot $dir
-    if (-not (Test-Path $fullPath)) {
-        New-Item -ItemType Directory -Path $fullPath | Out-Null
+    if (-not (Test-Path $dir)) {
+        New-Item -ItemType Directory -Path $dir | Out-Null
         Write-Success "Created directory: $dir"
     }
 }
@@ -596,9 +577,6 @@ Write-Host "STEP 7: Building and Deploying Services" -ForegroundColor Cyan
 Write-Host "================================================================" -ForegroundColor Cyan
 
 Write-Step "Building Docker images..."
-$projectRoot = Split-Path (Split-Path $PSScriptRoot -Parent) -Parent
-Push-Location $projectRoot
-
 docker-compose build --no-cache --parallel
 if ($LASTEXITCODE -eq 0) {
     Write-Success "Docker images built successfully"
@@ -632,30 +610,15 @@ Write-Step "Waiting for services to initialize..."
 Start-Sleep -Seconds 30
 
 Write-Step "Running health checks..."
-$projectRoot = Split-Path (Split-Path $PSScriptRoot -Parent) -Parent
-$venvPython = Join-Path $projectRoot ".venv\Scripts\python.exe"
-$healthCheckScript = Join-Path $projectRoot "scripts\health-check.py"
-
-if (Test-Path $healthCheckScript) {
-    & $venvPython $healthCheckScript
-} else {
-    Write-Warning "Health check script not found, skipping"
-}
+& ".venv\Scripts\python.exe" scripts\health-check.py
 
 Write-Step "Running deployment test..."
-$deploymentTestScript = Join-Path $projectRoot "deployment_test.py"
-if (Test-Path $deploymentTestScript) {
-    & $venvPython $deploymentTestScript
-} else {
-    Write-Warning "Deployment test script not found, skipping"
-}
+& ".venv\Scripts\python.exe" deployment_test.py
 
 # Show service status
 Write-Host ""
 Write-Host "Service Status:" -ForegroundColor Yellow
 docker-compose ps
-
-Pop-Location
 
 # ============================================================================
 # COMPLETION SUMMARY
