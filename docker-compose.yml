@@ -1,5 +1,3 @@
-version: '3.8'
-
 services:
   # Main application service
   agent-investment-platform:
@@ -10,7 +8,7 @@ services:
     container_name: agent-investment-platform
     restart: unless-stopped
     ports:
-      - "8000:8000" # Main web interface
+      - "8000:8080" # Main web interface (container runs on 8080)
     environment:
       - ENVIRONMENT=production
       - DATABASE_URL=postgresql://postgres:${POSTGRES_PASSWORD}@postgres:5432/investment_platform
@@ -29,7 +27,7 @@ services:
     networks:
       - investment-network
     healthcheck:
-      test: [ "CMD", "python", "-c", "import requests; requests.get('http://localhost:8000/health')" ]
+      test: [ "CMD", "python", "-c", "import requests; requests.get('http://localhost:8080/health')" ]
       interval: 30s
       timeout: 10s
       retries: 3
@@ -46,55 +44,77 @@ services:
     ports:
       - "3001:3001"
     environment:
-      - NODE_ENV=production
+      - PYTHONPATH=/app
       - PORT=3001
+      - DOCKER_CONTAINER=true
     env_file:
       - .env
-    command: [ "node", "src/mcp-servers/stock-data-server.js" ]
+    command: [ "python", "-m", "src.mcp_servers.stock_data_server" ]
     depends_on:
       - redis
     networks:
       - investment-network
+    healthcheck:
+      test: [ "CMD", "python", "-c", "import requests; requests.get('http://localhost:3001/health')" ]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 40s
 
-  mcp-news-server:
+  mcp-report-server:
     build:
       context: .
       dockerfile: Dockerfile
       target: production
-    container_name: mcp-news-server
+    container_name: mcp-report-server
     restart: unless-stopped
     ports:
       - "3002:3002"
     environment:
-      - NODE_ENV=production
+      - PYTHONPATH=/app
       - PORT=3002
+      - DOCKER_CONTAINER=true
     env_file:
       - .env
-    command: [ "node", "src/mcp-servers/news-analysis-server.js" ]
+    command: [ "python", "-m", "src.mcp_servers.report_generator_server" ]
     depends_on:
+      - postgres
       - redis
     networks:
       - investment-network
+    healthcheck:
+      test: [ "CMD", "python", "-c", "import requests; requests.get('http://localhost:3002/health')" ]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 40s
 
-  mcp-youtube-server:
+  mcp-stock-data-server:
     build:
       context: .
       dockerfile: Dockerfile
       target: production
-    container_name: mcp-youtube-server
+    container_name: mcp-stock-data-server
     restart: unless-stopped
     ports:
       - "3003:3003"
     environment:
-      - NODE_ENV=production
+      - PYTHONPATH=/app
       - PORT=3003
+      - DOCKER_CONTAINER=true
     env_file:
       - .env
-    command: [ "node", "src/mcp-servers/youtube-transcript-server.js" ]
+    command: [ "python", "-m", "src.mcp_servers.stock_data_server" ]
     depends_on:
       - redis
     networks:
       - investment-network
+    healthcheck:
+      test: [ "CMD", "python", "-c", "import requests; requests.get('http://localhost:3003/health')" ]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 40s
 
   mcp-analysis-server:
     build:
@@ -108,6 +128,7 @@ services:
     environment:
       - PYTHONPATH=/app
       - PORT=3004
+      - DOCKER_CONTAINER=true
     env_file:
       - .env
     command: [ "python", "-m", "src.mcp_servers.analysis_engine_server" ]
@@ -116,6 +137,12 @@ services:
       - redis
     networks:
       - investment-network
+    healthcheck:
+      test: [ "CMD", "python", "-c", "import requests; requests.get('http://localhost:3004/health')" ]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 40s
 
   mcp-financial-server:
     build:
@@ -129,6 +156,7 @@ services:
     environment:
       - PYTHONPATH=/app
       - PORT=3000
+      - DOCKER_CONTAINER=true
     env_file:
       - .env
     command: [ "python", "-m", "src.mcp_servers.financial_data_server" ]
@@ -136,6 +164,12 @@ services:
       - redis
     networks:
       - investment-network
+    healthcheck:
+      test: [ "CMD", "python", "-c", "import requests; requests.get('http://localhost:3000/health')" ]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 40s
 
   # Database services
   postgres:

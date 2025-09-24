@@ -339,6 +339,13 @@ class MCPServerBase(ABC):
         self.logger.info(f"Starting {self.name} MCP server...")
 
         try:
+            # Check if we're in a Docker container with no interactive stdin
+            import os
+            if os.getenv('DOCKER_CONTAINER') or not sys.stdin.isatty():
+                self.logger.info("Detected non-interactive environment, running as HTTP server instead")
+                await self.run_http_server()
+                return
+
             while True:
                 try:
                     # Read message from stdin
@@ -373,6 +380,75 @@ class MCPServerBase(ABC):
             self.logger.error(f"Fatal error in server: {e}", exc_info=True)
         finally:
             await self.cleanup()
+
+    async def run_http_server(self):
+        """
+        Run the MCP server as an HTTP server for Docker containers.
+        """
+        import os
+        from aiohttp import web, web_request
+
+        port = int(os.getenv('PORT', 3000))
+
+        async def handle_mcp_request(request: web_request.Request):
+            """Handle MCP requests over HTTP."""
+            try:
+                data = await request.json()
+                message_data = json.dumps(data)
+                response = await self.handle_message(message_data)
+
+                if response:
+                    response_data = json.loads(response)
+                    return web.json_response(response_data)
+                else:
+                    return web.json_response({"status": "ok"})
+
+            except Exception as e:
+                self.logger.error(f"Error handling HTTP request: {e}")
+                return web.json_response(
+                    {"error": {"code": -32603, "message": str(e)}},
+                    status=500
+                )
+
+        async def handle_health(request: web_request.Request):
+            """Handle health check requests."""
+            try:
+                health_status = await self.health_check()
+                return web.json_response(health_status)
+            except Exception as e:
+                self.logger.error(f"Health check failed: {e}")
+                return web.json_response(
+                    {"status": "unhealthy", "error": str(e)},
+                    status=500
+                )
+
+        app = web.Application()
+        app.router.add_post('/mcp', handle_mcp_request)
+        app.router.add_get('/health', handle_health)
+        app.router.add_get('/', handle_health)  # Root health check
+
+        self.logger.info(f"Starting HTTP server on port {port}")
+
+        try:
+            runner = web.AppRunner(app)
+            await runner.setup()
+            site = web.TCPSite(runner, '0.0.0.0', port)
+            await site.start()
+
+            self.logger.info(f"HTTP server started on http://0.0.0.0:{port}")
+
+            # Keep the server running
+            try:
+                while True:
+                    await asyncio.sleep(1)
+            except KeyboardInterrupt:
+                self.logger.info("Received interrupt signal, shutting down HTTP server...")
+            finally:
+                await runner.cleanup()
+
+        except Exception as e:
+            self.logger.error(f"Error starting HTTP server: {e}")
+            raise
 
     async def cleanup(self):
         """Cleanup resources when shutting down."""
