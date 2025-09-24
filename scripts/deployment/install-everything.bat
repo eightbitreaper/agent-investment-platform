@@ -181,10 +181,10 @@ if %errorLevel% neq 0 (
         echo Using web-based device activation for secure login...
         echo This will open your browser for authentication.
         echo.
-        
+
         REM Use Docker's device activation flow (web-based login)
         docker login
-        
+
         REM Verify authentication by testing Docker Hub access
         echo Verifying Docker Hub access...
         docker pull hello-world >nul 2>&1
@@ -196,7 +196,7 @@ if %errorLevel% neq 0 (
         ) else (
             echo ❌ Docker Hub login failed - unable to pull test image
             set /a attempt+=1
-            
+
             if !attempt! leq !maxAttempts! (
                 echo Please try again with correct credentials
                 echo.
@@ -279,7 +279,7 @@ if not exist "%PROJECT_ROOT%\.env" (
 
 REM Create necessary directories
 if not exist "%PROJECT_ROOT%\data" mkdir "%PROJECT_ROOT%\data"
-if not exist "%PROJECT_ROOT%\logs" mkdir "%PROJECT_ROOT%\logs" 
+if not exist "%PROJECT_ROOT%\logs" mkdir "%PROJECT_ROOT%\logs"
 if not exist "%PROJECT_ROOT%\reports" mkdir "%PROJECT_ROOT%\reports"
 if not exist "%PROJECT_ROOT%\models" mkdir "%PROJECT_ROOT%\models"
 if not exist "%PROJECT_ROOT%\.memory" mkdir "%PROJECT_ROOT%\.memory"
