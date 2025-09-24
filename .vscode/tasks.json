@@ -5,7 +5,7 @@
             "label": "🚀 Initialize Platform",
             "type": "shell",
             "command": "python",
-            "args": ["scripts/initialize.py", "--interactive"],
+            "args": ["scripts/initialize.py"],
             "group": {
                 "kind": "build",
                 "isDefault": true
@@ -97,7 +97,7 @@
             "label": "🤖 Setup Local LLMs",
             "type": "shell",
             "command": "python",
-            "args": ["scripts/setup/download-models.py", "--interactive"],
+            "args": ["scripts/setup/download-models.py"],
             "group": "build",
             "presentation": {
                 "echo": true,
