@@ -6,58 +6,24 @@ An agent-driven platform that provides automated analysis of stocks, ETFs, and b
 
 ⚠️ **Note**: The system does not execute trades. It informs the operator so they can act manually.
 
-## ⚡ One-Command Installation
+## ⚡ Quick Installation
 
-Get the complete platform running in under 10 minutes with our automated installers:
+Get the complete platform running in under 10 minutes:
 
-### 🪟 Windows PowerShell (Recommended)
-```powershell
-# Right-click PowerShell and "Run as Administrator", then:
-git clone https://github.com/eightbitreaper/agent-investment-platform.git
-cd agent-investment-platform
-.\scripts\deployment\master-installer.ps1
-```
+**📋 [Complete Installation Guide](docs/setup/installation-guide.md)**
 
-### 🔧 Windows Batch Alternative
-```batch
-# Right-click and "Run as Administrator"
-git clone https://github.com/eightbitreaper/agent-investment-platform.git
-cd agent-investment-platform
-.\scripts\deployment\install-everything.bat
-```
+**✅ What You Get:**
+- 🧠 **AI Investment Assistant** - Local LLM chat interface with GPU acceleration
+- 📊 **Real-Time Data** - Current stock prices, market data, and news
+- 📈 **Investment Analysis** - Automated reports and recommendations
+- 🐳 **Docker Infrastructure** - Containerized services and databases
+- � **MCP Servers** - Model Context Protocol for financial data integration
+- 🌐 **Web Interfaces** - Monitoring dashboards and analysis tools
 
-### 🐧 Linux/Mac (User Mode)
-```bash
-git clone https://github.com/eightbitreaper/agent-investment-platform.git
-cd agent-investment-platform
-pwsh ./scripts/deployment/user-installer.ps1  # PowerShell Core required
-```
-
-**✅ Complete Installation Includes:**
-- 🐳 **Docker Desktop** - Container orchestration platform
-- 🐍 **Python 3.11** - Virtual environment with 70+ packages
-- 📦 **Node.js 18+** - JavaScript runtime for MCP servers
-- 🛠️ **Git & VS Code** - Development tools
-- 🗄️ **PostgreSQL & Redis** - Database and caching layer
-- 🤖 **4 MCP Servers** - Stock data, analysis, news, and reports
-- 🌐 **Web Interface** - Accessible at http://localhost:8000
-- 📊 **Monitoring Stack** - Grafana and Prometheus dashboards
-
-## 🚀 Alternative: VS Code Workspace Setup
-
-For development-focused setup with VS Code integration:
-
-```bash
-# 1. Clone the repository
-git clone https://github.com/eightbitreaper/agent-investment-platform.git
-cd agent-investment-platform
-
-# 2. Open in VS Code
-code .
-
-# 3. Initialize everything with one command
-@workspace /docs/setup/initialize.prompt.md
-```
+**🚀 Installation Options:**
+- **[One-Command Setup](docs/setup/installation-guide.md#one-command-installation)** - Automated installer scripts
+- **[VS Code Integration](docs/setup/installation-guide.md#vs-code-workspace-setup)** - Development-focused setup
+- **[Manual Installation](docs/setup/installation-guide.md#manual-installation)** - Step-by-step custom setup
 
 ## 📋 Installation Methods Comparison
 
@@ -95,7 +61,7 @@ Run a complete investment analysis with AI-powered insights:
 # Generate a test report (safe, uses demo data)
 .\.venv\Scripts\python.exe orchestrator.py --test-mode
 
-# Generate live analysis (requires API keys)  
+# Generate live analysis (requires API keys)
 .\.venv\Scripts\python.exe orchestrator.py --live
 
 # Run in development mode with detailed logging
@@ -108,49 +74,36 @@ Run a complete investment analysis with AI-powered insights:
 - Risk assessments
 - Buy/Hold/Sell recommendations
 
-### 2. 📊 Monitor Platform Health
+## 💬 Using the Platform
 
-Check that all systems are working properly:
+### AI Investment Assistant
+Interactive chat interface with **real-time financial data** and GPU-accelerated local LLM:
 
-```powershell
-# Quick health check
-.\.venv\Scripts\python.exe scripts\health-check.py
+- **🧠 Smart Analysis**: Uses Llama 3.1 8B optimized for financial reasoning
+- **📈 Current Data**: Access to live stock prices, market indices, and news
+- **🔒 Private**: No data leaves your machine, completely local processing
+- **⚡ Fast**: GPU acceleration for instant responses
 
-# Comprehensive system validation  
-.\.venv\Scripts\python.exe scripts\deployment\validate-system.py
-```
+**📋 [Complete Chat Guide](docs/setup/ollama-chat-guide.md)**
 
-### 3. 🐳 Manage Docker Services
+### Investment Analysis & Reports
+Generate comprehensive investment analysis with automated reporting:
 
-Control the platform's infrastructure:
+- **📊 Technical Analysis**: Chart patterns, indicators, and trend analysis
+- **📰 Sentiment Analysis**: News and social media sentiment tracking
+- **🎯 Recommendations**: Buy/Hold/Sell decisions with risk assessment
+- **� Automated Reports**: Markdown reports with GitHub integration
 
-```powershell
-# Check service status
-docker-compose ps
+**📋 [Analysis Workflow Guide](docs/setup/analysis-workflow.md)**
 
-# View service logs
-docker-compose logs -f
+### Web Interfaces
+Access monitoring dashboards and analysis tools:
 
-# Restart services
-docker-compose restart
+- **🤖 AI Chat**: http://localhost:8080 - Investment assistant interface
+- **📊 Monitoring**: http://localhost:3000 - Grafana dashboards
+- **📈 Metrics**: http://localhost:9090 - Prometheus system metrics
 
-# Stop all services
-docker-compose down
-
-# Start services again
-docker-compose --profile development up -d
-```
-
-### 4. 📈 Access Web Interfaces
-
-Once fully deployed, access these URLs:
-
-- **Main Application**: http://localhost:8000 (when available)
-- **Grafana Monitoring**: http://localhost:3000  
-- **Prometheus Metrics**: http://localhost:9090
-- **Jupyter Notebooks**: http://localhost:8888 (development mode)
-
-### 5. ⚙️ Configuration
+**📋 [Web Interface Guide](docs/setup/web-interfaces.md)**### 5. ⚙️ Configuration
 
 Customize the platform for your needs:
 
@@ -161,7 +114,7 @@ notepad .env
 # Modify investment strategies
 notepad config\strategies.yaml
 
-# Adjust data sources  
+# Adjust data sources
 notepad config\data-sources.yaml
 ```
 
@@ -227,6 +180,11 @@ The platform follows a modular, agent-based architecture:
 ┌─────────────────┐    ┌──────────────┐    ┌─────────────────┐
 │ GitHub Reports  │◀───│ Report Gen   │◀───│ LLM Processing  │
 └─────────────────┘    └──────────────┘    └─────────────────┘
+                                                     │
+┌─────────────────┐    ┌──────────────┐    ┌─────────────────┐
+│ 🤖 Chat UI      │◀───│ Ollama API   │◀───│ GPU Accelerated │
+│ localhost:8080  │    │ localhost:11434│   │ Llama 3.1 8B   │
+└─────────────────┘    └──────────────┘    └─────────────────┘
 ```
 
 ## 🤝 Contributing
@@ -282,27 +240,18 @@ agent-investment-platform/
 └── 📄 .env.example            # ✅ Environment template
 ```
 
-## 🧪 Testing
+## 🧪 Testing & Development
 
-**Quick Testing:**
-```bash
-# Run all tests
-python run_tests.py --all
+The platform includes comprehensive testing and development tools:
 
-# Run specific test categories
-python run_tests.py --integration  # MCP server tests
-python run_tests.py --api          # API integration tests (Polygon, etc.)
-```
+- **Automated Test Suites** - Integration tests for all MCP servers
+- **API Testing Tools** - Validation of external data sources
+- **Health Monitoring** - System health checks and diagnostics
+- **Development Environment** - VS Code integration with automation tasks
 
-**Development Tools:**
-```bash
-# Test Polygon API with your key
-$env:POLYGON_API_KEY="your-key"; python dev-tools/test_polygon_api.py
-```
+**📋 [Complete Testing Guide](docs/development/testing-guide.md)**
 
-See [TESTING.md](TESTING.md) for complete testing strategy.
-
-**Current Status**: Infrastructure foundation complete with 4 production MCP servers, **real Polygon API integration**, and comprehensive testing framework.
+**Current Status**: Infrastructure foundation complete with 4 production MCP servers, real-time data integration, and comprehensive testing framework.
 
 ## 🔗 Links
 

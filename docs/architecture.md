@@ -23,6 +23,20 @@ This document describes the comprehensive architecture of the **Agent Investment
 │  └─────────────────┘  └─────────────────┘  └─────────────────┘  │
 └─────────────────────────────────────────────────────────────────┘
                                 │
+┌─────────────────────────────────────────────────────────────────┐
+│              🤖 Local LLM Chat Interface                        │
+│  ┌─────────────────┐              ┌─────────────────┐            │
+│  │   Chat Web UI   │◄─────────────┤   Ollama API    │            │
+│  │ localhost:8080  │              │ localhost:11434 │            │
+│  │                 │              │                 │            │
+│  │• Professional   │              │• GPU Accelerated│            │
+│  │  Chat Interface │              │• Llama 3.1 8B   │            │
+│  │• Investment     │              │• Local Models   │            │
+│  │  Focused        │              │• Private & Fast │            │
+│  │• Real-time      │              │• No Data Shared │            │
+│  └─────────────────┘              └─────────────────┘            │
+└─────────────────────────────────────────────────────────────────┘
+                                │
                     ┌───────────┴───────────┐
                     │   MCP Protocol Layer  │
                     │ (JSON-RPC 2.0 + Tools)│
@@ -92,13 +106,79 @@ This document describes the comprehensive architecture of the **Agent Investment
 - **Trend Detection**: Automated identification of trending financial topics
 - **News Summarization**: AI-powered summary generation with key insights
 
-### 2. MCP Server Management System
+### 2. Financial Data MCP Server
+
+**Financial Data Server** (`src/mcp_servers/financial_data_server.py`)
+- **Real-Time Stock Quotes**: TradingView integration for current prices, P/E ratios, market cap
+- **Market Overview**: Current major indices (S&P 500, Dow Jones, NASDAQ, VIX)
+- **Stock News**: Recent headlines from Google News RSS feeds
+- **Stock Comparison**: Side-by-side analysis of multiple stocks
+- **Sector Performance**: Current ETF performance across major sectors
+- **Docker Integration**: Containerized deployment with health monitoring
+
+**MCP Server Management System**
 
 **Server Manager** (`src/mcp_servers/manager.py`)
 - **Orchestration**: Start, stop, restart individual or all servers
 - **Health Monitoring**: Continuous health checks with auto-restart
 - **Configuration Management**: Dynamic configuration loading and validation
 - **Process Monitoring**: Memory usage, CPU tracking, performance metrics
+
+### 3. Local LLM Infrastructure (Ollama Integration)
+
+**Ollama Service** (`docker-compose.yml` - ollama service)
+- **GPU-Accelerated LLM Server**: Local Large Language Model hosting with NVIDIA GPU support
+- **API Endpoint**: REST API at `http://localhost:11434` for programmatic access
+- **Model Management**: Support for multiple models (Llama 3.1, Mistral, CodeLlama)
+- **Privacy-First**: All processing happens locally, no data sent to external servers
+- **Financial Models**: Pre-configured with models optimized for investment analysis
+
+**Open WebUI Service** (`docker-compose.yml` - ollama-webui service)
+- **Professional Chat Interface**: Web-based UI at `http://localhost:8080`
+- **Investment Assistant**: Pre-configured as "AI Investment Assistant"
+- **Real-time Data Integration**: Copy/paste workflow for current financial data
+- **Model Selection**: Dynamic switching between different LLM models (Llama 3.1, Mistral, etc.)
+- **No Authentication Required**: Streamlined local-only access
+- **Current Data Workflow**: Users run terminal commands to get live data, then paste into chat
+
+**Key Features:**
+```yaml
+# Docker Configuration
+services:
+  ollama:
+    image: ollama/ollama:latest
+    ports: ["11434:11434"]
+    deploy:
+      resources:
+        reservations:
+          devices:
+            - driver: nvidia
+              count: all
+              capabilities: [gpu]
+
+  ollama-webui:
+    image: ghcr.io/open-webui/open-webui:main
+    ports: ["8080:8080"]
+    environment:
+      - OLLAMA_BASE_URL=http://ollama:11434
+      - WEBUI_NAME=🚀 AI Investment Assistant
+```
+
+**Current Data Integration:**
+```bash
+# Terminal: Get current data
+python src\ollama_integration\financial_data_tool.py quote AAPL
+
+# Chat: Paste results with question
+"Here's today's Apple data: [paste output]
+Based on this current information, should I invest in AAPL?"
+```
+
+**Usage Examples:**
+- "Analyze this current AAPL data I just retrieved"
+- "Based on today's market data, should I invest in tech stocks?"
+- "Create a diversified portfolio using these current stock prices"
+- "What are the risks shown in this current market data?"
 - **Logging**: Comprehensive structured logging with rotation
 
 **Unified Runner** (`run_mcp_server.py`)
@@ -164,9 +244,17 @@ This document describes the comprehensive architecture of the **Agent Investment
 
 - **Primary environment:** Windows desktop (with NVIDIA GPU for LLM acceleration).
 - **Containerized services:** Run via Docker/WSL2.
+- **Local LLM Infrastructure:**
+  - Ollama service with GPU acceleration for fast, private AI responses
+  - Professional web chat interface (localhost:8080) for real-time investment analysis
+  - Pre-loaded financial models (Llama 3.1 8B) optimized for investment reasoning
 - **Hybrid LLM strategy:**
-  - Local models (for privacy and GPU use).
+  - Local models (for privacy and GPU use) via Ollama
   - Cloud-hosted LLMs (fallback for heavier workloads, via ChatGPT Plus or other APIs).
+- **User Interfaces:**
+  - Web-based chat interface for interactive analysis
+  - Automated report generation and GitHub integration
+  - Optional email alerts and notifications
 
 ---
 

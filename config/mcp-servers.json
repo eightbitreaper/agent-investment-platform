@@ -1,5 +1,36 @@
 {
     "mcpServers": {
+        "financial-data-server": {
+            "command": "python",
+            "args": [
+                "-m",
+                "src.mcp_servers.financial_data_server"
+            ],
+            "env": {
+                "PORT": "3000",
+                "PYTHONPATH": "/app"
+            },
+            "enabled": true,
+            "description": "Real-time financial data MCP server providing TradingView integration for current stock quotes, market indices, news, and sector performance",
+            "capabilities": [
+                "get_stock_quote",
+                "get_market_overview",
+                "get_stock_news",
+                "compare_stocks",
+                "get_sector_performance"
+            ],
+            "data_sources": [
+                "TradingView API",
+                "Google News RSS"
+            ],
+            "timeout": 30000,
+            "retry_attempts": 3,
+            "health_check": {
+                "enabled": true,
+                "interval": 60000,
+                "test_symbol": "AAPL"
+            }
+        },
         "stock-data-server": {
             "command": "node",
             "args": [

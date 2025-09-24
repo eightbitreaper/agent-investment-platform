@@ -66,6 +66,7 @@ class SetupValidator:
             self._validate_llm_setup()
             self._validate_mcp_readiness()
             self._validate_docker_environment()
+            self._validate_ollama_services()
             self._validate_documentation()
             self._validate_vscode_integration()
             self._validate_memory_bank()
@@ -452,6 +453,121 @@ class SetupValidator:
                               ValidationResult.WARNING,
                               f"Missing {docker_file}",
                               f"{docker_file} will be created in Task 1.0")
+
+    def _validate_ollama_services(self):
+        """Validate Ollama services and web interface"""
+        logger.info("Validating Ollama services...")
+
+        # Check if Docker Compose services are running
+        try:
+            # Check Docker services status
+            result = subprocess.run(
+                ["docker", "compose", "ps", "--format", "json"],
+                capture_output=True, text=True, timeout=30,
+                cwd=self.project_root
+            )
+
+            if result.returncode == 0:
+                services = []
+                try:
+                    # Parse each line as JSON (docker compose ps returns one JSON per line)
+                    for line in result.stdout.strip().split('\n'):
+                        if line.strip():
+                            services.append(json.loads(line))
+                except json.JSONDecodeError:
+                    # Fallback for older docker compose versions
+                    services = []
+
+                # Check for Ollama services
+                ollama_running = False
+                webui_running = False
+
+                for service in services:
+                    if 'ollama-investment' in service.get('Name', ''):
+                        if 'running' in service.get('State', '').lower():
+                            ollama_running = True
+                    elif 'ollama-webui' in service.get('Name', ''):
+                        if 'running' in service.get('State', '').lower():
+                            webui_running = True
+
+                # Validate Ollama API service
+                if ollama_running:
+                    self._add_check("ollama_service", "Ollama Service",
+                                  ValidationResult.PASS, "Ollama container running")
+
+                    # Test Ollama API endpoint
+                    try:
+                        response = requests.get("http://localhost:11434/api/tags", timeout=10)
+                        if response.status_code == 200:
+                            models = response.json().get('models', [])
+                            model_count = len(models)
+                            self._add_check("ollama_api", "Ollama API",
+                                          ValidationResult.PASS,
+                                          f"API accessible with {model_count} models")
+                        else:
+                            self._add_check("ollama_api", "Ollama API",
+                                          ValidationResult.WARNING,
+                                          f"API returned status {response.status_code}")
+                    except requests.RequestException as e:
+                        self._add_check("ollama_api", "Ollama API",
+                                      ValidationResult.WARNING,
+                                      f"API not accessible: {e}")
+                else:
+                    self._add_check("ollama_service", "Ollama Service",
+                                  ValidationResult.WARNING,
+                                  "Ollama container not running",
+                                  "Start with: docker compose up ollama -d")
+
+                # Validate Web UI service
+                if webui_running:
+                    self._add_check("ollama_webui_service", "Ollama Web UI Service",
+                                  ValidationResult.PASS, "Web UI container running")
+
+                    # Test Web UI endpoint
+                    try:
+                        response = requests.get("http://localhost:8080/health", timeout=10)
+                        if response.status_code == 200:
+                            self._add_check("ollama_webui_health", "Ollama Web UI Health",
+                                          ValidationResult.PASS, "Web UI health check passed")
+                        else:
+                            # Try alternative health check
+                            response = requests.get("http://localhost:8080", timeout=10)
+                            if response.status_code == 200:
+                                self._add_check("ollama_webui_health", "Ollama Web UI Health",
+                                              ValidationResult.PASS, "Web UI accessible")
+                            else:
+                                self._add_check("ollama_webui_health", "Ollama Web UI Health",
+                                              ValidationResult.WARNING,
+                                              f"Web UI returned status {response.status_code}")
+                    except requests.RequestException as e:
+                        self._add_check("ollama_webui_health", "Ollama Web UI Health",
+                                      ValidationResult.WARNING,
+                                      f"Web UI not accessible: {e}")
+                else:
+                    self._add_check("ollama_webui_service", "Ollama Web UI Service",
+                                  ValidationResult.WARNING,
+                                  "Web UI container not running",
+                                  "Start with: docker compose up ollama-webui -d")
+
+            else:
+                self._add_check("ollama_docker_status", "Ollama Docker Status",
+                              ValidationResult.WARNING,
+                              "Could not check Docker Compose services",
+                              "Ensure Docker Compose is running")
+
+        except subprocess.TimeoutExpired:
+            self._add_check("ollama_docker_timeout", "Ollama Docker Check",
+                          ValidationResult.WARNING,
+                          "Docker Compose command timeout")
+        except FileNotFoundError:
+            self._add_check("ollama_docker_missing", "Docker Compose",
+                          ValidationResult.WARNING,
+                          "Docker Compose not found",
+                          "Install Docker Compose")
+        except Exception as e:
+            self._add_check("ollama_validation_error", "Ollama Validation",
+                          ValidationResult.WARNING,
+                          f"Ollama validation failed: {e}")
 
     def _validate_documentation(self):
         """Validate documentation structure"""

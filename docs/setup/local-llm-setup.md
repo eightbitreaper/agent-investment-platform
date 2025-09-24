@@ -97,9 +97,56 @@ model = AutoModelForCausalLM.from_pretrained(model_name)
 
 ## Ollama Setup
 
-Ollama provides an easy way to run powerful LLMs locally with a simple API.
+Ollama provides an easy way to run powerful LLMs locally with a simple API. The platform includes both Docker-based and native installation options.
 
-### Installation
+### Docker Setup (Recommended)
+
+The Agent Investment Platform includes a pre-configured Ollama setup with web interface.
+
+#### Automatic Docker Setup
+
+```powershell
+# Start Ollama services with web interface
+docker-compose up ollama ollama-webui -d
+
+# Check service status
+docker-compose ps
+
+# Access web interface at http://localhost:8080
+```
+
+**What's Included**:
+- 🤖 **Ollama Server**: API endpoint at http://localhost:11434
+- 💻 **Web Chat Interface**: Professional UI at http://localhost:8080
+- 🧠 **GPU Acceleration**: Automatic NVIDIA GPU detection and usage
+- 📊 **Pre-configured**: Ready for investment analysis
+
+#### Download Financial Models
+
+```powershell
+# Download Llama 3.1 8B (recommended for investment analysis)
+docker exec ollama-investment ollama pull llama3.1:8b
+
+# Download additional models
+docker exec ollama-investment ollama pull mistral:7b      # Faster responses
+docker exec ollama-investment ollama pull codellama:7b    # Code analysis
+docker exec ollama-investment ollama pull llama3.1:70b   # Best quality (requires 40GB+ RAM)
+```
+
+#### Using the Web Interface
+
+1. **Access**: Open http://localhost:8080 in your browser
+2. **No Signup**: Authentication disabled for local use
+3. **Model Selection**: Choose from downloaded models in the dropdown
+4. **Chat**: Start asking investment-related questions immediately
+
+**Example Prompts**:
+- "Analyze the current market sentiment for tech stocks"
+- "Should I invest $10,000 in AAPL right now?"
+- "Create a diversified portfolio for conservative investors"
+- "What are the risks of investing in cryptocurrency?"
+
+### Native Installation (Alternative)
 
 #### Windows
 ```powershell
@@ -179,14 +226,54 @@ export OLLAMA_TIMEOUT=300
 export OLLAMA_GPU_LAYERS=35  # Adjust based on VRAM
 ```
 
-### Testing Ollama
+### Docker Services Configuration
+
+The platform's `docker-compose.yml` includes optimized Ollama configuration:
+
+```yaml
+# Ollama service with GPU support
+ollama:
+  image: ollama/ollama:latest
+  container_name: ollama-investment
+  ports:
+    - "11434:11434"
+  volumes:
+    - ollama_data:/root/.ollama
+  deploy:
+    resources:
+      reservations:
+        devices:
+          - driver: nvidia
+            count: all
+            capabilities: [gpu]
+
+# Professional web interface
+ollama-webui:
+  image: ghcr.io/open-webui/open-webui:main
+  container_name: ollama-webui
+  ports:
+    - "8080:8080"
+  environment:
+    - OLLAMA_BASE_URL=http://ollama:11434
+    - WEBUI_NAME=🚀 AI Investment Assistant
+    - ENABLE_SIGNUP=false
+```
+
+### Managing Docker Services
 
 ```powershell
-# Test model availability
-ollama list
+# Start services
+docker-compose up ollama ollama-webui -d
 
-# Test inference
-ollama run llama3.1:8b "Analyze the current market sentiment for tech stocks"
+# Stop services
+docker-compose stop ollama ollama-webui
+
+# View logs
+docker-compose logs -f ollama
+docker-compose logs -f ollama-webui
+
+# Restart services
+docker-compose restart ollama ollama-webui
 ```
 
 ## LM Studio Integration

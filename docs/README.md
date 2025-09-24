@@ -1,114 +1,77 @@
-# 📚 Agent Investment Platform Documentation
+# Agent Investment Platform - Documentation Index
 
-Welcome to the Agent Investment Platform documentation. This comprehensive guide covers everything from quick start to advanced development.
+Welcome to the comprehensive documentation for the Agent Investment Platform. This directory contains all guides, references, and technical documentation organized for easy navigation.
 
-## 🚀 Quick Start
+## Quick Navigation
 
-### New Users - Get Started in 5 Minutes
-1. **[Installation Guide](setup/installation-guide.md)** - Complete setup from scratch
-2. **[Configuration Guide](setup/configuration-guide.md)** - Customize for your needs
-3. **[Local LLM Setup](setup/local-llm-setup.md)** - Configure private AI models
+### 🚀 Getting Started
+- [Installation Guide](setup/installation-guide.md) - Complete platform setup instructions
+- [Quick Start](setup/quick-start.md) - Get up and running in 10 minutes
+- [Prerequisites](setup/prerequisites.md) - System requirements and dependencies
 
-**One-Command Setup**:
-```powershell
-git clone https://github.com/your-username/agent-investment-platform.git
-cd agent-investment-platform
-python scripts/initialize.py --interactive
-```
+### 📊 Using the Platform
+- [AI Investment Assistant](setup/ollama-chat-guide.md) - Using the chat interface with real-time data
+- [Investment Analysis](setup/analysis-workflow.md) - Running automated investment reports
+- [Web Interfaces](setup/web-interfaces.md) - Accessing monitoring and analysis dashboards
 
-### For Developers
-1. **[API Documentation](api/README.md)** - Complete API reference
-2. **[Development Guide](development/README.md)** - Development standards and workflows
-3. **[Contributing Guide](development/contributing.md)** - How to contribute to the project
+### 🔧 Development & Contributing
+- [Development Setup](development/development-setup.md) - Environment setup for contributors
+- [Debugging Guides](development/debugging/) - Troubleshooting Python scripts and components
+- [Contributing Guidelines](development/contributing.md) - How to contribute to the project
+- [Code Standards](development/code-standards.md) - Coding conventions and best practices
 
-### For DevOps
-1. **[Docker Deployment](deployment/docker-deployment.md)** - Production deployment
-2. **[Troubleshooting](troubleshooting/common-issues.md)** - Problem resolution
+### 📡 API & MCP Servers
+- [MCP Server Overview](api/mcp-overview.md) - Model Context Protocol server architecture
+- [Financial Data Server](api/financial-data-server.md) - Real-time financial data API
+- [Analysis Engine Server](api/analysis-engine-server.md) - Investment analysis capabilities
+- [News Analysis Server](api/news-analysis-server.md) - News aggregation and sentiment analysis
+- [Report Generator Server](api/report-generator-server.md) - Automated report generation
 
-## 📖 Complete Documentation Index
+### 🏗️ Architecture & Deployment
+- [System Architecture](architecture.md) - Overall platform design and components
+- [Docker Deployment](deployment/docker-guide.md) - Container orchestration and scaling
+- [Local LLM Setup](setup/local-llm-setup.md) - Setting up Ollama and language models
+- [MCP Server Integration](deployment/mcp-integration.md) - Production MCP server deployment
 
-### ⚙️ Setup & Installation
-| Document | Description | Status | Audience |
-|----------|-------------|--------|----------|
-| **[Installation Guide](setup/installation-guide.md)** | Complete platform setup for all platforms | ✅ Complete | All Users |
-| **[Configuration Guide](setup/configuration-guide.md)** | LLM, strategies, and system configuration | ✅ Complete | All Users |
-| **[Local LLM Setup](setup/local-llm-setup.md)** | Ollama, LM Studio, Hugging Face setup | ✅ Complete | Privacy-focused Users |
-| [Initialize Prompt](setup/initialize.prompt.md) | VS Code agent one-command setup | ✅ Available | VS Code Users |
-| [Prerequisites](prerequisites.md) | System requirements | ✅ Available | All Users |
+### �️ Troubleshooting
+- [Common Issues](troubleshooting/common-issues.md) - Frequently encountered problems and solutions
+- [Platform Health](troubleshooting/health-monitoring.md) - System monitoring and diagnostics
+- [Docker Issues](troubleshooting/docker-troubleshooting.md) - Container and service problems
+- [MCP Server Issues](troubleshooting/mcp-troubleshooting.md) - Model Context Protocol debugging
 
-### 🐋 Deployment & Infrastructure
-| Document | Description | Status | Audience |
-|----------|-------------|--------|----------|
-| **[Docker Deployment](deployment/docker-deployment.md)** | Production containerized deployment | ✅ Complete | DevOps |
+### 📋 Reference
+- [Configuration Reference](reference/configuration.md) - All configuration options and files
+- [Command Reference](reference/commands.md) - All available scripts and commands
+- [Environment Variables](reference/environment-variables.md) - Complete environment setup
+- [API Endpoints](reference/api-endpoints.md) - All available API endpoints and usage
 
-### 🔧 Troubleshooting & Support
-| Document | Description | Status | Audience |
-|----------|-------------|--------|----------|
-| **[Common Issues](troubleshooting/common-issues.md)** | Comprehensive troubleshooting guide | ✅ Complete | All Users |
+## Documentation Organization
 
-### 🔌 API & Development
-| Document | Description | Status | Audience |
-|----------|-------------|--------|----------|
-| **[API Documentation](api/README.md)** | Complete API reference and examples | ✅ Complete | Developers |
-| **[MCP Server Reference](api/mcp-server-reference.md)** | Detailed MCP server API docs | ✅ Complete | Advanced Developers |
-| **[Development Guide](development/README.md)** | Development workflows and standards | ✅ Complete | Contributors |
-| **[Contributing Guide](development/contributing.md)** | Contribution guidelines and process | ✅ Complete | Contributors |
+This documentation follows a structured hierarchy designed for different user types and use cases:
 
-### 🏗️ Architecture & Technical
-| Document | Description | Status | Audience |
-|----------|-------------|--------|----------|
-| [Architecture Overview](architecture.md) | Technical system design | ✅ Available | Architects |
-| [MCP Server Integration](mcp-server-integration.md) | MCP implementation details | ✅ Available | Developers |
-| [Backtesting Framework](backtesting-framework-summary.md) | Investment backtesting system | ✅ Available | Quant Analysts |
+- **Setup Guides** - For new users getting started with the platform
+- **Development** - For contributors and developers working on the codebase
+- **API Reference** - For developers integrating with MCP servers
+- **Deployment** - For production deployment and scaling
+- **Troubleshooting** - For diagnosing and resolving issues
+- **Reference** - For detailed technical specifications
 
-### 📋 Project Information
-| Document | Description | Status | Audience |
-|----------|-------------|--------|----------|
-| [Contributing Guidelines](development/contributing.md) | How to contribute | ✅ Available | Contributors |
-| [Code of Conduct](CODE_OF_CONDUCT.md) | Community standards | ✅ Available | All |
-| [License](LICENSE.md) | MIT License | ✅ Available | Legal |
+## Contributing to Documentation
 
-## 🏗️ Platform Architecture
+When adding or updating documentation:
 
-The Agent Investment Platform follows a modular architecture with these key components:
+1. Place files in the appropriate directory based on content type
+2. Update this index page with links to new documentation
+3. Follow the [documentation standards](development/documentation-standards.md)
+4. Include cross-references to related sections
+5. Test all links and examples before committing
 
-```
-📊 Data Layer          🤖 Processing Layer     📝 Output Layer
-├── Stock APIs         ├── MCP Servers         ├── Report Generator
-├── News Sources       ├── Sentiment Analysis  ├── GitHub Integration
-├── YouTube Feeds      ├── Technical Analysis  └── Notifications
-└── Market Data        └── Strategy Engine
-```
+## Getting Help
 
-## 📋 Project Resources
-
-### Core Documents
-- **[Product Requirements (PRD)](../tasks/prd.md)** - Complete project specification
-- **[Task Roadmap](../tasks/tasks-prd.md)** - Development progress and next steps
-- **[Architecture Overview](architecture.md)** - Technical system design
-
-### Project Guidelines
-- **[Contributing Guidelines](development/contributing.md)** - How to contribute code and documentation
-- **[Code of Conduct](CODE_OF_CONDUCT.md)** - Community standards and expectations
-- **[License (MIT)](LICENSE.md)** - Usage rights and limitations
-
-## 🔍 Quick Navigation
-
-**Need help with...?**
-- 🆕 **First-time setup** → [Initialize Platform](setup/initialize.prompt.md)
-- 🏗️ **System architecture** → [Architecture Overview](architecture.md)
-- 🤖 **MCP servers** → [MCP Server Integration](mcp-server-integration.md)
-- 👩‍💻 **Contributing code** → [Contributing Guide](development/contributing.md)
-- � **System requirements** → [Prerequisites](prerequisites.md)
-- 📋 **Project overview** → [Documentation Index](README.md)
-
-## 💡 Pro Tips
-
-- **Use the VS Code initializer**: Run `@workspace run docs/setup/initialize.prompt` for automated setup
-- **Check logs**: Most issues can be diagnosed in `logs/initialization.log`
-- **Start with defaults**: The platform works out-of-the-box, customize later
-- **Join discussions**: Use GitHub Discussions for questions and feature requests
+- **Issues**: Check [troubleshooting guides](troubleshooting/) first
+- **Development**: See [development documentation](development/)
+- **Questions**: Create an issue on GitHub with appropriate labels
 
 ---
 
-📧 **Need more help?** [Open an issue](https://github.com/eightbitreaper/agent-investment-platform/issues) or [start a discussion](https://github.com/eightbitreaper/agent-investment-platform/discussions).
+*Last updated: September 23, 2025*

@@ -10,7 +10,7 @@ services:
     container_name: agent-investment-platform
     restart: unless-stopped
     ports:
-      - "8000:8000"  # Main web interface
+      - "8000:8000" # Main web interface
     environment:
       - ENVIRONMENT=production
       - DATABASE_URL=postgresql://postgres:${POSTGRES_PASSWORD}@postgres:5432/investment_platform
@@ -29,7 +29,7 @@ services:
     networks:
       - investment-network
     healthcheck:
-      test: ["CMD", "python", "-c", "import requests; requests.get('http://localhost:8000/health')"]
+      test: [ "CMD", "python", "-c", "import requests; requests.get('http://localhost:8000/health')" ]
       interval: 30s
       timeout: 10s
       retries: 3
@@ -50,7 +50,7 @@ services:
       - PORT=3001
     env_file:
       - .env
-    command: ["node", "src/mcp-servers/stock-data-server.js"]
+    command: [ "node", "src/mcp-servers/stock-data-server.js" ]
     depends_on:
       - redis
     networks:
@@ -70,7 +70,7 @@ services:
       - PORT=3002
     env_file:
       - .env
-    command: ["node", "src/mcp-servers/news-analysis-server.js"]
+    command: [ "node", "src/mcp-servers/news-analysis-server.js" ]
     depends_on:
       - redis
     networks:
@@ -90,7 +90,7 @@ services:
       - PORT=3003
     env_file:
       - .env
-    command: ["node", "src/mcp-servers/youtube-transcript-server.js"]
+    command: [ "node", "src/mcp-servers/youtube-transcript-server.js" ]
     depends_on:
       - redis
     networks:
@@ -110,9 +110,29 @@ services:
       - PORT=3004
     env_file:
       - .env
-    command: ["python", "-m", "src.mcp_servers.analysis_engine_server"]
+    command: [ "python", "-m", "src.mcp_servers.analysis_engine_server" ]
     depends_on:
       - postgres
+      - redis
+    networks:
+      - investment-network
+
+  mcp-financial-server:
+    build:
+      context: .
+      dockerfile: Dockerfile
+      target: production
+    container_name: mcp-financial-server
+    restart: unless-stopped
+    ports:
+      - "3000:3000"
+    environment:
+      - PYTHONPATH=/app
+      - PORT=3000
+    env_file:
+      - .env
+    command: [ "python", "-m", "src.mcp_servers.financial_data_server" ]
+    depends_on:
       - redis
     networks:
       - investment-network
@@ -134,7 +154,7 @@ services:
     networks:
       - investment-network
     healthcheck:
-      test: ["CMD-SHELL", "pg_isready -U postgres"]
+      test: [ "CMD-SHELL", "pg_isready -U postgres" ]
       interval: 10s
       timeout: 5s
       retries: 5
@@ -152,12 +172,12 @@ services:
     networks:
       - investment-network
     healthcheck:
-      test: ["CMD", "redis-cli", "ping"]
+      test: [ "CMD", "redis-cli", "ping" ]
       interval: 10s
       timeout: 5s
       retries: 5
 
-  # Ollama for local LLM (optional)
+  # Ollama for local LLM with GPU acceleration
   ollama:
     image: ollama/ollama:latest
     container_name: ollama-investment
@@ -168,10 +188,59 @@ services:
       - ollama_data:/root/.ollama
     environment:
       - OLLAMA_HOST=0.0.0.0:11434
+      - OLLAMA_ORIGINS=*
     networks:
       - investment-network
+    # GPU support for NVIDIA
+    deploy:
+      resources:
+        reservations:
+          devices:
+            - driver: nvidia
+              count: all
+              capabilities: [ gpu ]
     profiles:
       - local-llm
+      - development
+      - production
+    healthcheck:
+      test: [ "CMD-SHELL", "curl -f http://localhost:11434/api/tags || exit 1" ]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 60s
+
+  # Open WebUI - Professional chat interface for Ollama
+  ollama-webui:
+    image: ghcr.io/open-webui/open-webui:main
+    container_name: ollama-webui
+    restart: unless-stopped
+    ports:
+      - "8080:8080" # Web interface
+    volumes:
+      - ./data/ollama-webui:/app/backend/data
+    networks:
+      - investment-network
+    environment:
+      - OLLAMA_BASE_URL=http://ollama:11434
+      - WEBUI_NAME=AI Investment Assistant
+      - ENABLE_SIGNUP=false
+      - DEFAULT_USER_ROLE=admin
+      - WEBUI_AUTH=false
+      - ENABLE_FUNCTION_CALLING=true
+      - MCP_SERVERS=http://mcp-financial-server:3000,http://mcp-analysis-server:3004
+    depends_on:
+      - ollama
+      - mcp-analysis-server
+    profiles:
+      - local-llm
+      - development
+      - production
+    healthcheck:
+      test: [ "CMD-SHELL", "curl -f http://localhost:8080/health || exit 1" ]
+      interval: 30s
+      timeout: 10s
+      retries: 3
 
   # Monitoring and observability
   prometheus:
@@ -230,7 +299,7 @@ services:
     profiles:
       - production
 
-# Development services
+  # Development services
   dev-environment:
     build:
       context: .
@@ -240,7 +309,7 @@ services:
     restart: unless-stopped
     ports:
       - "8000:8000"
-      - "8888:8888"  # Jupyter notebook
+      - "8888:8888" # Jupyter notebook
     environment:
       - ENVIRONMENT=development
       - DEBUG=true
@@ -249,7 +318,7 @@ services:
       - .env
     volumes:
       - .:/app
-      - /app/node_modules  # Prevent overwriting node_modules
+      - /app/node_modules # Prevent overwriting node_modules
     depends_on:
       - postgres
       - redis
@@ -257,7 +326,7 @@ services:
       - investment-network
     profiles:
       - development
-    command: ["tail", "-f", "/dev/null"]
+    command: [ "tail", "-f", "/dev/null" ]
 
 # Networks
 networks:

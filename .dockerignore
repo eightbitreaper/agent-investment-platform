@@ -1,0 +1,49 @@
+# Ignore cache directories
+data/ollama-webui/cache/
+data/ollama-webui/logs/
+*.log
+
+# Ignore development files
+.git/
+.vscode/
+.memory/
+__pycache__/
+*.pyc
+*.pyo
+*.egg-info/
+
+# Ignore large model files
+*.bin
+*.safetensors
+*.gguf
+*.onnx
+
+# Ignore OS files
+.DS_Store
+Thumbs.db
+desktop.ini
+
+# Ignore temporary files
+*.tmp
+*.temp
+*.swp
+*.bak
+
+# Ignore node_modules if any
+node_modules/
+
+# Ignore test files
+test_cache/
+reports/
+
+# Keep essential files only
+!src/
+!config/
+!requirements.txt
+!*.py
+!*.yaml
+!*.yml
+!*.json
+!*.md
+!Dockerfile
+!docker-compose.yml
