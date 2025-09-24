@@ -6,9 +6,46 @@ An agent-driven platform that provides automated analysis of stocks, ETFs, and b
 
 ⚠️ **Note**: The system does not execute trades. It informs the operator so they can act manually.
 
-## ⚡ Quick Start
+## ⚡ One-Command Installation
 
-Get up and running in under 5 minutes with our complete initialization system:
+Get the complete platform running in under 10 minutes with our automated installers:
+
+### 🪟 Windows PowerShell (Recommended)
+```powershell
+# Right-click PowerShell and "Run as Administrator", then:
+git clone https://github.com/eightbitreaper/agent-investment-platform.git
+cd agent-investment-platform
+.\scripts\deployment\master-installer.ps1
+```
+
+### 🔧 Windows Batch Alternative  
+```batch
+# Right-click and "Run as Administrator"
+git clone https://github.com/eightbitreaper/agent-investment-platform.git
+cd agent-investment-platform
+.\scripts\deployment\install-everything.bat
+```
+
+### 🐧 Linux/Mac (User Mode)
+```bash
+git clone https://github.com/eightbitreaper/agent-investment-platform.git
+cd agent-investment-platform
+pwsh ./scripts/deployment/user-installer.ps1  # PowerShell Core required
+```
+
+**✅ Complete Installation Includes:**
+- 🐳 **Docker Desktop** - Container orchestration platform
+- 🐍 **Python 3.11** - Virtual environment with 70+ packages
+- 📦 **Node.js 18+** - JavaScript runtime for MCP servers  
+- 🛠️ **Git & VS Code** - Development tools
+- 🗄️ **PostgreSQL & Redis** - Database and caching layer
+- 🤖 **4 MCP Servers** - Stock data, analysis, news, and reports
+- 🌐 **Web Interface** - Accessible at http://localhost:8000
+- 📊 **Monitoring Stack** - Grafana and Prometheus dashboards
+
+## 🚀 Alternative: VS Code Workspace Setup
+
+For development-focused setup with VS Code integration:
 
 ```bash
 # 1. Clone the repository
@@ -22,13 +59,29 @@ code .
 @workspace /docs/setup/initialize.prompt.md
 ```
 
-**✅ Initialization Complete!** Our system handles:
-- 🐍 **Python Environment** - Automatic dependency installation & configuration
-- 🤖 **LLM Setup** - Local models (Ollama) or API configuration (OpenAI/Claude)
-- 🔧 **VS Code Integration** - Complete workspace setup with 85+ optimized settings
-- 📊 **Platform Validation** - Comprehensive system checks and health monitoring
-- 🏗️ **Development Tools** - 20 VS Code tasks for all operations (build, test, deploy)
-- 💾 **Memory Bank** - AI persistence system for seamless development continuity
+## 📋 Installation Methods Comparison
+
+| Method | Best For | Time | Requirements | What You Get |
+|--------|----------|------|--------------|--------------|
+| **scripts/deployment/master-installer.ps1** | Production deployment | 10-15 min | Admin rights | Complete Docker stack |
+| **scripts/deployment/install-everything.bat** | Windows users | 10-15 min | Admin rights | Full platform + tools |  
+| **scripts/deployment/user-installer.ps1** | Limited permissions | 8-10 min | User rights | Core platform |
+| **VS Code Workspace** | Development work | 5-8 min | VS Code | Dev environment |
+
+### 🔧 Manual Installation
+
+If automatic installers don't work in your environment:
+
+```bash
+# 1. Install Docker Desktop manually
+# 2. Install Python 3.11
+# 3. Clone and setup:
+git clone https://github.com/eightbitreaper/agent-investment-platform.git
+cd agent-investment-platform
+python -m venv .venv
+.venv\Scripts\pip install -r requirements.txt
+docker-compose --profile development up -d
+```
 
 ## 🎯 What This Platform Does
 
