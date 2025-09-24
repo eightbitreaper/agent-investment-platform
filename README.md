@@ -18,7 +18,7 @@ cd agent-investment-platform
 .\scripts\deployment\master-installer.ps1
 ```
 
-### 🔧 Windows Batch Alternative  
+### 🔧 Windows Batch Alternative
 ```batch
 # Right-click and "Run as Administrator"
 git clone https://github.com/eightbitreaper/agent-investment-platform.git
@@ -36,7 +36,7 @@ pwsh ./scripts/deployment/user-installer.ps1  # PowerShell Core required
 **✅ Complete Installation Includes:**
 - 🐳 **Docker Desktop** - Container orchestration platform
 - 🐍 **Python 3.11** - Virtual environment with 70+ packages
-- 📦 **Node.js 18+** - JavaScript runtime for MCP servers  
+- 📦 **Node.js 18+** - JavaScript runtime for MCP servers
 - 🛠️ **Git & VS Code** - Development tools
 - 🗄️ **PostgreSQL & Redis** - Database and caching layer
 - 🤖 **4 MCP Servers** - Stock data, analysis, news, and reports
@@ -64,7 +64,7 @@ code .
 | Method | Best For | Time | Requirements | What You Get |
 |--------|----------|------|--------------|--------------|
 | **scripts/deployment/master-installer.ps1** | Production deployment | 10-15 min | Admin rights | Complete Docker stack |
-| **scripts/deployment/install-everything.bat** | Windows users | 10-15 min | Admin rights | Full platform + tools |  
+| **scripts/deployment/install-everything.bat** | Windows users | 10-15 min | Admin rights | Full platform + tools |
 | **scripts/deployment/user-installer.ps1** | Limited permissions | 8-10 min | User rights | Core platform |
 | **VS Code Workspace** | Development work | 5-8 min | VS Code | Dev environment |
 
@@ -82,6 +82,114 @@ python -m venv .venv
 .venv\Scripts\pip install -r requirements.txt
 docker-compose --profile development up -d
 ```
+
+## 🚀 How to Use the Platform
+
+Once installation is complete, you have several ways to use the platform:
+
+### 1. 🤖 Generate AI Investment Analysis (Recommended)
+
+Run a complete investment analysis with AI-powered insights:
+
+```powershell
+# Generate a test report (safe, uses demo data)
+.\.venv\Scripts\python.exe orchestrator.py --test-mode
+
+# Generate live analysis (requires API keys)  
+.\.venv\Scripts\python.exe orchestrator.py --live
+
+# Run in development mode with detailed logging
+.\.venv\Scripts\python.exe orchestrator.py --mode development --log-level DEBUG
+```
+
+**Output**: Creates detailed reports in `reports/` directory with:
+- Stock analysis and recommendations
+- Market sentiment analysis
+- Risk assessments
+- Buy/Hold/Sell recommendations
+
+### 2. 📊 Monitor Platform Health
+
+Check that all systems are working properly:
+
+```powershell
+# Quick health check
+.\.venv\Scripts\python.exe scripts\health-check.py
+
+# Comprehensive system validation  
+.\.venv\Scripts\python.exe scripts\deployment\validate-system.py
+```
+
+### 3. 🐳 Manage Docker Services
+
+Control the platform's infrastructure:
+
+```powershell
+# Check service status
+docker-compose ps
+
+# View service logs
+docker-compose logs -f
+
+# Restart services
+docker-compose restart
+
+# Stop all services
+docker-compose down
+
+# Start services again
+docker-compose --profile development up -d
+```
+
+### 4. 📈 Access Web Interfaces
+
+Once fully deployed, access these URLs:
+
+- **Main Application**: http://localhost:8000 (when available)
+- **Grafana Monitoring**: http://localhost:3000  
+- **Prometheus Metrics**: http://localhost:9090
+- **Jupyter Notebooks**: http://localhost:8888 (development mode)
+
+### 5. ⚙️ Configuration
+
+Customize the platform for your needs:
+
+```powershell
+# Edit environment variables (API keys, etc.)
+notepad .env
+
+# Modify investment strategies
+notepad config\strategies.yaml
+
+# Adjust data sources  
+notepad config\data-sources.yaml
+```
+
+### 6. 📝 View Generated Reports
+
+All analysis reports are saved in structured format:
+
+```powershell
+# View latest reports
+ls reports\
+
+# Open latest report
+notepad "reports\investment-analysis-$(Get-Date -Format 'yyyy-MM-dd').md"
+```
+
+### 🆘 Troubleshooting
+
+**If something isn't working:**
+
+1. **Check platform health**: `.\.venv\Scripts\python.exe scripts\health-check.py`
+2. **Verify Docker**: `docker-compose ps`
+3. **Check logs**: `docker-compose logs`
+4. **Restart services**: `docker-compose restart`
+
+**Common Issues:**
+- **Port conflicts**: Stop other services using ports 8000, 3000, 5432, 6379
+- **API key errors**: Configure your API keys in `.env` file
+- **Memory issues**: Ensure at least 4GB RAM available for Docker
 
 ## 🎯 What This Platform Does
 
