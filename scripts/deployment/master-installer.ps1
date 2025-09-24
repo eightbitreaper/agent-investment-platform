@@ -162,20 +162,15 @@ try {
             # Use Docker's device activation flow (web-based login)
             docker login
 
-            if ($LASTEXITCODE -eq 0) {
+            # Verify authentication by testing Docker Hub access
+            Write-Step "Verifying Docker Hub access..."
+            try {
+                docker pull hello-world 2>$null | Out-Null
                 Write-Success "Docker Hub login successful!"
+                Write-Success "Docker Hub access verified"
                 $loginSuccess = $true
-
-                # Verify by trying to pull a test image
-                Write-Step "Verifying Docker Hub access..."
-                try {
-                    docker pull hello-world 2>$null | Out-Null
-                    Write-Success "Docker Hub access verified"
-                } catch {
-                    Write-Warning "Login succeeded but image pull still failed"
-                }
-            } else {
-                Write-Error "Docker Hub login failed"
+            } catch {
+                Write-Error "Docker Hub login failed - unable to pull test image"
                 $attempt++
 
                 if ($attempt -le $maxAttempts) {

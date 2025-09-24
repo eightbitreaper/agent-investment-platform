@@ -184,21 +184,17 @@ if %errorLevel% neq 0 (
         
         REM Use Docker's device activation flow (web-based login)
         docker login
+        
+        REM Verify authentication by testing Docker Hub access
+        echo Verifying Docker Hub access...
+        docker pull hello-world >nul 2>&1
         if %errorLevel% equ 0 (
             echo ✅ Docker Hub login successful!
+            echo ✅ Docker Hub access verified
             set loginSuccess=true
-            
-            REM Verify by trying to pull test image
-            echo Verifying Docker Hub access...
-            docker pull hello-world >nul 2>&1
-            if %errorLevel% equ 0 (
-                echo ✅ Docker Hub access verified
-            ) else (
-                echo ⚠️  Login succeeded but image pull still failed
-            )
             goto :dockerLoginSuccess
         ) else (
-            echo ❌ Docker Hub login failed
+            echo ❌ Docker Hub login failed - unable to pull test image
             set /a attempt+=1
             
             if !attempt! leq !maxAttempts! (
