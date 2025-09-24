@@ -2,7 +2,7 @@
 """
 Environment Configuration Script for Agent Investment Platform
 
-This script handles automated configuration of environment variables, 
+This script handles automated configuration of environment variables,
 configuration files, and workspace settings for the platform.
 """
 
@@ -63,20 +63,20 @@ class NotificationConfig:
 
 class EnvironmentConfigurator:
     """Handles environment configuration and setup"""
-    
+
     def __init__(self, project_root: Path):
         self.project_root = project_root
         self.config_dir = project_root / "config"
         self.env_file = project_root / ".env"
         self.env_example = project_root / ".env.example"
-        
+
         # Ensure config directory exists
         self.config_dir.mkdir(exist_ok=True)
-    
+
     def setup_all(self):
         """Setup complete environment configuration"""
         logger.info("Configuring environment...")
-        
+
         try:
             # Create configuration files
             self._create_env_example()
@@ -86,20 +86,29 @@ class EnvironmentConfigurator:
             self._create_data_sources_config()
             self._create_strategies_config()
             self._create_notification_config()
-            
+
             # Load environment variables
             self._load_environment()
-            
+
             logger.info("Environment configuration completed successfully")
-            
+
         except Exception as e:
             logger.error(f"Environment configuration failed: {e}")
             raise
-    
+
     def _create_env_example(self):
         """Create .env.example template file"""
+
+        # Check if a comprehensive .env.example already exists
+        if self.env_example.exists():
+            content = self.env_example.read_text()
+            # If file has substantial content (more than basic template), preserve it
+            if len(content.splitlines()) > 50:
+                logger.info(".env.example already exists with comprehensive configuration, preserving it")
+                return
+
         logger.info("Creating .env.example template...")
-        
+
         env_template = """# Agent Investment Platform Environment Variables
 # Copy this file to .env and fill in your actual values
 
@@ -186,36 +195,49 @@ SECRET_KEY=
 # API rate limiting
 API_RATE_LIMIT_PER_HOUR=1000
 """
-        
+
         with open(self.env_example, 'w') as f:
             f.write(env_template)
-        
+
         logger.info(f"Created {self.env_example}")
-    
+
     def _create_env_file(self):
         """Create .env file from template if it doesn't exist"""
         if self.env_file.exists():
             logger.info(".env file already exists, skipping creation")
             return
-        
+
         logger.info("Creating .env file from template...")
-        
+
         # Copy from example
         shutil.copy2(self.env_example, self.env_file)
-        
+
         # Generate secret key
         secret_key = self._generate_secret_key()
         set_key(str(self.env_file), "SECRET_KEY", secret_key)
-        
+
         logger.info(f"Created {self.env_file}")
         logger.warning("Please edit .env file and add your API keys and configuration")
-    
+
     def _create_llm_config(self):
         """Create LLM configuration file"""
-        logger.info("Creating LLM configuration...")
-        
+
         config_file = self.config_dir / "llm-config.yaml"
-        
+
+        # Check if comprehensive config already exists
+        if config_file.exists():
+            try:
+                with open(config_file, 'r') as f:
+                    existing_config = yaml.safe_load(f)
+                # If config has substantial content, preserve it
+                if existing_config and len(str(existing_config)) > 1000:
+                    logger.info("LLM config already exists with comprehensive configuration, preserving it")
+                    return
+            except Exception:
+                pass  # If we can't read it, create new one
+
+        logger.info("Creating LLM configuration...")
+
         llm_config = {
             "providers": {
                 "local": {
@@ -272,18 +294,31 @@ API_RATE_LIMIT_PER_HOUR=1000
                 "timeout_seconds": 30
             }
         }
-        
+
         with open(config_file, 'w') as f:
             yaml.dump(llm_config, f, default_flow_style=False, indent=2)
-        
+
         logger.info(f"Created {config_file}")
-    
+
     def _create_mcp_servers_config(self):
         """Create MCP servers configuration"""
-        logger.info("Creating MCP servers configuration...")
-        
+
         config_file = self.config_dir / "mcp-servers.json"
-        
+
+        # Check if comprehensive config already exists
+        if config_file.exists():
+            try:
+                with open(config_file, 'r') as f:
+                    existing_config = json.load(f)
+                # If config has substantial content, preserve it
+                if existing_config and len(str(existing_config)) > 1000:
+                    logger.info("MCP servers config already exists with comprehensive configuration, preserving it")
+                    return
+            except Exception:
+                pass  # If we can't read it, create new one
+
+        logger.info("Creating MCP servers configuration...")
+
         mcp_config = {
             "mcpServers": {
                 "stock-data": {
@@ -332,18 +367,31 @@ API_RATE_LIMIT_PER_HOUR=1000
                 }
             }
         }
-        
+
         with open(config_file, 'w') as f:
             json.dump(mcp_config, f, indent=2)
-        
+
         logger.info(f"Created {config_file}")
-    
+
     def _create_data_sources_config(self):
         """Create data sources configuration"""
-        logger.info("Creating data sources configuration...")
-        
+
         config_file = self.config_dir / "data-sources.yaml"
-        
+
+        # Check if comprehensive config already exists
+        if config_file.exists():
+            try:
+                with open(config_file, 'r') as f:
+                    existing_config = yaml.safe_load(f)
+                # If config has substantial content, preserve it
+                if existing_config and len(str(existing_config)) > 1000:
+                    logger.info("Data sources config already exists with comprehensive configuration, preserving it")
+                    return
+            except Exception:
+                pass  # If we can't read it, create new one
+
+        logger.info("Creating data sources configuration...")
+
         data_sources_config = {
             "stock_apis": {
                 "alpha_vantage": {
@@ -408,18 +456,31 @@ API_RATE_LIMIT_PER_HOUR=1000
                 "rate_limit": 100
             }
         }
-        
+
         with open(config_file, 'w') as f:
             yaml.dump(data_sources_config, f, default_flow_style=False, indent=2)
-        
+
         logger.info(f"Created {config_file}")
-    
+
     def _create_strategies_config(self):
         """Create investment strategies configuration"""
-        logger.info("Creating strategies configuration...")
-        
+
         config_file = self.config_dir / "strategies.yaml"
-        
+
+        # Check if comprehensive config already exists
+        if config_file.exists():
+            try:
+                with open(config_file, 'r') as f:
+                    existing_config = yaml.safe_load(f)
+                # If config has substantial content, preserve it
+                if existing_config and len(str(existing_config)) > 1000:
+                    logger.info("Strategies config already exists with comprehensive configuration, preserving it")
+                    return
+            except Exception:
+                pass  # If we can't read it, create new one
+
+        logger.info("Creating strategies configuration...")
+
         strategies_config = {
             "strategies": {
                 "value_investing": {
@@ -436,7 +497,7 @@ API_RATE_LIMIT_PER_HOUR=1000
                     "weight": 0.4
                 },
                 "momentum": {
-                    "name": "Momentum Strategy", 
+                    "name": "Momentum Strategy",
                     "description": "Follow trending stocks with strong price momentum",
                     "enabled": True,
                     "parameters": {
@@ -485,18 +546,31 @@ API_RATE_LIMIT_PER_HOUR=1000
                 "include_uncertainty": True
             }
         }
-        
+
         with open(config_file, 'w') as f:
             yaml.dump(strategies_config, f, default_flow_style=False, indent=2)
-        
+
         logger.info(f"Created {config_file}")
-    
+
     def _create_notification_config(self):
         """Create notification configuration"""
-        logger.info("Creating notification configuration...")
-        
+
         config_file = self.config_dir / "notification-config.yaml"
-        
+
+        # Check if comprehensive config already exists
+        if config_file.exists():
+            try:
+                with open(config_file, 'r') as f:
+                    existing_config = yaml.safe_load(f)
+                # If config has substantial content, preserve it
+                if existing_config and len(str(existing_config)) > 1000:
+                    logger.info("Notification config already exists with comprehensive configuration, preserving it")
+                    return
+            except Exception:
+                pass  # If we can't read it, create new one
+
+        logger.info("Creating notification configuration...")
+
         notification_config = {
             "email": {
                 "enabled": "${EMAIL_ENABLED:-false}",
@@ -542,12 +616,12 @@ API_RATE_LIMIT_PER_HOUR=1000
                 }
             }
         }
-        
+
         with open(config_file, 'w') as f:
             yaml.dump(notification_config, f, default_flow_style=False, indent=2)
-        
+
         logger.info(f"Created {config_file}")
-    
+
     def _load_environment(self):
         """Load environment variables from .env file"""
         if self.env_file.exists():
@@ -555,24 +629,24 @@ API_RATE_LIMIT_PER_HOUR=1000
             logger.info("Loaded environment variables from .env")
         else:
             logger.warning("No .env file found")
-    
+
     def _generate_secret_key(self, length: int = 32) -> str:
         """Generate a random secret key"""
         alphabet = string.ascii_letters + string.digits + "!@#$%^&*"
         return ''.join(secrets.choice(alphabet) for _ in range(length))
-    
+
     def interactive_setup(self):
         """Interactive configuration setup with user prompts"""
         print("\n🔧 Environment Configuration")
         print("=" * 40)
-        
+
         # LLM Provider choice
         print("\n🧠 Choose your LLM provider:")
         print("1. Local (Ollama) - Free, private, requires local installation")
         print("2. OpenAI - Paid API, high quality, cloud-based")
         print("3. Anthropic (Claude) - Paid API, excellent analysis, cloud-based")
         print("4. Hybrid - Local for processing, API for complex analysis")
-        
+
         while True:
             choice = input("\nEnter your choice (1-4): ").strip()
             if choice in ["1", "2", "3", "4"]:
@@ -580,45 +654,45 @@ API_RATE_LIMIT_PER_HOUR=1000
                 llm_provider = providers[choice]
                 break
             print("Invalid choice. Please enter 1, 2, 3, or 4.")
-        
+
         # Update .env with provider choice
         set_key(str(self.env_file), "LLM_PROVIDER", llm_provider)
-        
+
         # API key setup for non-local providers
         if llm_provider in ["openai", "hybrid"]:
             api_key = input("\n🔑 Enter your OpenAI API key (or press Enter to skip): ").strip()
             if api_key:
                 set_key(str(self.env_file), "OPENAI_API_KEY", api_key)
-        
+
         if llm_provider in ["anthropic", "hybrid"]:
             api_key = input("\n🔑 Enter your Anthropic API key (or press Enter to skip): ").strip()
             if api_key:
                 set_key(str(self.env_file), "ANTHROPIC_API_KEY", api_key)
-        
+
         # Notification setup
         print("\n📧 Setup notifications (optional):")
-        
+
         email_setup = input("Enable email notifications? (y/N): ").strip().lower()
         if email_setup == 'y':
             set_key(str(self.env_file), "EMAIL_ENABLED", "true")
-            
+
             email = input("Email address: ").strip()
             if email:
                 set_key(str(self.env_file), "EMAIL_USERNAME", email)
                 set_key(str(self.env_file), "EMAIL_TO_ADDRESS", email)
-            
+
             password = input("Email app password (for Gmail use app-specific password): ").strip()
             if password:
                 set_key(str(self.env_file), "EMAIL_PASSWORD", password)
-        
+
         discord_setup = input("Enable Discord notifications? (y/N): ").strip().lower()
         if discord_setup == 'y':
             set_key(str(self.env_file), "DISCORD_ENABLED", "true")
-            
+
             webhook = input("Discord webhook URL: ").strip()
             if webhook:
                 set_key(str(self.env_file), "DISCORD_WEBHOOK_URL", webhook)
-        
+
         print("\n✅ Basic configuration completed!")
         print("📝 You can add API keys for data sources by editing the .env file")
         print(f"📄 Configuration files created in: {self.config_dir}")
@@ -627,7 +701,7 @@ def main():
     """Main entry point for standalone execution"""
     project_root = Path(__file__).parent.parent.parent
     configurator = EnvironmentConfigurator(project_root)
-    
+
     if len(sys.argv) > 1 and sys.argv[1] == "--interactive":
         configurator.setup_all()
         configurator.interactive_setup()

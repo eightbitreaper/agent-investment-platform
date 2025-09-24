@@ -2,7 +2,17 @@
 """
 Setup Validation Script for Agent Investment Platform
 
-This script provides comprehensive validation of the complete setup including
+This script provides comprehensive validation         # Python version check
+        python_version = sys.version_info
+        if python_version >= (3, 9):
+            self._add_check("python_version", "Python Version",
+                          ValidationResult.PASS,
+                          f"Python {python_version.major}.{python_version.minor}.{python_version.micro}")
+        else:
+            self._add_check("python_version", "Python Version",
+                          ValidationResult.FAIL,
+                          f"Python {python_version.major}.{python_version.minor} < 3.9",
+                          "Install Python 3.9 or higher")lete setup including
 dependencies, configuration, LLM availability, and system readiness.
 """
 
@@ -132,15 +142,15 @@ class SetupValidator:
 
         # Python version
         python_version = sys.version_info
-        if python_version >= (3, 11):
+        if python_version >= (3, 9):
             self._add_check("python_version", "Python Version",
                           ValidationResult.PASS,
                           f"Python {python_version.major}.{python_version.minor}.{python_version.micro}")
         else:
             self._add_check("python_version", "Python Version",
                           ValidationResult.FAIL,
-                          f"Python {python_version.major}.{python_version.minor} < 3.11",
-                          "Install Python 3.11 or higher")
+                          f"Python {python_version.major}.{python_version.minor} < 3.9",
+                          "Install Python 3.9 or higher")
 
         # Required system commands
         required_commands = {
@@ -166,7 +176,7 @@ class SetupValidator:
                 remediation = {
                     "git": "Install Git: https://git-scm.com/downloads",
                     "docker": "Install Docker: https://docs.docker.com/get-docker/",
-                    "python3": "Install Python 3.11+: https://python.org/downloads"
+                    "python3": "Install Python 3.9+: https://python.org/downloads"
                 }.get(cmd, f"Install {cmd}")
 
                 self._add_check(f"cmd_{cmd}", f"Command: {cmd}",

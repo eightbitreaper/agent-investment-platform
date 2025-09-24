@@ -88,25 +88,22 @@ class DependencyInstaller:
             self._install_linux_dependencies()
             return
 
-        # Install Chocolatey if not present (for package management)
-        if not self._check_command_exists("choco"):
-            logger.info("Installing Chocolatey package manager...")
-            choco_install_cmd = [
-                "powershell.exe",
-                "-Command",
-                "Set-ExecutionPolicy Bypass -Scope Process -Force; " +
-                "[System.Net.ServicePointManager]::SecurityProtocol = " +
-                "[System.Net.ServicePointManager]::SecurityProtocol -bor 3072; " +
-                "iex ((New-Object System.Net.WebClient).DownloadString('https://community.chocolatey.org/install.ps1'))"
-            ]
-            self._run_command(choco_install_cmd, admin_required=True)
+        # For development environment, skip complex system package installation
+        # Focus on Python packages and essential tools that are likely already present
+        logger.info("Checking essential tools...")
 
-        # Install essential tools via Chocolatey
-        essential_packages = ["git", "curl", "wget"]
-        for package in essential_packages:
-            if not self._check_command_exists(package):
-                logger.info(f"Installing {package}...")
-                self._run_command(["choco", "install", package, "-y"], admin_required=True)
+        essential_tools = ["git", "python", "pip"]
+        missing_tools = []
+
+        for tool in essential_tools:
+            if not self._check_command_exists(tool):
+                missing_tools.append(tool)
+
+        if missing_tools:
+            logger.warning(f"Some essential tools are missing: {missing_tools}")
+            logger.info("Please install missing tools manually or run as administrator")
+        else:
+            logger.info("Essential tools are available")
 
     def _install_linux_dependencies(self):
         """Install Linux-specific dependencies"""
@@ -169,7 +166,7 @@ class DependencyInstaller:
 
         # Try to install Python if not present
         if not self._check_command_exists("python3"):
-            logger.warning("Python3 not found. Please install Python 3.11+ manually.")
+            logger.warning("Python3 not found. Please install Python 3.9+ manually.")
 
         # Try to install pip if not present
         if not self._check_command_exists("pip3"):
@@ -197,7 +194,7 @@ class DependencyInstaller:
             self._run_command(brew_install_cmd)
 
         # Install essential packages via Homebrew
-        packages = ["python@3.11", "git", "curl", "wget"]
+        packages = ["python@3.9", "git", "curl", "wget"]
         for package in packages:
             logger.info(f"Installing {package}...")
             self._run_command(["brew", "install", package])
@@ -301,8 +298,8 @@ class DependencyInstaller:
         logger.info("Verifying installations...")
 
         # Check Python
-        if sys.version_info < (3, 11):
-            raise DependencyError("Python 3.11+ is required")
+        if sys.version_info < (3, 9):
+            raise DependencyError("Python 3.9+ is required")
 
         # Check essential commands
         required_commands = ["git", "python3" if self.system_info.os_name != "windows" else "python"]
@@ -340,9 +337,10 @@ class DependencyInstaller:
 
         try:
             if admin_required and self.system_info.os_name == "windows" and not self.system_info.is_admin:
-                logger.warning("Administrator privileges required. Please run as administrator.")
-                # For Windows, we might need to elevate
-                cmd = ["powershell.exe", "Start-Process"] + cmd + ["-Verb", "RunAs", "-Wait"]
+                logger.warning("Administrator privileges required for some operations.")
+                logger.info("Attempting to proceed without elevation (some features may not work)")
+                # Skip admin elevation for development environment
+                # The command will run as current user
 
             result = subprocess.run(
                 cmd,

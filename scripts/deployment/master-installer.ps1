@@ -1,5 +1,77 @@
 # Agent Investment Platform - Master Installation Script
-# This script installs ALL required tools and deploys the complete platform
+# This script installs ALL required tools and deploys the complete             if ($timer -ge $timeout) {
+                Write-Error "Docker failed to start within $timeout seconds"
+                Write-Info "Please manually start Docker Desktop and run this script again"
+                exit 1
+            }
+    }
+
+    # Test Docker Hub connectivity and authenticate if needed
+    Write-Step "Testing Docker Hub connectivity..."
+    try {
+        docker pull hello-world 2>$null | Out-Null
+        Write-Success "Docker Hub access is working"
+    } catch {
+        Write-Warning "Docker Hub requires authentication for image pulls"
+        Write-Info ""
+        Write-Info "Docker Hub now requires authentication to pull images."
+        Write-Info "You need a free Docker Hub account to continue."
+        Write-Info ""
+        Write-Info "If you don't have an account:"
+        Write-Info "1. Visit https://hub.docker.com and create a free account"
+        Write-Info "2. Come back and enter your credentials below"
+        Write-Info ""
+        Write-Info "If you already have an account, please login now:"
+        Write-Info ""
+
+        # Prompt for Docker Hub login
+        $maxAttempts = 3
+        $attempt = 1
+        $loginSuccess = $false
+
+        while ($attempt -le $maxAttempts -and -not $loginSuccess) {
+            Write-Step "Docker Hub login attempt $attempt of $maxAttempts"
+
+            # Use docker login interactively so user can enter credentials
+            docker login
+
+            if ($LASTEXITCODE -eq 0) {
+                Write-Success "Docker Hub login successful!"
+                $loginSuccess = $true
+
+                # Verify by trying to pull a test image
+                Write-Step "Verifying Docker Hub access..."
+                try {
+                    docker pull hello-world 2>$null | Out-Null
+                    Write-Success "Docker Hub access verified"
+                } catch {
+                    Write-Warning "Login succeeded but image pull still failed"
+                }
+            } else {
+                Write-Error "Docker Hub login failed"
+                $attempt++
+
+                if ($attempt -le $maxAttempts) {
+                    Write-Info "Please try again with correct credentials"
+                    Write-Info ""
+                }
+            }
+        }
+
+        if (-not $loginSuccess) {
+            Write-Error "Failed to authenticate with Docker Hub after $maxAttempts attempts"
+            Write-Info ""
+            Write-Info "Please ensure you have:"
+            Write-Info "1. A valid Docker Hub account (free at https://hub.docker.com)"
+            Write-Info "2. Correct username and password/token"
+            Write-Info "3. Stable internet connection"
+            Write-Info ""
+            Write-Info "You can also run 'docker login' manually and then re-run this installer"
+            exit 1
+        }
+    }
+} catch {
+    Write-Step "Installing Docker Desktop..."
 
 param(
     [switch]$SkipChecks,
@@ -95,33 +167,39 @@ try {
 
     # Check if Docker is running
     try {
-        docker info | Out-Null
+        docker info 2>$null | Out-Null
         Write-Success "Docker is running"
     } catch {
-        Write-Warning "Docker is installed but not running"
-        Write-Step "Starting Docker Desktop..."
-        Start-Process "Docker Desktop" -WindowStyle Hidden
-        Write-Info "Waiting for Docker to start..."
-
-        $timeout = 120 # 2 minutes
-        $timer = 0
-        do {
-            Start-Sleep -Seconds 5
-            $timer += 5
-            try {
-                docker info | Out-Null
-                Write-Success "Docker is now running"
-                break
-            } catch {
-                Write-Host "." -NoNewline -ForegroundColor Yellow
-            }
-        } while ($timer -lt $timeout)
-
-        if ($timer -ge $timeout) {
-            Write-Error "Docker failed to start within $timeout seconds"
-            Write-Info "Please manually start Docker Desktop and run this script again"
-            exit 1
+        # Check if it's just an API version issue but Docker is actually running
+        try {
+            docker ps 2>$null | Out-Null
+            Write-Success "Docker is running (API version warning is non-critical)"
+        } catch {
+            Write-Warning "Docker is installed but not running"
+            Write-Step "Starting Docker Desktop..."
+            Start-Process "Docker Desktop" -WindowStyle Hidden
+            Write-Info "Waiting for Docker to start..."
         }
+
+            $timeout = 120 # 2 minutes
+            $timer = 0
+            do {
+                Start-Sleep -Seconds 5
+                $timer += 5
+                try {
+                    docker ps 2>$null | Out-Null
+                    Write-Success "Docker is now running"
+                    break
+                } catch {
+                    Write-Host "." -NoNewline -ForegroundColor Yellow
+                }
+            } while ($timer -lt $timeout)
+
+            if ($timer -ge $timeout) {
+                Write-Error "Docker failed to start within $timeout seconds"
+                Write-Info "Please manually start Docker Desktop and run this script again"
+                exit 1
+            }
     }
 } catch {
     Write-Step "Docker not found. Installing Docker Desktop..."
@@ -182,18 +260,35 @@ try {
 
 # Check virtual environment
 Write-Step "Setting up Python virtual environment..."
-if (Test-Path ".venv") {
-    Write-Success "Virtual environment exists"
+$projectRoot = Split-Path (Split-Path $PSScriptRoot -Parent) -Parent
+$venvPath = Join-Path $projectRoot ".venv"
+
+if (Test-Path $venvPath) {
+    Write-Success "Virtual environment exists at project root"
 } else {
+    Push-Location $projectRoot
     python -m venv .venv
-    Write-Success "Virtual environment created"
+    Pop-Location
+    Write-Success "Virtual environment created at project root"
 }
 
 # Activate virtual environment and install dependencies
 Write-Step "Installing Python dependencies..."
-& ".venv\Scripts\python.exe" -m pip install --upgrade pip
-& ".venv\Scripts\pip.exe" install -r requirements.txt
-Write-Success "Python dependencies installed"
+$projectRoot = Split-Path (Split-Path $PSScriptRoot -Parent) -Parent
+$venvPython = Join-Path $projectRoot ".venv\Scripts\python.exe"
+$venvPip = Join-Path $projectRoot ".venv\Scripts\pip.exe"
+
+& $venvPython -m pip install --upgrade pip
+
+# Install from requirements.txt in project root
+$requirementsFile = Join-Path $projectRoot "requirements.txt"
+if (Test-Path $requirementsFile) {
+    & $venvPip install -r $requirementsFile
+    Write-Success "Python dependencies installed from project root"
+} else {
+    Write-Warning "requirements.txt not found in project root, skipping package installation"
+}
+Write-Success "Python dependencies setup completed"
 
 # ============================================================================
 # STEP 4: Install Node.js
@@ -275,18 +370,28 @@ Write-Host "================================================================" -F
 
 # Ensure .env file exists
 Write-Step "Configuring environment variables..."
-if (-not (Test-Path ".env")) {
-    Copy-Item ".env.example" ".env"
-    Write-Success "Environment file created from template"
+$projectRoot = Split-Path (Split-Path $PSScriptRoot -Parent) -Parent
+$envFile = Join-Path $projectRoot ".env"
+$envExample = Join-Path $projectRoot ".env.example"
+
+if (-not (Test-Path $envFile)) {
+    if (Test-Path $envExample) {
+        Copy-Item $envExample $envFile
+        Write-Success "Environment file created from template"
+    } else {
+        Write-Warning ".env.example not found in project root"
+    }
 } else {
     Write-Success "Environment file already exists"
 }
 
 # Create necessary directories
+$projectRoot = Split-Path (Split-Path $PSScriptRoot -Parent) -Parent
 $directories = @("data", "logs", "reports", "models", ".memory")
 foreach ($dir in $directories) {
-    if (-not (Test-Path $dir)) {
-        New-Item -ItemType Directory -Path $dir | Out-Null
+    $fullPath = Join-Path $projectRoot $dir
+    if (-not (Test-Path $fullPath)) {
+        New-Item -ItemType Directory -Path $fullPath | Out-Null
         Write-Success "Created directory: $dir"
     }
 }
@@ -301,6 +406,9 @@ Write-Host "STEP 7: Building and Deploying Services" -ForegroundColor Cyan
 Write-Host "================================================================" -ForegroundColor Cyan
 
 Write-Step "Building Docker images..."
+$projectRoot = Split-Path (Split-Path $PSScriptRoot -Parent) -Parent
+Push-Location $projectRoot
+
 docker-compose build --no-cache --parallel
 if ($LASTEXITCODE -eq 0) {
     Write-Success "Docker images built successfully"
@@ -334,15 +442,30 @@ Write-Step "Waiting for services to initialize..."
 Start-Sleep -Seconds 30
 
 Write-Step "Running health checks..."
-& ".venv\Scripts\python.exe" scripts\health-check.py
+$projectRoot = Split-Path (Split-Path $PSScriptRoot -Parent) -Parent
+$venvPython = Join-Path $projectRoot ".venv\Scripts\python.exe"
+$healthCheckScript = Join-Path $projectRoot "scripts\health-check.py"
+
+if (Test-Path $healthCheckScript) {
+    & $venvPython $healthCheckScript
+} else {
+    Write-Warning "Health check script not found, skipping"
+}
 
 Write-Step "Running deployment test..."
-& ".venv\Scripts\python.exe" deployment_test.py
+$deploymentTestScript = Join-Path $projectRoot "deployment_test.py"
+if (Test-Path $deploymentTestScript) {
+    & $venvPython $deploymentTestScript
+} else {
+    Write-Warning "Deployment test script not found, skipping"
+}
 
 # Show service status
 Write-Host ""
 Write-Host "Service Status:" -ForegroundColor Yellow
 docker-compose ps
+
+Pop-Location
 
 # ============================================================================
 # COMPLETION SUMMARY
