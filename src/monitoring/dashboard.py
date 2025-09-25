@@ -79,10 +79,26 @@ class ComponentHealth:
 
     def to_dict(self):
         """Convert to dictionary for JSON serialization."""
+        from enum import Enum
+
+        def serialize_value(value):
+            """Recursively serialize values, handling enums."""
+            if isinstance(value, Enum):
+                return value.value
+            elif isinstance(value, list):
+                return [serialize_value(item) for item in value]
+            elif isinstance(value, dict):
+                return {k: serialize_value(v) for k, v in value.items()}
+            elif hasattr(value, '__dict__'):
+                # Handle objects with __dict__ (like dataclasses)
+                return {k: serialize_value(v) for k, v in value.__dict__.items()}
+            else:
+                return value
+
         result = asdict(self)
         result['status'] = self.status.value
         result['last_check'] = self.last_check.isoformat()
-        result['metadata'] = self.metadata or {}
+        result['metadata'] = serialize_value(self.metadata or {})
         return result
 
 
@@ -485,6 +501,17 @@ class MonitoringDashboard:
         """Set system components for monitoring."""
         self.data_collector.set_components(**components)
 
+    def _json_encoder(self, obj):
+        """Custom JSON encoder to handle enums and other non-serializable objects."""
+        if isinstance(obj, Enum):
+            return obj.value
+        elif hasattr(obj, 'isoformat'):  # datetime objects
+            return obj.isoformat()
+        elif hasattr(obj, '__dict__'):  # objects with __dict__
+            return obj.__dict__
+        else:
+            return str(obj)
+
     def _setup_routes(self):
         """Setup API routes."""
         if not self.app:
@@ -507,7 +534,8 @@ class MonitoringDashboard:
                 # Calculate overall health
                 overall_status = self._calculate_overall_status(component_health)
 
-                return JSONResponse({
+                # Create response data with proper serialization
+                response_data = {
                     'status': 'success',
                     'data': {
                         'overall_status': overall_status,
@@ -516,7 +544,11 @@ class MonitoringDashboard:
                         'analysis_metrics': analysis_metrics.to_dict(),
                         'timestamp': datetime.utcnow().isoformat()
                     }
-                })
+                }
+
+                # Use custom JSON encoder to handle enums
+                json_str = json.dumps(response_data, default=self._json_encoder)
+                return JSONResponse(content=json.loads(json_str))
 
             except Exception as e:
                 self.logger.error(f"Status endpoint error: {e}")

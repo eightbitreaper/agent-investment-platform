@@ -354,7 +354,8 @@ Write-Host "================================================================" -F
 # Function to generate secure passwords
 function Generate-SecurePassword {
     param([int]$Length = 24)
-    $chars = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789!@#$%^&*"
+    # Use only alphanumeric characters to avoid Docker Compose variable substitution issues
+    $chars = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789"
     $password = ""
     for ($i = 0; $i -lt $Length; $i++) {
         $password += $chars[(Get-Random -Maximum $chars.Length)]
@@ -617,16 +618,16 @@ if ($ollamaReady) {
     Write-Host ""
     Write-Info "Downloading finance-optimized LLM model..."
     Write-Info "This may take 5-15 minutes depending on your internet connection"
-    
+
     # Use a smaller, efficient model good for financial analysis
     # Mistral 7B is excellent for structured analysis and reasoning
     Write-Step "Downloading Mistral 7B Instruct (optimized for analysis tasks)..."
-    
+
     docker-compose exec -T ollama ollama pull mistral:7b-instruct
     if ($LASTEXITCODE -eq 0) {
         Write-Success "Financial analysis model downloaded successfully!"
         Write-Info "Model 'mistral:7b-instruct' is now available in Ollama"
-        
+
         # Update the .env file to use the downloaded model
         $envFile = Join-Path $projectRoot ".env"
         if (Test-Path $envFile) {
