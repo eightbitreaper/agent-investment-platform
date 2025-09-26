@@ -118,11 +118,14 @@ class AgentPlatformInitializer:
     def _check_admin_privileges(self) -> bool:
         """Check if running with administrator privileges"""
         try:
-            if self.system_info and self.system_info.os_name == "windows":
+            if platform.system().lower() == "windows":
                 import ctypes
                 return ctypes.windll.shell32.IsUserAnAdmin() != 0
             else:
-                return os.geteuid() == 0
+                # Unix systems
+                if hasattr(os, 'geteuid'):
+                    return os.geteuid() == 0  # type: ignore
+                return False
         except Exception:
             return False
 
@@ -143,6 +146,9 @@ class AgentPlatformInitializer:
                 "install_dependencies",
                 self.scripts_dir / "setup" / "install-dependencies.py"
             )
+            if spec is None or spec.loader is None:
+                raise ImportError("Could not load dependency installer module")
+
             install_dependencies = importlib.util.module_from_spec(spec)
             spec.loader.exec_module(install_dependencies)
 
@@ -164,6 +170,9 @@ class AgentPlatformInitializer:
                 "configure_environment",
                 self.scripts_dir / "setup" / "configure-environment.py"
             )
+            if spec is None or spec.loader is None:
+                raise ImportError("Could not load environment configurator module")
+
             configure_environment = importlib.util.module_from_spec(spec)
             spec.loader.exec_module(configure_environment)
 
@@ -173,6 +182,37 @@ class AgentPlatformInitializer:
         except (ImportError, FileNotFoundError, AttributeError) as e:
             logger.error(f"Environment configurator not found or failed to load: {e}")
             raise InitializationError("Missing environment configurator")
+
+    def setup_logging_infrastructure(self):
+        """Setup logging and monitoring infrastructure"""
+        logger.info("Setting up logging and monitoring infrastructure...")
+
+        try:
+            # Handle hyphenated filename by using importlib
+            import importlib.util
+            spec = importlib.util.spec_from_file_location(
+                "setup_logging_infrastructure",
+                self.scripts_dir / "setup" / "setup-logging-infrastructure.py"
+            )
+            if spec is None or spec.loader is None:
+                raise ImportError("Could not load logging infrastructure setup module")
+
+            setup_logging_infrastructure = importlib.util.module_from_spec(spec)
+            spec.loader.exec_module(setup_logging_infrastructure)
+
+            logging_setup = setup_logging_infrastructure.LoggingInfrastructureSetup(self.project_root)
+            config = setup_logging_infrastructure.LoggingConfig()
+
+            if logging_setup.setup_all(config):
+                logger.info("Logging infrastructure configured successfully")
+                return True
+            else:
+                logger.error("Logging infrastructure setup failed")
+                return False
+
+        except (ImportError, FileNotFoundError, AttributeError) as e:
+            logger.error(f"Logging infrastructure setup not found or failed to load: {e}")
+            return False
 
     def setup_llm_models(self, llm_choice: str = "local"):
         """Setup LLM models based on user choice"""
@@ -185,6 +225,9 @@ class AgentPlatformInitializer:
                 "download_models",
                 self.scripts_dir / "setup" / "download-models.py"
             )
+            if spec is None or spec.loader is None:
+                raise ImportError("Could not load model downloader module")
+
             download_models = importlib.util.module_from_spec(spec)
             spec.loader.exec_module(download_models)
 
@@ -207,6 +250,9 @@ class AgentPlatformInitializer:
                 "validate_setup",
                 self.scripts_dir / "setup" / "validate-setup.py"
             )
+            if spec is None or spec.loader is None:
+                raise ImportError("Could not load setup validator module")
+
             validate_setup = importlib.util.module_from_spec(spec)
             spec.loader.exec_module(validate_setup)
 
@@ -248,6 +294,7 @@ class AgentPlatformInitializer:
         try:
             self.install_dependencies()
             self.configure_environment()
+            self.setup_logging_infrastructure()  # Setup logging infrastructure
             self.setup_llm_models(llm_choice)
 
             # Final validation
@@ -274,6 +321,7 @@ class AgentPlatformInitializer:
             self.detect_system()
             self.install_dependencies()
             self.configure_environment()
+            self.setup_logging_infrastructure()  # Setup logging infrastructure
             self.setup_llm_models(llm_choice)
             return self.validate_setup()
         except Exception as e:

@@ -7,5 +7,7 @@
 			"path": "../ai-dev-tasks"
 		}
 	],
-	"settings": {}
+	"settings": {
+		"powershell.cwd": "agent-investment-platform"
+	}
 }

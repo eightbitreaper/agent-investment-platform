@@ -1,260 +1,388 @@
+networks:
+  investment-network:
+    driver: bridge
+    ipam:
+      config:
+        - subnet: 172.20.0.0/16
 services:
-  # Main application service
   agent-investment-platform:
     build:
       context: .
       dockerfile: Dockerfile
       target: production
     container_name: agent-investment-platform
-    restart: unless-stopped
-    ports:
-      - "8000:8080" # Main web interface (container runs on 8080)
+    depends_on:
+      - postgres
+      - redis
+    env_file:
+      - .env
     environment:
       - ENVIRONMENT=production
       - DATABASE_URL=postgresql://postgres:${POSTGRES_PASSWORD}@postgres:5432/investment_platform
       - REDIS_URL=redis://redis:6379/0
-    env_file:
-      - .env
+    healthcheck:
+      interval: 30s
+      retries: 3
+      start_period: 40s
+      test:
+        - CMD
+        - python
+        - -c
+        - import requests; requests.get('http://localhost:8080/health')
+      timeout: 10s
+    networks:
+      - investment-network
+    ports:
+      - 8000:8080
+    restart: unless-stopped
     volumes:
       - ./data:/app/data
       - ./logs:/app/logs
       - ./reports:/app/reports
       - ./models:/app/models
       - ./.memory:/app/.memory
+  dev-environment:
+    build:
+      context: .
+      dockerfile: Dockerfile
+      target: development
+    command:
+      - tail
+      - -f
+      - /dev/null
+    container_name: dev-investment-platform
     depends_on:
       - postgres
       - redis
+    env_file:
+      - .env
+    environment:
+      - ENVIRONMENT=development
+      - DEBUG=true
+      - DATABASE_URL=postgresql://postgres:${POSTGRES_PASSWORD}@postgres:5432/investment_platform
     networks:
       - investment-network
+    ports:
+      - 8000:8000
+      - 8888:8888
+    profiles:
+      - development
+    restart: unless-stopped
+    volumes:
+      - .:/app
+      - /app/node_modules
+  elasticsearch:
+    container_name: elasticsearch
+    environment:
+      - discovery.type=single-node
+      - ES_JAVA_OPTS=-Xms512m -Xmx512m
+      - xpack.security.enabled=false
     healthcheck:
-      test: [ "CMD", "python", "-c", "import requests; requests.get('http://localhost:8080/health')" ]
       interval: 30s
-      timeout: 10s
       retries: 3
-      start_period: 40s
-
-  # MCP Servers
-  mcp-stock-server:
+      test:
+        - CMD-SHELL
+        - curl -f http://localhost:9200/_cluster/health || exit 1
+      timeout: 10s
+    image: docker.elastic.co/elasticsearch/elasticsearch:8.11.0
+    networks:
+      - investment-network
+    ports:
+      - 9200:9200
+      - 9300:9300
+    volumes:
+      - elasticsearch_data:/usr/share/elasticsearch/data
+  grafana:
+    container_name: grafana
+    environment:
+      - GF_SECURITY_ADMIN_PASSWORD=admin123
+      - GF_USERS_ALLOW_SIGN_UP=false
+    image: grafana/grafana:latest
+    networks:
+      - investment-network
+    ports:
+      - 3001:3000
+    volumes:
+      - grafana_data:/var/lib/grafana
+      - ./config/grafana:/etc/grafana/provisioning
+  kibana:
+    container_name: kibana
+    depends_on:
+      elasticsearch:
+        condition: service_healthy
+    environment:
+      - ELASTICSEARCH_HOSTS=http://elasticsearch:9200
+    image: docker.elastic.co/kibana/kibana:8.11.0
+    networks:
+      - investment-network
+    ports:
+      - 5601:5601
+  log-streaming-server:
     build:
       context: .
       dockerfile: Dockerfile
       target: production
-    container_name: mcp-stock-server
-    restart: unless-stopped
-    ports:
-      - "3001:3001"
-    environment:
-      - PYTHONPATH=/app
-      - PORT=3001
-      - DOCKER_CONTAINER=true
+    command:
+      - python
+      - -m
+      - src.logging.websocket_server
+    container_name: log-streaming-server
+    depends_on:
+      - elasticsearch
     env_file:
       - .env
-    command: [ "python", "-m", "src.mcp_servers.stock_data_server" ]
-    depends_on:
-      - redis
-    networks:
-      - investment-network
-    healthcheck:
-      test: [ "CMD", "python", "-c", "import requests; requests.get('http://localhost:3001/health')" ]
-      interval: 30s
-      timeout: 10s
-      retries: 3
-      start_period: 40s
-
-  mcp-report-server:
-    build:
-      context: .
-      dockerfile: Dockerfile
-      target: production
-    container_name: mcp-report-server
-    restart: unless-stopped
-    ports:
-      - "3002:3002"
     environment:
       - PYTHONPATH=/app
-      - PORT=3002
+      - WEBSOCKET_PORT=8765
       - DOCKER_CONTAINER=true
-    env_file:
-      - .env
-    command: [ "python", "-m", "src.mcp_servers.report_generator_server" ]
-    depends_on:
-      - postgres
-      - redis
     networks:
       - investment-network
-    healthcheck:
-      test: [ "CMD", "python", "-c", "import requests; requests.get('http://localhost:3002/health')" ]
-      interval: 30s
-      timeout: 10s
-      retries: 3
-      start_period: 40s
-
-  mcp-stock-data-server:
-    build:
-      context: .
-      dockerfile: Dockerfile
-      target: production
-    container_name: mcp-stock-data-server
-    restart: unless-stopped
     ports:
-      - "3003:3003"
-    environment:
-      - PYTHONPATH=/app
-      - PORT=3003
-      - DOCKER_CONTAINER=true
-    env_file:
-      - .env
-    command: [ "python", "-m", "src.mcp_servers.stock_data_server" ]
+      - 8765:8765
+    profiles:
+      - logging
+      - monitoring
+    restart: unless-stopped
+  logstash:
+    container_name: logstash
     depends_on:
-      - redis
+      elasticsearch:
+        condition: service_healthy
+    image: docker.elastic.co/logstash/logstash:8.11.0
     networks:
       - investment-network
-    healthcheck:
-      test: [ "CMD", "python", "-c", "import requests; requests.get('http://localhost:3003/health')" ]
-      interval: 30s
-      timeout: 10s
-      retries: 3
-      start_period: 40s
-
+    ports:
+      - 5000:5000
+      - 5044:5044
+    volumes:
+      - ./config/logstash/pipeline:/usr/share/logstash/pipeline
+      - ./logs:/logs
   mcp-analysis-server:
     build:
       context: .
       dockerfile: Dockerfile
       target: production
+    command:
+      - python
+      - -m
+      - src.mcp_servers.analysis_engine_server
     container_name: mcp-analysis-server
-    restart: unless-stopped
-    ports:
-      - "3004:3004"
+    depends_on:
+      - postgres
+      - redis
+    env_file:
+      - .env
     environment:
       - PYTHONPATH=/app
       - PORT=3004
       - DOCKER_CONTAINER=true
-    env_file:
-      - .env
-    command: [ "python", "-m", "src.mcp_servers.analysis_engine_server" ]
-    depends_on:
-      - postgres
-      - redis
-    networks:
-      - investment-network
     healthcheck:
-      test: [ "CMD", "python", "-c", "import requests; requests.get('http://localhost:3004/health')" ]
       interval: 30s
-      timeout: 10s
       retries: 3
       start_period: 40s
-
+      test:
+        - CMD
+        - python
+        - -c
+        - import requests; requests.get('http://localhost:3004/health')
+      timeout: 10s
+    networks:
+      - investment-network
+    ports:
+      - 3004:3004
+    restart: unless-stopped
   mcp-financial-server:
     build:
       context: .
       dockerfile: Dockerfile
       target: production
+    command:
+      - python
+      - -m
+      - src.mcp_servers.financial_data_server
     container_name: mcp-financial-server
-    restart: unless-stopped
-    ports:
-      - "3000:3000"
+    depends_on:
+      - redis
+    env_file:
+      - .env
     environment:
       - PYTHONPATH=/app
       - PORT=3000
       - DOCKER_CONTAINER=true
-    env_file:
-      - .env
-    command: [ "python", "-m", "src.mcp_servers.financial_data_server" ]
-    depends_on:
-      - redis
-    networks:
-      - investment-network
     healthcheck:
-      test: [ "CMD", "python", "-c", "import requests; requests.get('http://localhost:3000/health')" ]
       interval: 30s
-      timeout: 10s
       retries: 3
       start_period: 40s
-
-  # Database services
-  postgres:
-    image: postgres:15-alpine
-    container_name: postgres-investment
-    restart: unless-stopped
+      test:
+        - CMD
+        - python
+        - -c
+        - import requests; requests.get('http://localhost:3000/health')
+      timeout: 10s
+    networks:
+      - investment-network
     ports:
-      - "5432:5432"
+      - 3000:3000
+    restart: unless-stopped
+  mcp-log-server:
+    build:
+      context: .
+      dockerfile: Dockerfile
+      target: production
+    command:
+      - python
+      - -m
+      - src.mcp_servers.log_management_server
+    container_name: mcp-log-server
+    depends_on:
+      - elasticsearch
+      - log-streaming-server
+    env_file:
+      - .env
     environment:
-      - POSTGRES_DB=investment_platform
-      - POSTGRES_USER=postgres
-      - POSTGRES_PASSWORD=${POSTGRES_PASSWORD:-investment_platform_2024}
-    volumes:
-      - postgres_data:/var/lib/postgresql/data
-      - ./scripts/database/init.sql:/docker-entrypoint-initdb.d/init.sql
+      - PYTHONPATH=/app
+      - PORT=3005
+      - DOCKER_CONTAINER=true
+    healthcheck:
+      interval: 30s
+      retries: 3
+      test:
+        - CMD
+        - python
+        - -c
+        - import requests; requests.get('http://localhost:3005/health')
+      timeout: 10s
     networks:
       - investment-network
-    healthcheck:
-      test: [ "CMD-SHELL", "pg_isready -U postgres" ]
-      interval: 10s
-      timeout: 5s
-      retries: 5
-
-  # Redis for caching and session management
-  redis:
-    image: redis:7-alpine
-    container_name: redis-investment
-    restart: unless-stopped
     ports:
-      - "6379:6379"
-    command: redis-server --appendonly yes --requirepass ${REDIS_PASSWORD:-investment_redis_2024}
-    volumes:
-      - redis_data:/data
+      - 3005:3005
+    profiles:
+      - logging
+      - monitoring
+    restart: unless-stopped
+  mcp-report-server:
+    build:
+      context: .
+      dockerfile: Dockerfile
+      target: production
+    command:
+      - python
+      - -m
+      - src.mcp_servers.report_generator_server
+    container_name: mcp-report-server
+    depends_on:
+      - postgres
+      - redis
+    env_file:
+      - .env
+    environment:
+      - PYTHONPATH=/app
+      - PORT=3002
+      - DOCKER_CONTAINER=true
+    healthcheck:
+      interval: 30s
+      retries: 3
+      start_period: 40s
+      test:
+        - CMD
+        - python
+        - -c
+        - import requests; requests.get('http://localhost:3002/health')
+      timeout: 10s
     networks:
       - investment-network
+    ports:
+      - 3002:3002
+    restart: unless-stopped
+  mcp-stock-data-server:
+    build:
+      context: .
+      dockerfile: Dockerfile
+      target: production
+    command:
+      - python
+      - -m
+      - src.mcp_servers.stock_data_server
+    container_name: mcp-stock-data-server
+    depends_on:
+      - redis
+    env_file:
+      - .env
+    environment:
+      - PYTHONPATH=/app
+      - PORT=3003
+      - DOCKER_CONTAINER=true
     healthcheck:
-      test: [ "CMD", "redis-cli", "ping" ]
-      interval: 10s
-      timeout: 5s
-      retries: 5
+      interval: 30s
+      retries: 3
+      start_period: 40s
+      test:
+        - CMD
+        - python
+        - -c
+        - import requests; requests.get('http://localhost:3003/health')
+      timeout: 10s
+    networks:
+      - investment-network
+    ports:
+      - 3003:3003
+    restart: unless-stopped
 
-  # Ollama for local LLM with GPU acceleration
+  nginx:
+    container_name: nginx-investment
+    depends_on:
+      - agent-investment-platform
+    image: nginx:alpine
+    networks:
+      - investment-network
+    ports:
+      - 80:80
+      - 443:443
+    profiles:
+      - production
+    restart: unless-stopped
+    volumes:
+      - ./config/nginx/nginx.conf:/etc/nginx/nginx.conf
+      - ./config/nginx/ssl:/etc/nginx/ssl
+      - ./logs/nginx:/var/log/nginx
   ollama:
-    image: ollama/ollama:latest
     container_name: ollama-investment
-    restart: unless-stopped
-    ports:
-      - "11434:11434"
-    volumes:
-      - ollama_data:/root/.ollama
-    environment:
-      - OLLAMA_HOST=0.0.0.0:11434
-      - OLLAMA_ORIGINS=*
-    networks:
-      - investment-network
-    # GPU support for NVIDIA
     deploy:
       resources:
         reservations:
           devices:
-            - driver: nvidia
+            - capabilities:
+                - gpu
               count: all
-              capabilities: [ gpu ]
+              driver: nvidia
+    environment:
+      - OLLAMA_HOST=0.0.0.0:11434
+      - OLLAMA_ORIGINS=*
+    healthcheck:
+      interval: 30s
+      retries: 3
+      start_period: 60s
+      test:
+        - CMD-SHELL
+        - curl -f http://localhost:11434/api/tags || exit 1
+      timeout: 10s
+    image: ollama/ollama:latest
+    networks:
+      - investment-network
+    ports:
+      - 11434:11434
     profiles:
       - local-llm
       - development
       - production
-    healthcheck:
-      test: [ "CMD-SHELL", "curl -f http://localhost:11434/api/tags || exit 1" ]
-      interval: 30s
-      timeout: 10s
-      retries: 3
-      start_period: 60s
-
-  # Open WebUI - Professional chat interface for Ollama
-  ollama-webui:
-    image: ghcr.io/open-webui/open-webui:main
-    container_name: ollama-webui
     restart: unless-stopped
-    ports:
-      - "8080:8080" # Web interface
     volumes:
-      - ./data/ollama-webui:/app/backend/data
-    networks:
-      - investment-network
+      - ollama_data:/root/.ollama
+  ollama-webui:
+    container_name: ollama-webui
+    depends_on:
+      - ollama
+      - mcp-analysis-server
     environment:
       - OLLAMA_BASE_URL=http://ollama:11434
       - WEBUI_NAME=AI Investment Assistant
@@ -263,122 +391,95 @@ services:
       - WEBUI_AUTH=false
       - ENABLE_FUNCTION_CALLING=true
       - MCP_SERVERS=http://mcp-financial-server:3000,http://mcp-analysis-server:3004
-    depends_on:
-      - ollama
-      - mcp-analysis-server
+    healthcheck:
+      interval: 30s
+      retries: 3
+      test:
+        - CMD-SHELL
+        - curl -f http://localhost:8080/health || exit 1
+      timeout: 10s
+    image: ghcr.io/open-webui/open-webui:main
+    networks:
+      - investment-network
+    ports:
+      - 8080:8080
     profiles:
       - local-llm
       - development
       - production
-    healthcheck:
-      test: [ "CMD-SHELL", "curl -f http://localhost:8080/health || exit 1" ]
-      interval: 30s
-      timeout: 10s
-      retries: 3
-
-  # Monitoring and observability
-  prometheus:
-    image: prom/prometheus:latest
-    container_name: prometheus-investment
     restart: unless-stopped
+    volumes:
+      - ./data/ollama-webui:/app/backend/data
+  postgres:
+    container_name: postgres-investment
+    environment:
+      - POSTGRES_DB=investment_platform
+      - POSTGRES_USER=postgres
+      - POSTGRES_PASSWORD=${POSTGRES_PASSWORD:-investment_platform_2024}
+    healthcheck:
+      interval: 10s
+      retries: 5
+      test:
+        - CMD-SHELL
+        - pg_isready -U postgres
+      timeout: 5s
+    image: postgres:15-alpine
+    networks:
+      - investment-network
     ports:
-      - "9090:9090"
+      - 5432:5432
+    restart: unless-stopped
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+      - ./scripts/database/init.sql:/docker-entrypoint-initdb.d/init.sql
+  prometheus:
+    command:
+      - --config.file=/etc/prometheus/prometheus.yml
+      - --storage.tsdb.path=/prometheus
+      - --web.console.libraries=/etc/prometheus/console_libraries
+      - --web.console.templates=/etc/prometheus/consoles
+      - --web.enable-lifecycle
+    container_name: prometheus-investment
+    image: prom/prometheus:latest
+    networks:
+      - investment-network
+    ports:
+      - 9090:9090
+    profiles:
+      - monitoring
+    restart: unless-stopped
     volumes:
       - ./config/prometheus.yml:/etc/prometheus/prometheus.yml
       - prometheus_data:/prometheus
-    command:
-      - '--config.file=/etc/prometheus/prometheus.yml'
-      - '--storage.tsdb.path=/prometheus'
-      - '--web.console.libraries=/etc/prometheus/console_libraries'
-      - '--web.console.templates=/etc/prometheus/consoles'
-      - '--web.enable-lifecycle'
+  redis:
+    command: redis-server --appendonly yes --requirepass ${REDIS_PASSWORD:-investment_redis_2024}
+    container_name: redis-investment
+    healthcheck:
+      interval: 10s
+      retries: 5
+      test:
+        - CMD
+        - redis-cli
+        - ping
+      timeout: 5s
+    image: redis:7-alpine
     networks:
       - investment-network
-    profiles:
-      - monitoring
-
-  grafana:
-    image: grafana/grafana:latest
-    container_name: grafana-investment
-    restart: unless-stopped
     ports:
-      - "3000:3000"
-    environment:
-      - GF_SECURITY_ADMIN_PASSWORD=${GRAFANA_PASSWORD:-admin123}
-    volumes:
-      - grafana_data:/var/lib/grafana
-      - ./config/grafana/dashboards:/etc/grafana/provisioning/dashboards
-      - ./config/grafana/datasources:/etc/grafana/provisioning/datasources
-    networks:
-      - investment-network
-    profiles:
-      - monitoring
-
-  # Reverse proxy and SSL termination
-  nginx:
-    image: nginx:alpine
-    container_name: nginx-investment
+      - 6379:6379
     restart: unless-stopped
-    ports:
-      - "80:80"
-      - "443:443"
     volumes:
-      - ./config/nginx/nginx.conf:/etc/nginx/nginx.conf
-      - ./config/nginx/ssl:/etc/nginx/ssl
-      - ./logs/nginx:/var/log/nginx
-    depends_on:
-      - agent-investment-platform
-    networks:
-      - investment-network
-    profiles:
-      - production
-
-  # Development services
-  dev-environment:
-    build:
-      context: .
-      dockerfile: Dockerfile
-      target: development
-    container_name: dev-investment-platform
-    restart: unless-stopped
-    ports:
-      - "8000:8000"
-      - "8888:8888" # Jupyter notebook
-    environment:
-      - ENVIRONMENT=development
-      - DEBUG=true
-      - DATABASE_URL=postgresql://postgres:${POSTGRES_PASSWORD}@postgres:5432/investment_platform
-    env_file:
-      - .env
-    volumes:
-      - .:/app
-      - /app/node_modules # Prevent overwriting node_modules
-    depends_on:
-      - postgres
-      - redis
-    networks:
-      - investment-network
-    profiles:
-      - development
-    command: [ "tail", "-f", "/dev/null" ]
-
-# Networks
-networks:
-  investment-network:
-    driver: bridge
-    ipam:
-      config:
-        - subnet: 172.20.0.0/16
-
-# Volumes
+      - redis_data:/data
 volumes:
-  postgres_data:
+  elasticsearch_data:
     driver: local
-  redis_data:
+  grafana_data:
     driver: local
   ollama_data:
     driver: local
+  postgres_data:
+    driver: local
   prometheus_data:
     driver: local
-  grafana_data:
+  redis_data:
     driver: local

@@ -1,0 +1,281 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Agent Investment Platform - Log Dashboard</title>
+    <link rel="stylesheet" href="dashboard.css">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+</head>
+
+<body>
+    <div class="dashboard-container">
+        <!-- Header -->
+        <header class="dashboard-header">
+            <div class="header-content">
+                <h1><i class="fas fa-chart-line"></i> Agent Investment Platform</h1>
+                <div class="header-actions">
+                    <div class="connection-status" id="connectionStatus">
+                        <i class="fas fa-circle status-indicator"></i>
+                        <span>Connecting...</span>
+                    </div>
+                    <button class="btn btn-primary" id="refreshBtn">
+                        <i class="fas fa-sync-alt"></i> Refresh
+                    </button>
+                </div>
+            </div>
+        </header>
+
+        <!-- Main Dashboard -->
+        <div class="dashboard-main">
+            <!-- Sidebar Filters -->
+            <aside class="dashboard-sidebar">
+                <div class="filter-section">
+                    <h3><i class="fas fa-filter"></i> Filters</h3>
+
+                    <!-- Log Level Filter -->
+                    <div class="filter-group">
+                        <label for="levelFilter">Log Level</label>
+                        <select id="levelFilter" multiple>
+                            <option value="DEBUG">DEBUG</option>
+                            <option value="INFO" selected>INFO</option>
+                            <option value="WARNING" selected>WARNING</option>
+                            <option value="ERROR" selected>ERROR</option>
+                            <option value="CRITICAL" selected>CRITICAL</option>
+                        </select>
+                    </div>
+
+                    <!-- Component Filter -->
+                    <div class="filter-group">
+                        <label for="componentFilter">Component</label>
+                        <select id="componentFilter" multiple>
+                            <option value="">All Components</option>
+                            <!-- Populated dynamically -->
+                        </select>
+                    </div>
+
+                    <!-- Time Range Filter -->
+                    <div class="filter-group">
+                        <label for="timeRange">Time Range</label>
+                        <select id="timeRange">
+                            <option value="5m">Last 5 minutes</option>
+                            <option value="15m">Last 15 minutes</option>
+                            <option value="1h" selected>Last hour</option>
+                            <option value="6h">Last 6 hours</option>
+                            <option value="24h">Last 24 hours</option>
+                            <option value="custom">Custom Range</option>
+                        </select>
+                    </div>
+
+                    <!-- Custom Time Range -->
+                    <div class="filter-group" id="customTimeRange" style="display: none;">
+                        <label for="startTime">Start Time</label>
+                        <input type="datetime-local" id="startTime">
+
+                        <label for="endTime">End Time</label>
+                        <input type="datetime-local" id="endTime">
+                    </div>
+
+                    <!-- Search Filter -->
+                    <div class="filter-group">
+                        <label for="searchFilter">Search in Messages</label>
+                        <input type="text" id="searchFilter" placeholder="Enter search terms...">
+                    </div>
+
+                    <!-- Filter Actions -->
+                    <div class="filter-actions">
+                        <button class="btn btn-primary" id="applyFilters">
+                            <i class="fas fa-search"></i> Apply Filters
+                        </button>
+                        <button class="btn btn-secondary" id="clearFilters">
+                            <i class="fas fa-times"></i> Clear
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Real-time Toggle -->
+                <div class="realtime-section">
+                    <h3><i class="fas fa-broadcast-tower"></i> Real-time</h3>
+                    <div class="toggle-group">
+                        <label class="toggle-switch">
+                            <input type="checkbox" id="realtimeToggle" checked>
+                            <span class="toggle-slider"></span>
+                        </label>
+                        <span>Live Stream</span>
+                    </div>
+                    <div class="realtime-stats">
+                        <div class="stat">
+                            <span class="stat-label">Connected:</span>
+                            <span class="stat-value" id="connectedClients">0</span>
+                        </div>
+                        <div class="stat">
+                            <span class="stat-label">Logs/min:</span>
+                            <span class="stat-value" id="logsPerMinute">0</span>
+                        </div>
+                    </div>
+                </div>
+            </aside>
+
+            <!-- Main Content -->
+            <main class="dashboard-content">
+                <!-- Statistics Overview -->
+                <section class="stats-section">
+                    <div class="stats-grid">
+                        <div class="stat-card">
+                            <div class="stat-icon">
+                                <i class="fas fa-exclamation-triangle"></i>
+                            </div>
+                            <div class="stat-content">
+                                <h4>Errors</h4>
+                                <span class="stat-number" id="errorCount">0</span>
+                                <span class="stat-trend">Last hour</span>
+                            </div>
+                        </div>
+
+                        <div class="stat-card">
+                            <div class="stat-icon">
+                                <i class="fas fa-exclamation-circle"></i>
+                            </div>
+                            <div class="stat-content">
+                                <h4>Warnings</h4>
+                                <span class="stat-number" id="warningCount">0</span>
+                                <span class="stat-trend">Last hour</span>
+                            </div>
+                        </div>
+
+                        <div class="stat-card">
+                            <div class="stat-icon">
+                                <i class="fas fa-info-circle"></i>
+                            </div>
+                            <div class="stat-content">
+                                <h4>Info</h4>
+                                <span class="stat-number" id="infoCount">0</span>
+                                <span class="stat-trend">Last hour</span>
+                            </div>
+                        </div>
+
+                        <div class="stat-card">
+                            <div class="stat-icon">
+                                <i class="fas fa-chart-line"></i>
+                            </div>
+                            <div class="stat-content">
+                                <h4>Total Logs</h4>
+                                <span class="stat-number" id="totalCount">0</span>
+                                <span class="stat-trend">Last hour</span>
+                            </div>
+                        </div>
+                    </div>
+                </section>
+
+                <!-- Log Timeline Chart -->
+                <section class="chart-section">
+                    <div class="chart-header">
+                        <h3><i class="fas fa-chart-area"></i> Log Timeline</h3>
+                        <div class="chart-controls">
+                            <button class="btn btn-sm" id="chartZoomOut">
+                                <i class="fas fa-search-minus"></i>
+                            </button>
+                            <button class="btn btn-sm" id="chartZoomIn">
+                                <i class="fas fa-search-plus"></i>
+                            </button>
+                        </div>
+                    </div>
+                    <div class="chart-container">
+                        <canvas id="logChart"></canvas>
+                    </div>
+                </section>
+
+                <!-- Log Entries Table -->
+                <section class="logs-section">
+                    <div class="logs-header">
+                        <h3><i class="fas fa-list"></i> Log Entries</h3>
+                        <div class="logs-controls">
+                            <div class="pagination-info">
+                                <span id="logCount">0 logs</span>
+                            </div>
+                            <div class="logs-actions">
+                                <button class="btn btn-sm" id="exportLogs">
+                                    <i class="fas fa-download"></i> Export
+                                </button>
+                                <button class="btn btn-sm" id="clearLogTable">
+                                    <i class="fas fa-trash"></i> Clear
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="logs-table-container">
+                        <table class="logs-table" id="logsTable">
+                            <thead>
+                                <tr>
+                                    <th class="col-timestamp">Timestamp</th>
+                                    <th class="col-level">Level</th>
+                                    <th class="col-component">Component</th>
+                                    <th class="col-logger">Logger</th>
+                                    <th class="col-message">Message</th>
+                                    <th class="col-actions">Actions</th>
+                                </tr>
+                            </thead>
+                            <tbody id="logsTableBody">
+                                <!-- Log entries populated dynamically -->
+                            </tbody>
+                        </table>
+                    </div>
+
+                    <div class="logs-pagination">
+                        <button class="btn btn-sm" id="prevPage" disabled>
+                            <i class="fas fa-chevron-left"></i> Previous
+                        </button>
+                        <span class="pagination-text">
+                            Page <span id="currentPage">1</span> of <span id="totalPages">1</span>
+                        </span>
+                        <button class="btn btn-sm" id="nextPage">
+                            Next <i class="fas fa-chevron-right"></i>
+                        </button>
+                    </div>
+                </section>
+            </main>
+        </div>
+    </div>
+
+    <!-- Log Detail Modal -->
+    <div class="modal" id="logDetailModal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3><i class="fas fa-info-circle"></i> Log Entry Details</h3>
+                <button class="modal-close" id="closeModal">
+                    <i class="fas fa-times"></i>
+                </button>
+            </div>
+            <div class="modal-body" id="logDetailContent">
+                <!-- Log details populated dynamically -->
+            </div>
+        </div>
+    </div>
+
+    <!-- Loading Overlay -->
+    <div class="loading-overlay" id="loadingOverlay">
+        <div class="loading-spinner">
+            <i class="fas fa-spinner fa-spin"></i>
+            <span>Loading logs...</span>
+        </div>
+    </div>
+
+    <!-- Error Toast -->
+    <div class="toast error-toast" id="errorToast">
+        <div class="toast-content">
+            <i class="fas fa-exclamation-circle"></i>
+            <span class="toast-message"></span>
+        </div>
+        <button class="toast-close">
+            <i class="fas fa-times"></i>
+        </button>
+    </div>
+
+    <!-- Scripts -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script src="dashboard.js"></script>
+</body>
+
+</html>

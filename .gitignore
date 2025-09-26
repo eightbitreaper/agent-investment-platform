@@ -139,7 +139,19 @@ reports/*.json
 # Runtime logs
 logs/*.log
 logs/*.txt
+logs/*.json
 !logs/.gitkeep
+
+# Logging system files
+src/logging/dashboard/*.log
+src/logging/*.log
+*.log.*
+*.log.gz
+
+# ELK Stack data
+elasticsearch_data/
+logstash_data/
+kibana_data/
 
 # Local model files (too large for git)
 models/
@@ -185,6 +197,7 @@ validation-report.md
 
 # Session files
 .memory/session-log.json
+.memory/project-context-backup.md
 
 # Docker and infrastructure
 docker-compose.override.yml
@@ -204,6 +217,12 @@ ollama_data/
 test_data/
 backup/
 logs/health-check-report.json
+
+# Docker monitoring reports (runtime generated)
+docker_health_report_*.json
+container_monitoring_*.json
+monitoring_*.log
+health_reports/
 
 # Security: API Keys and Sensitive Data
 # ====================================

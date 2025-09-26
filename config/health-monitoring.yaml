@@ -1,0 +1,29 @@
+alerts:
+  enabled: true
+  thresholds:
+    cpu_usage: 80
+    disk_usage: 90
+    error_rate: 5
+    memory_usage: 85
+    response_time_ms: 5000
+monitoring:
+  components:
+  - orchestrator
+  - mcp_manager
+  - analysis_engines
+  - notification_system
+  - logging_system
+  enabled: true
+  interval_seconds: 30
+  metrics:
+    application:
+    - response_time
+    - error_rate
+    - throughput
+    custom:
+    - analysis_success_rate
+    - report_generation_time
+    system:
+    - cpu
+    - memory
+    - disk

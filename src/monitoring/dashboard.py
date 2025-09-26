@@ -275,14 +275,14 @@ class MonitoringDataCollector:
 
         try:
             # Try to get orchestrator status
-            if hasattr(self.orchestrator, 'get_system_status'):
+            if self.orchestrator and hasattr(self.orchestrator, 'get_system_status'):
                 status_info = self.orchestrator.get_system_status()
                 response_time = (time.time() - start_time) * 1000
 
                 # Determine status based on orchestrator state
-                if status_info.get('state') == 'running':
+                if status_info and status_info.get('state') == 'running':
                     status = ComponentStatus.HEALTHY
-                elif status_info.get('state') in ['error', 'stopped']:
+                elif status_info and status_info.get('state') in ['error', 'stopped']:
                     status = ComponentStatus.ERROR
                 else:
                     status = ComponentStatus.WARNING
@@ -292,7 +292,7 @@ class MonitoringDataCollector:
                     status=status,
                     last_check=datetime.utcnow(),
                     response_time_ms=response_time,
-                    metadata=status_info
+                    metadata=status_info or {}
                 )
             else:
                 return ComponentHealth(
@@ -315,7 +315,7 @@ class MonitoringDataCollector:
         start_time = time.time()
 
         try:
-            if hasattr(self.scheduler, 'is_running') and hasattr(self.scheduler, 'get_statistics'):
+            if self.scheduler and hasattr(self.scheduler, 'is_running') and hasattr(self.scheduler, 'get_statistics'):
                 is_running = self.scheduler.is_running()
                 stats = self.scheduler.get_statistics()
                 response_time = (time.time() - start_time) * 1000
@@ -327,7 +327,7 @@ class MonitoringDataCollector:
                     status=status,
                     last_check=datetime.utcnow(),
                     response_time_ms=response_time,
-                    metadata=stats
+                    metadata=stats or {}
                 )
             else:
                 return ComponentHealth(
@@ -350,11 +350,12 @@ class MonitoringDataCollector:
         start_time = time.time()
 
         try:
-            if hasattr(self.notification_system, 'get_statistics'):
+            if self.notification_system and hasattr(self.notification_system, 'get_statistics'):
                 stats = self.notification_system.get_statistics()
                 response_time = (time.time() - start_time) * 1000
 
                 # Check if there are recent failures
+                stats = stats or {}
                 failure_rate = stats.get('messages_failed', 0) / max(stats.get('messages_sent', 1), 1)
 
                 if failure_rate > 0.5:
@@ -392,12 +393,25 @@ class MonitoringDataCollector:
         start_time = time.time()
 
         try:
-            if hasattr(self.mcp_manager, 'get_server_status'):
+            if self.mcp_manager and hasattr(self.mcp_manager, 'get_server_status'):
                 server_status = self.mcp_manager.get_server_status()
                 response_time = (time.time() - start_time) * 1000
 
                 # Check if all servers are running
-                all_healthy = all(status.get('status') == 'running' for status in server_status.values())
+                if server_status is None:
+                    server_status = {}
+
+                try:
+                    if not server_status:
+                        all_healthy = True  # No servers configured
+                    else:
+                        all_healthy = True
+                        for status in server_status.values():
+                            if isinstance(status, dict) and status.get('status') != 'running':
+                                all_healthy = False
+                                break
+                except (AttributeError, TypeError):
+                    all_healthy = False
 
                 status = ComponentStatus.HEALTHY if all_healthy else ComponentStatus.WARNING
 
@@ -446,7 +460,7 @@ class MonitoringDataCollector:
             return self.scheduler.queue_size()
         return 0
 
-    def get_historical_metrics(self, hours: int = 24) -> Dict[str, List[Dict[str, Any]]]:
+    def get_historical_metrics(self, hours: int = 24) -> Dict[str, Any]:
         """Get historical metrics for the specified time period."""
         cutoff_time = datetime.utcnow() - timedelta(hours=hours)
 
@@ -484,16 +498,22 @@ class MonitoringDashboard:
             return
 
         # Initialize FastAPI app
+        if FastAPI is None:
+            self.logger.error("FastAPI not available")
+            self.app = None
+            return
+
         self.app = FastAPI(title="Agent Investment Platform Monitor", version="1.0.0")
 
         # Add CORS middleware
-        self.app.add_middleware(
-            CORSMiddleware,
-            allow_origins=["*"],
-            allow_credentials=True,
-            allow_methods=["*"],
-            allow_headers=["*"],
-        )
+        if CORSMiddleware is not None:
+            self.app.add_middleware(
+                CORSMiddleware,
+                allow_origins=["*"],
+                allow_credentials=True,
+                allow_methods=["*"],
+                allow_headers=["*"],
+            )
 
         self._setup_routes()
 
@@ -512,12 +532,26 @@ class MonitoringDashboard:
         else:
             return str(obj)
 
+    def _safe_json_response(self, data, status_code=200):
+        """Create safe JSON response handling missing FastAPI components."""
+        if JSONResponse:
+            return JSONResponse(content=data, status_code=status_code)
+        else:
+            return data
+
+    def _safe_http_exception(self, status_code, detail):
+        """Create safe HTTP exception handling missing FastAPI components."""
+        if HTTPException:
+            raise HTTPException(status_code=status_code, detail=detail)
+        else:
+            return {"error": detail, "status_code": status_code}
+
     def _setup_routes(self):
         """Setup API routes."""
-        if not self.app:
+        if not self.app or not WEB_AVAILABLE:
             return
 
-        @self.app.get("/", response_class=HTMLResponse)
+        @self.app.get("/")
         async def dashboard():
             """Serve the main dashboard HTML."""
             return self._get_dashboard_html()
@@ -548,24 +582,30 @@ class MonitoringDashboard:
 
                 # Use custom JSON encoder to handle enums
                 json_str = json.dumps(response_data, default=self._json_encoder)
-                return JSONResponse(content=json.loads(json_str))
+                if JSONResponse:
+                    return JSONResponse(content=json.loads(json_str))
+                else:
+                    return json.loads(json_str)
 
             except Exception as e:
                 self.logger.error(f"Status endpoint error: {e}")
-                raise HTTPException(status_code=500, detail=str(e))
+                if HTTPException:
+                    raise HTTPException(status_code=500, detail=str(e))
+                else:
+                    return {"error": str(e)}
 
         @self.app.get("/api/metrics/history")
         async def get_metrics_history(hours: int = 24):
             """Get historical metrics."""
             try:
                 data = self.data_collector.get_historical_metrics(hours)
-                return JSONResponse({
+                return self._safe_json_response({
                     'status': 'success',
                     'data': data
                 })
             except Exception as e:
                 self.logger.error(f"Metrics history endpoint error: {e}")
-                raise HTTPException(status_code=500, detail=str(e))
+                return self._safe_http_exception(500, str(e))
 
         @self.app.get("/api/components/{component_name}")
         async def get_component_details(component_name: str):
@@ -573,20 +613,18 @@ class MonitoringDashboard:
             try:
                 if component_name in self.data_collector.component_health:
                     component = self.data_collector.component_health[component_name]
-                    return JSONResponse({
+                    return self._safe_json_response({
                         'status': 'success',
                         'data': component.to_dict()
                     })
                 else:
-                    raise HTTPException(status_code=404, detail="Component not found")
-            except HTTPException:
-                raise
+                    return self._safe_http_exception(404, "Component not found")
             except Exception as e:
                 self.logger.error(f"Component details endpoint error: {e}")
-                raise HTTPException(status_code=500, detail=str(e))
+                return self._safe_http_exception(500, str(e))
 
         @self.app.websocket("/ws")
-        async def websocket_endpoint(websocket: WebSocket):
+        async def websocket_endpoint(websocket):
             """WebSocket endpoint for real-time updates."""
             await websocket.accept()
             self.connected_clients.append(websocket)
@@ -611,6 +649,10 @@ class MonitoringDashboard:
         asyncio.create_task(self._monitoring_loop())
 
         # Start web server
+        if uvicorn is None:
+            self.logger.error("uvicorn not available - cannot start web server")
+            return
+
         config = uvicorn.Config(
             app=self.app,
             host=self.host,

@@ -286,7 +286,13 @@ class DependencyInstaller:
                 "rich>=13.0.0",
                 "httpx>=0.24.0",
                 "asyncio",
-                "aiofiles>=23.0.0"
+                "aiofiles>=23.0.0",
+                # Logging and monitoring dependencies
+                "elasticsearch>=8.11.0",
+                "websockets>=12.0",
+                "aiohttp-cors>=0.7.0",
+                "fastapi>=0.104.0",
+                "uvicorn[standard]>=0.24.0"
             ]
 
             logger.info("Installing essential Python packages...")

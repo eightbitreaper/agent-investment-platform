@@ -39,7 +39,9 @@ try:
     from src.reports.markdown_generator import MarkdownReportGenerator
     from src.reports.report_validator import ReportValidator
     from src.reports.report_history import ReportHistoryTracker
-    from src.github.report_uploader import GitHubReportUploader
+    # Temporarily disable GitHub integration to test orchestrator
+    # from src.github.report_uploader import GitHubReportUploader
+    GitHubReportUploader = None
     from src.integration.framework import IntegrationFramework, ComponentType
     from src.notifications.notification_system import NotificationSystem
     from src.alerts.alert_system import IntelligentAlertSystem
@@ -117,7 +119,7 @@ class PlatformOrchestrator:
         self.report_generator: Optional[MarkdownReportGenerator] = None
         self.report_validator: Optional[ReportValidator] = None
         self.report_history: Optional[ReportHistoryTracker] = None
-        self.github_uploader: Optional[GitHubReportUploader] = None
+        self.github_uploader: Optional[Any] = None
         self.notification_system: Optional[NotificationSystem] = None
         self.alert_system: Optional[IntelligentAlertSystem] = None
         self.monitoring_dashboard: Optional[MonitoringDashboard] = None        # System state
@@ -397,15 +399,18 @@ class PlatformOrchestrator:
 
         # Initialize and register GitHub integration (optional)
         try:
-            self.github_uploader = GitHubReportUploader()
-            self.integration_framework.register_component(
-                "github_uploader",
-                self.github_uploader,
-                ComponentType.REPORT_GENERATOR,
-                dependencies=["report_generator"]
-            )
-            self.stats['component_status']['github_uploader'] = 'initialized'
-            self.logger.info("GitHub uploader registered")
+            if GitHubReportUploader is not None:
+                self.github_uploader = GitHubReportUploader()
+                self.integration_framework.register_component(
+                    "github_uploader",
+                    self.github_uploader,
+                    ComponentType.REPORT_GENERATOR,
+                    dependencies=["report_generator"]
+                )
+                self.stats['component_status']['github_uploader'] = 'initialized'
+                self.logger.info("GitHub uploader registered")
+            else:
+                self.logger.warning("GitHub uploader disabled - functionality limited")
         except Exception as e:
             self.logger.warning(f"GitHub uploader initialization failed (optional): {e}")
             self.stats['component_status']['github_uploader'] = 'failed'

@@ -275,7 +275,70 @@ Link to related guides using relative paths and reference main project documenta
 - **Update documentation** - Ensure any new features are properly documented
 - **Commit changes** - Make sure completed work is saved to the repository
 
-### 14. Git Push Command Protocol
+### 14. Docker Container Health Monitoring Requirements
+
+**Mandatory Container Health Monitoring:**
+- **ALWAYS implement comprehensive monitoring** for all Docker containers that the platform depends on
+- **DETECT and ALERT on container failures** including stopped containers, unhealthy status, and port conflicts
+- **MONITOR container resource usage** and performance metrics to prevent degradation
+- **IMPLEMENT automated recovery** for critical services when possible
+- **MAINTAIN container dependency mapping** to understand service relationships and impact
+
+**Container Health Check Implementation:**
+1. **Health Check Endpoints** - Every service container must expose a `/health` endpoint
+2. **Docker Health Checks** - Configure proper `healthcheck` directives in docker-compose.yml
+3. **Container Status Monitoring** - Regularly check `docker ps` status for all services
+4. **Port Conflict Detection** - Monitor for port binding failures and conflicts
+5. **Resource Monitoring** - Track CPU, memory, and disk usage for container performance
+6. **Log Aggregation** - Centralize container logs for analysis and alerting
+
+**Critical Container Categories:**
+- **Core Platform Services** - Main application, orchestrator, API servers
+- **Data Layer** - Database (PostgreSQL), cache (Redis), search (Elasticsearch)
+- **MCP Servers** - All Model Context Protocol servers for financial data and analysis
+- **Monitoring Stack** - Logging (Logstash, Kibana), metrics (Grafana), alerting systems
+- **AI Services** - Ollama, WebUI, and model serving infrastructure
+
+**Monitoring and Alerting Standards:**
+```yaml
+# Required health check configuration
+healthcheck:
+  test: ["CMD", "curl", "-f", "http://localhost:8080/health"]
+  interval: 30s
+  timeout: 10s
+  retries: 3
+  start_period: 40s
+```
+
+**Automated Monitoring Scripts:**
+- **Container Status Script** - Regular check of all container health and status
+- **Port Conflict Detection** - Identify and resolve port binding issues
+- **Resource Usage Monitoring** - Alert on high CPU/memory usage
+- **Service Dependency Validation** - Ensure all required services are running and healthy
+- **Recovery Automation** - Automatic restart of failed non-critical services
+
+**Monitoring Integration Requirements:**
+1. **Health Check Endpoints** - All services must implement standardized health endpoints
+2. **Prometheus Metrics** - Export container and service metrics for monitoring
+3. **Grafana Dashboards** - Visual monitoring of container health and performance
+4. **Alerting Rules** - Configure alerts for container failures, resource exhaustion, and performance degradation
+5. **Log Analysis** - Automated detection of error patterns and failure indicators
+
+**Container Failure Response Protocol:**
+1. **Immediate Detection** - Alert within 1 minute of container failure
+2. **Impact Assessment** - Determine which services are affected by the failure
+3. **Automated Recovery** - Attempt to restart failed containers automatically
+4. **Escalation** - If automated recovery fails, escalate to manual intervention
+5. **Root Cause Analysis** - Investigate and document the cause of container failures
+6. **Prevention** - Update monitoring and configuration to prevent similar failures
+
+**Regular Health Audits:**
+- **Daily Container Health Checks** - Automated verification of all container status
+- **Weekly Resource Usage Review** - Analysis of container performance trends
+- **Monthly Configuration Audit** - Review and update container health check configurations
+- **Quarterly Monitoring Effectiveness Review** - Assess monitoring coverage and alert accuracy
+
+### 15. Git Push Command Protocol
 
 **Single-Word 'push' Command:**
 - **WHEN user inputs only the word 'push'** - Execute automated git commit and push sequence
@@ -566,7 +629,9 @@ These guidelines are **mandatory** for all development work on this project. Any
 25. **SEPARATE essential files** from generated content and verify seamless operation after clean operations
 26. **UPDATE task status accurately** in tasks/tasks-prd.md immediately after completing any work items or subtasks
 27. **MAINTAIN task completion tracking** to ensure documented progress matches actual implementation status
-28. **RESPOND to 'push' command** by analyzing staged changes, generating descriptive commit messages, and executing git commit/push sequence
+28. **IMPLEMENT comprehensive Docker monitoring** for all platform containers with health checks, alerting, and automated recovery
+29. **DETECT container failures immediately** and implement proper monitoring to prevent unnoticed service degradation
+30. **RESPOND to 'push' command** by analyzing staged changes, generating descriptive commit messages, and executing git commit/push sequence
 
 ## Updates to Guidelines
 

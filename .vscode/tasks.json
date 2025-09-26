@@ -49,6 +49,44 @@
             "detail": "Comprehensive setup validation and health check"
         },
         {
+            "label": "📊 Setup Logging Infrastructure",
+            "type": "shell",
+            "command": "python",
+            "args": [
+                "scripts/setup/setup-logging-infrastructure.py"
+            ],
+            "group": "build",
+            "presentation": {
+                "echo": true,
+                "reveal": "always",
+                "focus": false,
+                "panel": "shared",
+                "showReuseMessage": true,
+                "clear": false
+            },
+            "problemMatcher": [],
+            "detail": "Setup ELK stack and monitoring infrastructure"
+        },
+        {
+            "label": "🔍 Validate Logging Infrastructure",
+            "type": "shell",
+            "command": "python",
+            "args": [
+                "scripts/setup/validate-logging-infrastructure.py"
+            ],
+            "group": "test",
+            "presentation": {
+                "echo": true,
+                "reveal": "always",
+                "focus": false,
+                "panel": "shared",
+                "showReuseMessage": true,
+                "clear": false
+            },
+            "problemMatcher": [],
+            "detail": "Validate logging and monitoring infrastructure"
+        },
+        {
             "label": "⚡ Quick Validation",
             "type": "shell",
             "command": "python",
@@ -381,6 +419,45 @@
             },
             "problemMatcher": [],
             "detail": "Follow Docker service logs in real-time",
+            "isBackground": true
+        },
+        {
+            "label": "🩺 Monitor Docker Health",
+            "type": "shell",
+            "command": "python",
+            "args": [
+                "scripts/monitor-docker-health.py"
+            ],
+            "group": "test",
+            "presentation": {
+                "echo": true,
+                "reveal": "always",
+                "focus": true,
+                "panel": "shared",
+                "clear": true
+            },
+            "problemMatcher": [],
+            "detail": "Comprehensive Docker container health monitoring"
+        },
+        {
+            "label": "🩺 Continuous Docker Monitoring",
+            "type": "shell",
+            "command": "python",
+            "args": [
+                "scripts/monitor-docker-health.py",
+                "--continuous",
+                "--interval",
+                "30"
+            ],
+            "group": "test",
+            "presentation": {
+                "echo": true,
+                "reveal": "always",
+                "focus": true,
+                "panel": "dedicated"
+            },
+            "problemMatcher": [],
+            "detail": "Continuous Docker health monitoring (30s intervals)",
             "isBackground": true
         }
     ],

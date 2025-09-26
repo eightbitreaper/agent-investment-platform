@@ -31,6 +31,7 @@ Welcome to the comprehensive documentation for the Agent Investment Platform. Th
 ### 🏗️ Architecture & Deployment
 - [System Architecture](architecture.md) - Overall platform design and components
 - [Docker Deployment](deployment/docker-guide.md) - Container orchestration and scaling
+- [Docker Health Monitoring](deployment/docker-health-monitoring.md) - **CRITICAL**: Comprehensive container monitoring and alerting
 - [Local LLM Setup](setup/local-llm-setup.md) - Setting up Ollama and language models
 - [MCP Server Integration](deployment/mcp-integration.md) - Production MCP server deployment
 

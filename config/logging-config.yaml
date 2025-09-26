@@ -1,0 +1,51 @@
+disable_existing_loggers: false
+formatters:
+  console:
+    class: src.logging.core.ConsoleFormatter
+    format: '%(asctime)s [%(levelname)-8s] [%(name)s] %(message)s'
+  structured:
+    class: src.logging.core.StructuredFormatter
+    format: '%(message)s'
+handlers:
+  console:
+    class: logging.StreamHandler
+    formatter: console
+    level: INFO
+    stream: ext://sys.stdout
+  elasticsearch:
+    class: src.logging.aggregation.ElasticsearchLogHandler
+    formatter: structured
+    level: INFO
+  file:
+    backupCount: 5
+    class: logging.handlers.RotatingFileHandler
+    filename: logs/platform.log
+    formatter: structured
+    level: DEBUG
+    maxBytes: 10485760
+loggers:
+  ? ''
+  : handlers:
+    - console
+    - file
+    - elasticsearch
+    level: INFO
+    propagate: false
+  src:
+    handlers:
+    - console
+    - file
+    - elasticsearch
+    level: DEBUG
+    propagate: false
+version: 1
+
+# Real-time logging configuration
+realtime:
+  websocket_enabled: true
+  websocket_port: 8765
+
+# Performance configuration
+performance:
+  function_timing: true
+  slow_operation_threshold_ms: 1000
